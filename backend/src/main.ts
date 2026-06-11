@@ -15,7 +15,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Security Headers
-  app.use(helmet());
+  app.use(helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  }));
 
   // Cookie Parser for HTTP-Only cookies
   app.use(cookieParser());
