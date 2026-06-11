@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+
 import { useState, useEffect } from "react";
 import { ArrowLeft, MapPin } from "lucide-react";
 
