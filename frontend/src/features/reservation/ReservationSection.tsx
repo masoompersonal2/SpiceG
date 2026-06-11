@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, ChevronDown, CheckCircle2 } from "lucide-react";
+import { Calendar, CheckCircle2 } from "lucide-react";
 import { GlassFilter } from "../../components/ui/GlassFilter";
 import { useContent } from "../../context/ContentContext";
 

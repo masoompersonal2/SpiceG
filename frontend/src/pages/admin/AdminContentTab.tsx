@@ -540,7 +540,7 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
                         <input type="checkbox" checked={social.isEnabled} onChange={(e) => {
                           const newSocials = [...siteData.footer.footerSocials];
                           newSocials[idx].isEnabled = e.target.checked;
-                          handleTextChange('footer', 'footerSocials', newSocials);
+                          handleTextChange('footer', 'footerSocials', newSocials as any);
                         }} className="sr-only peer" />
                         <div className="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500 relative"></div>
                       </label>
@@ -548,7 +548,7 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
                     <input type="text" value={social.url} onChange={(e) => {
                       const newSocials = [...siteData.footer.footerSocials];
                       newSocials[idx].url = e.target.value;
-                      handleTextChange('footer', 'footerSocials', newSocials);
+                      handleTextChange('footer', 'footerSocials', newSocials as any);
                     }} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm" />
                   </div>
                 ))}

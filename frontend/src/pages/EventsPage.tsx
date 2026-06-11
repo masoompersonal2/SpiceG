@@ -1,5 +1,6 @@
-import { ArrowLeft, MapPin, Share, Calendar, IndianRupee } from "lucide-react";
+import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { ArrowLeft, MapPin } from "lucide-react";
 
 export function EventsPage() {
   const [siteData, setSiteData] = useState<any>(null);
