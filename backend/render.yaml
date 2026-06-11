@@ -22,5 +22,6 @@ services:
 
 databases:
   - name: spice-garden-db
+    plan: free
     databaseName: spice_garden
     user: admin
