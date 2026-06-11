@@ -21,13 +21,8 @@ async function bootstrap() {
   app.use(cookieParser());
 
   // Strict CORS configuration
-  const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
-  if (process.env.FRONTEND_URL) {
-    allowedOrigins.push(process.env.FRONTEND_URL);
-  }
-
   app.enableCors({
-    origin: allowedOrigins,
+    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], // Add production frontend domains later
     credentials: true,
   });
 
