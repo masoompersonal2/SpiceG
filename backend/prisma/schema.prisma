@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password     String
+  profileImage String?
+  createdAt    DateTime @default(now())
+}
+
+model MenuItem {
+  id        Int      @id @default(autoincrement())
+  name      String
+  category  String
+  isVeg     Boolean
+  priceText String
+  image     String
+  createdAt DateTime @default(now())
+}
+
+model Reservation {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @default("")
+  phone     String
+  date      String
+  time      String
+  status    String   @default("Pending")
+  createdAt DateTime @default(now())
+}
+
+model RestaurantSettings {
+  id        Int      @id @default(1)
+  openTime  String   @default("18:00")
+  closeTime String   @default("23:00")
+}
+
+model SiteContent {
+  id      Int  @id @default(1)
+  seo     Json @default("{}")
+  hero    Json
+  about   Json
+  online  Json
+  call    Json
+  event   Json
+  promise Json
+  footer  Json
+  aboutH  Json @default("{}")
+  contact Json @default("{}")
+  eventsH Json @default("{}")
+  galleryH Json @default("{}")
+}
+
+model GalleryImage {
+  id        Int      @id @default(autoincrement())
+  row       Int      @default(1)
+  title     String   @default("")
+  image     String
+  createdAt DateTime @default(now())
+}
+
+model ContactRequest {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String
+  message   String
+  status    String   @default("Pending")
+  createdAt DateTime @default(now())
+}
+
+model ChefSpecial {
+  id        Int      @id @default(autoincrement())
+  title     String
+  hoverText String
+  image     String
+}
+
+model ContentMenuCategory {
+  id        Int      @id @default(autoincrement())
+  name      String
+  isEnabled Boolean  @default(true)
+  image1    String
+  image2    String
+  image3    String
+}
+
+model Testimonial {
+  id        Int      @id @default(autoincrement())
+  name      String
+  text      String
+  image     String
+}
+
+model TicketEvent {
+  id              Int      @id @default(autoincrement())
+  title           String
+  subtitle        String?
+  location        String
+  date            DateTime
+  price           Int
+  totalSeats      Int
+  bookedSeats     Int      @default(0)
+  image           String
+  isEnabled       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+}
