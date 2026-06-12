@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Search, Plus, Settings, Calendar, Menu as MenuIcon, ShoppingBag, MapPin, User, LogOut, Upload, Info } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
 
 // Shared Custom Modal
 function Modal({ isOpen, title, desc, onConfirm, onCancel, confirmText = "Confirm", isDestructive = false }: any) {
@@ -33,7 +32,7 @@ function MenuTab() {
     fetch("http://localhost:3000/api/menu").then(r => r.json()).then(setItems);
   }, []);
 
-  const filteredItems = items.filter(item => {
+  const filteredItems = items.filter((item: any) => {
     const matchesCat = selectedCategory === "All" || item.category === selectedCategory;
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCat && matchesSearch;
@@ -61,7 +60,7 @@ function MenuTab() {
 
       <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide">
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredItems.map(item => (
+          {filteredItems.map((item: any) => (
             <div key={item.id} className="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all group flex flex-col">
               <div className="h-48 w-full bg-gray-100 relative overflow-hidden">
                 <img src={item.image.startsWith('http') ? item.image : (item.image.startsWith('/') && !item.image.startsWith('/uploads') ? item.image : `http://localhost:3000${item.image}`)} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -120,8 +119,8 @@ function EventsTab() {
     }
   };
 
-  const displayedEvents = activeTab === "All Events" ? events : myEvents.map(b => b.event).filter(Boolean);
-  const filteredEvents = displayedEvents.filter(e => e.title.toLowerCase().includes(searchQuery.toLowerCase()));
+  const displayedEvents = activeTab === "All Events" ? events : myEvents.map((b: any) => b.event).filter(Boolean);
+  const filteredEvents = displayedEvents.filter((e: any) => e.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] relative">
@@ -146,8 +145,8 @@ function EventsTab() {
 
       <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide">
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredEvents.map((ev, idx) => {
-            const booking = activeTab === "My Events" ? myEvents.find(b => b.eventId === ev.id) : null;
+          {filteredEvents.map((ev: any, idx: number) => {
+            const booking = activeTab === "My Events" ? myEvents.find((b: any) => b.eventId === ev.id) : null;
             return (
               <div key={`${ev.id}-${idx}`} className="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all group flex flex-col">
                 <div className="h-48 w-full relative overflow-hidden bg-gray-100">
@@ -211,7 +210,7 @@ function ReservationsTab() {
           <div className="text-center text-gray-500 py-12">No reservations found.</div>
         ) : (
           <div className="flex flex-col gap-4">
-            {reservations.map(res => (
+            {reservations.map((res: any) => (
               <div key={res.id} className="border border-gray-100 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-md transition-shadow">
                 <div>
                   <div className="flex items-center gap-3 mb-2">
@@ -375,8 +374,15 @@ function SettingsTab({ user, onUpdate }: any) {
 
 // ------------------------ Main Component ------------------------
 export function CustomerDashboard() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const currentTab = searchParams.get("tab") || "Menu";
+  const queryParams = new URLSearchParams(window.location.search);
+  const initialTab = queryParams.get("tab") || "Menu";
+  const [currentTab, setCurrentTab] = useState(initialTab);
+
+  // Update URL silently when tab changes
+  const handleTabChange = (tab: string) => {
+    setCurrentTab(tab);
+    window.history.replaceState(null, '', `?tab=${tab}`);
+  };
 
   const [user, setUser] = useState<any>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -432,7 +438,7 @@ export function CustomerDashboard() {
           {tabs.map(t => {
             const Icon = t.icon;
             return (
-              <button key={t.id} onClick={() => setSearchParams({ tab: t.id })} className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all ${currentTab === t.id ? 'bg-white text-black shadow-sm' : 'hover:text-black hover:bg-gray-100/50'}`}>
+              <button key={t.id} onClick={() => handleTabChange(t.id)} className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all ${currentTab === t.id ? 'bg-white text-black shadow-sm' : 'hover:text-black hover:bg-gray-100/50'}`}>
                 <Icon className="w-4 h-4" /> {t.id}
               </button>
             )
