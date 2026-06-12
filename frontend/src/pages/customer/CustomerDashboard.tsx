@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Plus, Minus, Settings, Calendar, Menu as MenuIcon, ShoppingBag, MapPin, User, LogOut, Upload, Info } from "lucide-react";
+import { Search, Plus, Minus, Settings, Calendar, Menu as MenuIcon, ShoppingBag, MapPin, User, LogOut, Upload, Info, Check } from "lucide-react";
 
 // Shared Custom Modal
 function Modal({ isOpen, title, desc, onConfirm, onCancel, confirmText = "Confirm", isDestructive = false }: any) {
@@ -397,6 +397,39 @@ export function CustomerDashboard() {
   const [user, setUser] = useState<any>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [cart, setCart] = useState<any[]>([]);
+  const [attemptingToLeave, setAttemptingToLeave] = useState(false);
+  const [reservationSuccessMsg, setReservationSuccessMsg] = useState("");
+
+  useEffect(() => {
+    // Process any pending reservations
+    const pending = localStorage.getItem("pendingReservation");
+    if (pending) {
+      try {
+        const payload = JSON.parse(pending);
+        fetch("http://localhost:3000/api/reservations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(payload),
+        }).then(() => {
+          localStorage.removeItem("pendingReservation");
+          setReservationSuccessMsg("Table Booked Successfully!");
+          setTimeout(() => setReservationSuccessMsg(""), 4000);
+        });
+      } catch (e) {
+        localStorage.removeItem("pendingReservation");
+      }
+    }
+
+    // Trap the browser back button
+    window.history.pushState({ page: 'dashboard' }, '', window.location.href);
+    const handlePopState = () => {
+      window.history.pushState({ page: 'dashboard' }, '', window.location.href);
+      setAttemptingToLeave(true);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const fetchUser = async () => {
     try {
@@ -433,6 +466,13 @@ export function CustomerDashboard() {
 
   return (
     <div className="h-screen flex flex-col bg-[#F8F9FB] font-sans text-[#1A1A1A] overflow-hidden">
+      {reservationSuccessMsg && (
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 px-8 py-4 bg-black text-[#B2E624] rounded-full text-lg font-bold shadow-2xl z-[300] animate-in slide-in-from-top-10 fade-in duration-500 flex items-center gap-3">
+          <Check className="w-6 h-6" />
+          {reservationSuccessMsg}
+        </div>
+      )}
+      <Modal isOpen={attemptingToLeave} title="Leave Dashboard?" desc="Are you sure you want to go back to the home page?" onConfirm={() => window.location.replace("/")} onCancel={() => setAttemptingToLeave(false)} confirmText="Yes, Leave" isDestructive={true} />
       <Modal isOpen={isLoggingOut} title="Sign Out" desc="Are you sure you want to sign out from your account?" onConfirm={handleLogout} onCancel={() => setIsLoggingOut(false)} confirmText="Yes, Sign Out" isDestructive={true} />
       
       {/* Fixed Top Header */}
