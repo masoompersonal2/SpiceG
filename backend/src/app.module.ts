@@ -9,6 +9,7 @@ import { SettingsController } from './settings.controller';
 import { ContentController } from './content.controller';
 import { ContactController } from './contact.controller';
 import { EventsController } from './events.controller';
+import { CustomerAuthController } from './customer-auth.controller';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { JwtModule } from '@nestjs/jwt';
@@ -29,7 +30,7 @@ import { JwtModule } from '@nestjs/jwt';
       signOptions: { expiresIn: '1d' },
     }),
   ],
-  controllers: [AuthController, AdminController, MenuController, ReservationController, SettingsController, ContentController, ContactController, EventsController],
+  controllers: [AuthController, AdminController, MenuController, ReservationController, SettingsController, ContentController, ContactController, EventsController, CustomerAuthController],
   providers: [
     {
       provide: APP_GUARD,

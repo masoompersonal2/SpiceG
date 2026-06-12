@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Eye, EyeOff, Mail, Sparkles } from "lucide-react";
+import { Eye, EyeOff, Mail, Sparkles, MapPin, ArrowLeft } from "lucide-react";
 
 interface PupilProps {
   size?: number;
@@ -9,13 +9,7 @@ interface PupilProps {
   forceLookY?: number;
 }
 
-const Pupil = ({ 
-  size = 12, 
-  maxDistance = 5,
-  pupilColor = "black",
-  forceLookX,
-  forceLookY
-}: PupilProps) => {
+const Pupil = ({ size = 12, maxDistance = 5, pupilColor = "black", forceLookX, forceLookY }: PupilProps) => {
   const [mouseX, setMouseX] = useState<number>(0);
   const [mouseY, setMouseY] = useState<number>(0);
   const pupilRef = useRef<HTMLDivElement>(null);
@@ -25,33 +19,22 @@ const Pupil = ({
       setMouseX(e.clientX);
       setMouseY(e.clientY);
     };
-
     window.addEventListener("mousemove", handleMouseMove);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   const calculatePupilPosition = () => {
     if (!pupilRef.current) return { x: 0, y: 0 };
-
-    if (forceLookX !== undefined && forceLookY !== undefined) {
-      return { x: forceLookX, y: forceLookY };
-    }
-
+    if (forceLookX !== undefined && forceLookY !== undefined) return { x: forceLookX, y: forceLookY };
     const pupil = pupilRef.current.getBoundingClientRect();
     const pupilCenterX = pupil.left + pupil.width / 2;
     const pupilCenterY = pupil.top + pupil.height / 2;
-
     const deltaX = mouseX - pupilCenterX;
     const deltaY = mouseY - pupilCenterY;
     const distance = Math.min(Math.sqrt(deltaX ** 2 + deltaY ** 2), maxDistance);
-
     const angle = Math.atan2(deltaY, deltaX);
     const x = Math.cos(angle) * distance;
     const y = Math.sin(angle) * distance;
-
     return { x, y };
   };
 
@@ -83,16 +66,7 @@ interface EyeBallProps {
   forceLookY?: number;
 }
 
-const EyeBall = ({ 
-  size = 48, 
-  pupilSize = 16, 
-  maxDistance = 10,
-  eyeColor = "white",
-  pupilColor = "black",
-  isBlinking = false,
-  forceLookX,
-  forceLookY
-}: EyeBallProps) => {
+const EyeBall = ({ size = 48, pupilSize = 16, maxDistance = 10, eyeColor = "white", pupilColor = "black", isBlinking = false, forceLookX, forceLookY }: EyeBallProps) => {
   const [mouseX, setMouseX] = useState<number>(0);
   const [mouseY, setMouseY] = useState<number>(0);
   const eyeRef = useRef<HTMLDivElement>(null);
@@ -102,33 +76,22 @@ const EyeBall = ({
       setMouseX(e.clientX);
       setMouseY(e.clientY);
     };
-
     window.addEventListener("mousemove", handleMouseMove);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   const calculatePupilPosition = () => {
     if (!eyeRef.current) return { x: 0, y: 0 };
-
-    if (forceLookX !== undefined && forceLookY !== undefined) {
-      return { x: forceLookX, y: forceLookY };
-    }
-
+    if (forceLookX !== undefined && forceLookY !== undefined) return { x: forceLookX, y: forceLookY };
     const eye = eyeRef.current.getBoundingClientRect();
     const eyeCenterX = eye.left + eye.width / 2;
     const eyeCenterY = eye.top + eye.height / 2;
-
     const deltaX = mouseX - eyeCenterX;
     const deltaY = mouseY - eyeCenterY;
     const distance = Math.min(Math.sqrt(deltaX ** 2 + deltaY ** 2), maxDistance);
-
     const angle = Math.atan2(deltaY, deltaX);
     const x = Math.cos(angle) * distance;
     const y = Math.sin(angle) * distance;
-
     return { x, y };
   };
 
@@ -162,11 +125,21 @@ const EyeBall = ({
 };
 
 export function AuthPage() {
+  const [view, setView] = useState<'login' | 'signup' | 'setup'>('login');
+
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  
+  const [fullName, setFullName] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [location, setLocation] = useState("");
+  const [profileImage, setProfileImage] = useState("");
+
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
   const [mouseX, setMouseX] = useState<number>(0);
   const [mouseY, setMouseY] = useState<number>(0);
   const [isPurpleBlinking, setIsPurpleBlinking] = useState(false);
@@ -184,7 +157,6 @@ export function AuthPage() {
       setMouseX(e.clientX);
       setMouseY(e.clientY);
     };
-
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
@@ -224,9 +196,7 @@ export function AuthPage() {
   useEffect(() => {
     if (isTyping) {
       setIsLookingAtEachOther(true);
-      const timer = setTimeout(() => {
-        setIsLookingAtEachOther(false);
-      }, 800);
+      const timer = setTimeout(() => setIsLookingAtEachOther(false), 800);
       return () => clearTimeout(timer);
     } else {
       setIsLookingAtEachOther(false);
@@ -238,9 +208,7 @@ export function AuthPage() {
       const schedulePeek = () => {
         const peekInterval = setTimeout(() => {
           setIsPurplePeeking(true);
-          setTimeout(() => {
-            setIsPurplePeeking(false);
-          }, 800);
+          setTimeout(() => setIsPurplePeeking(false), 800);
         }, Math.random() * 3000 + 2000);
         return peekInterval;
       };
@@ -269,20 +237,122 @@ export function AuthPage() {
   const yellowPos = calculatePosition(yellowRef);
   const orangePos = calculatePosition(orangeRef);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const fetchLiveLocation = () => {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocation(`${position.coords.latitude}, ${position.coords.longitude}`);
+        setError("");
+      },
+      () => {
+        setError("Unable to retrieve your location");
+      }
+    );
+  };
+
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    if (email === "erik@gmail.com" && password === "1234") {
-      alert("Login successful! Welcome, Erik!");
-    } else {
-      setError("Invalid email or password. Please try again.");
+    try {
+      const res = await fetch("http://localhost:3000/api/customer/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Login failed");
+      
+      if (data.customer.isSetupComplete) {
+        window.location.href = "/dashboard";
+      } else {
+        setView("setup");
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
+
+  const handleSignupSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    if (password.length < 4) {
+      setError("Password must be at least 4 characters");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("http://localhost:3000/api/customer/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Signup failed");
+      
+      setView("setup");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSetupSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!fullName || !mobile || !location) return;
+
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("http://localhost:3000/api/customer/auth/setup", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fullName, mobile, location, profileImage }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Setup failed");
+      
+      window.location.href = "/dashboard";
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancelSetup = async () => {
+    setIsLoading(true);
+    try {
+      await fetch("http://localhost:3000/api/customer/auth/cancel-setup", {
+        method: "POST",
+      });
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setView("login");
+    } catch (error) {
+      console.error("Cancel failed:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const isSetupComplete = fullName.trim() !== "" && mobile.trim() !== "" && location.trim() !== "";
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2 bg-black text-white">
@@ -433,8 +503,8 @@ export function AuthPage() {
         </div>
       </div>
 
-      {/* Right Login Section */}
-      <div className="flex items-center justify-center p-8 bg-[#0a0a0a]">
+      {/* Right Login/Signup/Setup Section */}
+      <div className="flex items-center justify-center p-8 bg-black">
         <div className="w-full max-w-[420px]">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center gap-2 text-lg font-semibold mb-12 cursor-pointer" onClick={() => window.location.href="/"}>
@@ -444,95 +514,231 @@ export function AuthPage() {
             <span>Spice Garden</span>
           </div>
 
-          <div className="text-center mb-10">
-            <h1 className="text-3xl font-bold tracking-tight mb-2">Welcome back!</h1>
-            <p className="text-zinc-400 text-sm">Please enter your details</p>
-          </div>
+          {view === 'setup' ? (
+            <>
+              <div className="text-center mb-10">
+                <h1 className="text-3xl font-bold tracking-tight mb-2">Almost there!</h1>
+                <p className="text-zinc-400 text-sm">Please complete your profile</p>
+              </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2 text-left">
-              <label htmlFor="email" className="text-sm font-medium">Email</label>
-              <input
-                id="email"
-                type="email"
-                placeholder="anna@gmail.com"
-                value={email}
-                autoComplete="off"
-                onChange={(e) => setEmail(e.target.value)}
-                onFocus={() => setIsTyping(true)}
-                onBlur={() => setIsTyping(false)}
-                required
-                className="flex h-12 w-full rounded-md border border-zinc-800 bg-black px-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
-              />
-            </div>
+              <form onSubmit={handleSetupSubmit} className="space-y-5">
+                <div className="space-y-2 text-left">
+                  <label htmlFor="fullName" className="text-sm font-medium">Full Name</label>
+                  <input
+                    id="fullName"
+                    type="text"
+                    placeholder="John Doe"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required
+                    className="flex h-12 w-full rounded-md border border-zinc-800 bg-black px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                  />
+                </div>
 
-            <div className="space-y-2 text-left">
-              <label htmlFor="password" className="text-sm font-medium">Password</label>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="flex h-12 w-full rounded-md border border-zinc-800 bg-black px-3 py-2 pr-10 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+                <div className="space-y-2 text-left">
+                  <label htmlFor="mobile" className="text-sm font-medium">Mobile Number</label>
+                  <input
+                    id="mobile"
+                    type="tel"
+                    placeholder="+1 234 567 8900"
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                    required
+                    className="flex h-12 w-full rounded-md border border-zinc-800 bg-black px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                  />
+                </div>
+
+                <div className="space-y-2 text-left">
+                  <label htmlFor="location" className="text-sm font-medium">Location</label>
+                  <div className="flex gap-2">
+                    <input
+                      id="location"
+                      type="text"
+                      placeholder="City, Country"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      required
+                      className="flex h-12 w-full rounded-md border border-zinc-800 bg-black px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={fetchLiveLocation}
+                      className="h-12 px-4 rounded-md border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-white transition-colors"
+                      title="Fetch Live Location"
+                    >
+                      <MapPin className="size-5" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2 text-left">
+                  <label htmlFor="profileImage" className="text-sm font-medium">Profile Image URL (Optional)</label>
+                  <input
+                    id="profileImage"
+                    type="url"
+                    placeholder="https://example.com/avatar.jpg"
+                    value={profileImage}
+                    onChange={(e) => setProfileImage(e.target.value)}
+                    className="flex h-12 w-full rounded-md border border-zinc-800 bg-black px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                  />
+                </div>
+
+                {error && (
+                  <div className="p-3 text-sm text-red-400 bg-red-950/20 border border-red-900/30 rounded-lg text-left">
+                    {error}
+                  </div>
+                )}
+
+                <div className="flex gap-4 mt-8">
+                  <button 
+                    type="button" 
+                    onClick={handleCancelSetup}
+                    className="w-1/3 h-12 rounded-md border border-zinc-800 text-white hover:bg-zinc-900 transition-colors text-base font-medium flex items-center justify-center" 
+                    disabled={isLoading}
+                  >
+                    <ArrowLeft className="size-4 mr-2" /> Back
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="w-2/3 h-12 rounded-md bg-white text-black hover:bg-zinc-200 transition-colors text-base font-medium flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" 
+                    disabled={isLoading || !isSetupComplete}
+                  >
+                    {isLoading ? "Saving..." : "Get Started"}
+                  </button>
+                </div>
+              </form>
+            </>
+          ) : (
+            <>
+              <div className="text-center mb-10">
+                <h1 className="text-3xl font-bold tracking-tight mb-2">
+                  {view === 'login' ? 'Welcome back!' : 'Create an account'}
+                </h1>
+                <p className="text-zinc-400 text-sm">
+                  {view === 'login' ? 'Please enter your details' : 'Enter your details to register'}
+                </p>
+              </div>
+
+              <form onSubmit={view === 'login' ? handleLoginSubmit : handleSignupSubmit} className="space-y-5">
+                <div className="space-y-2 text-left">
+                  <label htmlFor="email" className="text-sm font-medium">Email</label>
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="anna@gmail.com"
+                    value={email}
+                    autoComplete="off"
+                    onChange={(e) => setEmail(e.target.value)}
+                    onFocus={() => setIsTyping(true)}
+                    onBlur={() => setIsTyping(false)}
+                    required
+                    className="flex h-12 w-full rounded-md border border-zinc-800 bg-black px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                  />
+                </div>
+
+                <div className="space-y-2 text-left">
+                  <label htmlFor="password" className="text-sm font-medium">Password</label>
+                  <div className="relative">
+                    <input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="flex h-12 w-full rounded-md border border-zinc-800 bg-black px-3 py-2 pr-10 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
+                    </button>
+                  </div>
+                </div>
+
+                {view === 'signup' && (
+                  <div className="space-y-2 text-left">
+                    <label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password</label>
+                    <div className="relative">
+                      <input
+                        id="confirmPassword"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                        className="flex h-12 w-full rounded-md border border-zinc-800 bg-black px-3 py-2 pr-10 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {view === 'login' && (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <input type="checkbox" id="remember" className="h-4 w-4 rounded border-zinc-800 bg-black accent-white cursor-pointer" />
+                      <label htmlFor="remember" className="text-sm font-normal cursor-pointer text-zinc-300">
+                        Remember for 30 days
+                      </label>
+                    </div>
+                    <a href="#" className="text-sm text-zinc-300 hover:text-white hover:underline font-medium">
+                      Forgot password?
+                    </a>
+                  </div>
+                )}
+
+                {error && (
+                  <div className="p-3 text-sm text-red-400 bg-red-950/20 border border-red-900/30 rounded-lg text-left">
+                    {error}
+                  </div>
+                )}
+
+                <button 
+                  type="submit" 
+                  className="w-full h-12 rounded-md bg-white text-black hover:bg-zinc-200 transition-colors text-base font-medium flex items-center justify-center" 
+                  disabled={isLoading}
                 >
-                  {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
+                  {isLoading ? "Processing..." : view === 'login' ? "Log in" : "Sign up"}
+                </button>
+              </form>
+
+              {/* Social Login */}
+              {view === 'login' ? (
+                <div className="mt-6">
+                  <button 
+                    className="w-full h-12 flex items-center justify-center rounded-md border border-zinc-800 bg-black hover:bg-zinc-900 transition-colors font-medium text-sm text-white"
+                    type="button"
+                  >
+                    <Mail className="mr-2 size-5" />
+                    Log in with Google
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-6">
+                  <button 
+                    className="w-full h-12 flex items-center justify-center rounded-md border border-zinc-800 bg-black hover:bg-zinc-900 transition-colors font-medium text-sm text-white"
+                    type="button"
+                  >
+                    <Mail className="mr-2 size-5" />
+                    Sign up with Google
+                  </button>
+                </div>
+              )}
+
+              {/* Toggle View Link */}
+              <div className="text-center text-sm text-zinc-400 mt-8">
+                {view === 'login' ? "Don't have an account? " : "Already have an account? "}
+                <button 
+                  onClick={() => setView(view === 'login' ? 'signup' : 'login')} 
+                  className="text-white font-medium hover:underline"
+                >
+                  {view === 'login' ? "Sign Up" : "Login"}
                 </button>
               </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <input type="checkbox" id="remember" className="h-4 w-4 rounded border-zinc-800 bg-black accent-white cursor-pointer" />
-                <label htmlFor="remember" className="text-sm font-normal cursor-pointer text-zinc-300">
-                  Remember for 30 days
-                </label>
-              </div>
-              <a href="#" className="text-sm text-zinc-300 hover:text-white hover:underline font-medium">
-                Forgot password?
-              </a>
-            </div>
-
-            {error && (
-              <div className="p-3 text-sm text-red-400 bg-red-950/20 border border-red-900/30 rounded-lg text-left">
-                {error}
-              </div>
-            )}
-
-            <button 
-              type="submit" 
-              className="w-full h-12 rounded-md bg-white text-black hover:bg-zinc-200 transition-colors text-base font-medium flex items-center justify-center" 
-              disabled={isLoading}
-            >
-              {isLoading ? "Signing in..." : "Log in"}
-            </button>
-          </form>
-
-          {/* Social Login */}
-          <div className="mt-6 flex flex-col gap-4">
-            <button 
-              className="w-full h-12 flex items-center justify-center rounded-md border border-zinc-800 bg-black hover:bg-zinc-900 transition-colors font-medium text-sm text-white"
-              type="button"
-            >
-              <Mail className="mr-2 size-5" />
-              Log in with Google
-            </button>
-            
-            <button 
-              className="w-full h-12 flex items-center justify-center rounded-md border border-zinc-800 bg-black hover:bg-zinc-900 transition-colors font-medium text-sm text-white"
-              type="button"
-            >
-              <Mail className="mr-2 size-5" />
-              Sign up with Google
-            </button>
-          </div>
+            </>
+          )}
         </div>
       </div>
     </div>

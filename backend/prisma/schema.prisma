@@ -112,3 +112,16 @@ model TicketEvent {
   isEnabled       Boolean  @default(true)
   createdAt       DateTime @default(now())
 }
+
+model Customer {
+  id              Int      @id @default(autoincrement())
+  email           String   @unique
+  password        String
+  isSetupComplete Boolean  @default(false)
+  fullName        String?
+  mobile          String?
+  location        String?
+  profileImage    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
