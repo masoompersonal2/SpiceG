@@ -40,7 +40,6 @@ export function Navbar() {
     { name: "Menu", href: "/menu" },
     { name: "Gallery", href: "/gallery" },
     { name: "Events", href: "/events" },
-    { name: "Order Online", href: "/auth" },
     { name: "Contact", href: "/contact" }
   ];
 
@@ -77,7 +76,6 @@ export function Navbar() {
           <a href="/menu" className="hover:text-[#E04D2D] transition-colors">Menu</a>
           <a href="/gallery" className="hover:text-[#E04D2D] transition-colors">Gallery</a>
           <a href="/events" className="hover:text-[#E04D2D] transition-colors">Events</a>
-          <a href="/auth" className="hover:text-[#E04D2D] transition-colors">Order Online</a>
           <a href="/contact" className="hover:text-[#E04D2D] transition-colors">Contact</a>
         </div>
 
