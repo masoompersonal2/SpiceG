@@ -29,7 +29,7 @@ export function AboutSection() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="col-span-1 bg-[#E04D2D] rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-6 md:p-12 flex flex-col justify-between relative overflow-hidden text-white min-h-[200px] sm:min-h-[300px] md:min-h-[500px]"
+            className="col-span-1 bg-[#E04D2D] rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-6 md:p-12 flex flex-col justify-between relative overflow-hidden text-white min-h-[200px] sm:min-h-[300px] md:min-h-[380px]"
           >
             <div className="flex justify-between items-start">
               <span className="px-2 sm:px-4 py-1 sm:py-1.5 border border-white/40 rounded-full text-[8px] sm:text-[10px] md:text-xs font-semibold tracking-wider uppercase truncate max-w-[80%]">
@@ -56,7 +56,7 @@ export function AboutSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="col-span-1 relative rounded-[1.5rem] md:rounded-[2rem] overflow-hidden min-h-[200px] sm:min-h-[300px] md:min-h-[500px] bg-zinc-900 group"
+            className="col-span-1 relative rounded-[1.5rem] md:rounded-[2rem] overflow-hidden min-h-[200px] sm:min-h-[300px] md:min-h-[380px] bg-zinc-900 group"
           >
             <img 
               src={siteData.about.aboutImage?.startsWith('http') ? siteData.about.aboutImage : (siteData.about.aboutImage?.startsWith('/') && !siteData.about.aboutImage?.startsWith('/uploads') ? siteData.about.aboutImage : `http://localhost:3000${siteData.about.aboutImage}`)} 
