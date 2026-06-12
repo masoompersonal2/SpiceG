@@ -583,41 +583,37 @@ export function AuthPage() {
               <form onSubmit={handleSetupSubmit} className="space-y-5">
                 <div className="space-y-2 text-left">
                   <label htmlFor="fullName" className="text-sm font-medium">Full Name</label>
-                  <input
-                    id="fullName"
-                    type="text"
-                    placeholder="John Doe"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
+                  <input 
+                    type="text" 
                     required
-                    className="flex h-12 w-full rounded-md border border-zinc-800 bg-black px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                    value={fullName}
+                    onChange={e => setFullName(e.target.value)}
+                    placeholder="Your Name"
+                    className="w-full bg-black border-2 border-[#1A1A1A] text-white px-5 py-4 rounded-xl focus:outline-none focus:border-[#B2E624] transition-colors"
                   />
                 </div>
 
                 <div className="space-y-2 text-left">
                   <label htmlFor="mobile" className="text-sm font-medium">Mobile Number</label>
-                  <input
-                    id="mobile"
-                    type="tel"
-                    placeholder="+1 234 567 8900"
+                  <input 
+                    type="tel" 
                     value={mobile}
-                    onChange={(e) => setMobile(e.target.value)}
-                    required
-                    className="flex h-12 w-full rounded-md border border-zinc-800 bg-black px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                    onChange={e => setMobile(e.target.value)}
+                    placeholder="+91 9876543210"
+                    className="w-full bg-black border-2 border-[#1A1A1A] text-white px-5 py-4 rounded-xl focus:outline-none focus:border-[#B2E624] transition-colors"
                   />
                 </div>
 
                 <div className="space-y-2 text-left">
                   <label htmlFor="location" className="text-sm font-medium">Location</label>
                   <div className="flex gap-2">
-                    <input
-                      id="location"
-                      type="text"
-                      placeholder="City, Country"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
+                    <input 
+                      type="text" 
                       required
-                      className="flex h-12 w-full rounded-md border border-zinc-800 bg-black px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                      value={location}
+                      onChange={e => setLocation(e.target.value)}
+                      placeholder="Gokak, belagavi, Karnataka. 591309."
+                      className="w-full bg-black border-2 border-[#1A1A1A] text-white px-5 py-4 rounded-xl focus:outline-none focus:border-[#B2E624] transition-colors"
                     />
                     <button
                       type="button"
@@ -690,7 +686,7 @@ export function AuthPage() {
                   <input
                     id="email"
                     type="email"
-                    placeholder="anna@gmail.com"
+                    placeholder="Your Gmail"
                     value={email}
                     autoComplete="off"
                     onChange={(e) => setEmail(e.target.value)}
