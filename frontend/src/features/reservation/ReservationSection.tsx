@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, CheckCircle2 } from "lucide-react";
-import { GlassFilter } from "../../components/ui/GlassFilter";
 import { useContent } from "../../context/ContentContext";
 
 const ReservationTimeSelector = ({ value, onChange }: { value: string, onChange: (v: string) => void }) => {
@@ -42,8 +41,8 @@ export function ReservationSection() {
   const [phone, setPhone] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("18:00");
-  const [success, setSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [settings, setSettings] = useState({ openTime: "18:00", closeTime: "23:00" });
 
   // Fetch time settings on load
@@ -59,31 +58,26 @@ export function ReservationSection() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
+    setIsSubmitting(true);
+    
     if (!name || !phone || !date || !time) return;
 
     // Time validation
     if (time < settings.openTime || time > settings.closeTime) {
       setErrorMsg(`This time slot is not available. We are open from ${settings.openTime} to ${settings.closeTime}.`);
+      setIsSubmitting(false);
       return;
     }
 
     try {
-      const res = await fetch("http://localhost:3000/api/reservations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, date, time })
-      });
-      if (res.ok) {
-        setSuccess(true);
-        setName("");
-        setEmail("");
-        setPhone("");
-        setDate("");
-        setTime("");
-        setTimeout(() => setSuccess(false), 4000);
-      }
-    } catch (e) {
-      console.error(e);
+      localStorage.setItem("pendingReservation", JSON.stringify({
+        name, email, phone, date, time
+      }));
+
+      window.location.href = "/auth";
+    } catch (error) {
+      setErrorMsg("Error initiating reservation. Please try again.");
+      setIsSubmitting(false);
     }
   };
 
@@ -92,7 +86,7 @@ export function ReservationSection() {
       
       {/* Success Toast */}
       <AnimatePresence>
-        {success && (
+        {false && (
           <motion.div 
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -206,14 +200,10 @@ export function ReservationSection() {
 
               <button 
                 type="submit" 
-                className="relative isolate mt-6 self-start bg-transparent text-[#E04D2D] px-10 py-4 rounded-full text-sm md:text-base font-semibold tracking-wider uppercase hover:scale-105 transition-all duration-300"
+                disabled={isSubmitting}
+                className="w-full bg-[#B2E624] text-black py-4 font-bold tracking-widest hover:bg-white transition-colors duration-300 disabled:opacity-50"
               >
-                <div className="absolute top-0 left-0 z-0 h-full w-full rounded-full shadow-[0_0_8px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3.5px_rgba(255,255,255,0.09),inset_-3px_-3px_0.5px_-3.5px_rgba(255,255,255,0.85),inset_1px_1px_1px_-0.5px_rgba(255,255,255,0.6),inset_-1px_-1px_1px_-0.5px_rgba(255,255,255,0.6),inset_0_0_6px_6px_rgba(255,255,255,0.12),inset_0_0_2px_2px_rgba(255,255,255,0.06),0_0_12px_rgba(0,0,0,0.15)] transition-all" />
-                <div className="absolute top-0 left-0 isolate -z-10 h-full w-full overflow-hidden rounded-full" style={{ backdropFilter: 'url("#container-glass")' }} />
-                <div className="pointer-events-none relative z-10 flex items-center gap-2">
-                  Book A Table
-                </div>
-                <GlassFilter />
+                {isSubmitting ? "REDIRECTING..." : "BOOK TABLE"}
               </button>
             </form>
           </motion.div>

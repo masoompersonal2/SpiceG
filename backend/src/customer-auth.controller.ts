@@ -7,7 +7,7 @@ import { PrismaClient } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 import * as bcrypt from 'bcryptjs';
-import { CustomerLoginDto, CustomerSignupDto, CustomerSetupDto } from './dto/customer.dto';
+import { CustomerLoginDto, CustomerSignupDto, CustomerSetupDto, CustomerProfileUpdateDto, CustomerPasswordUpdateDto } from './dto/customer.dto';
 import { CustomerAuthGuard } from './customer.guard';
 
 const prisma = new PrismaClient();
@@ -154,5 +154,96 @@ export class CustomerAuthController {
 
     const imageUrl = `/uploads/${file.filename}`;
     return { imageUrl };
+  }
+
+  @UseGuards(CustomerAuthGuard)
+  @Put('profile')
+  async updateProfile(@Req() req: Request, @Body() dto: CustomerProfileUpdateDto) {
+    const user = req['user'] as { id: number };
+    const customer = await prisma.customer.update({
+      where: { id: user.id },
+      data: {
+        fullName: dto.fullName,
+        mobile: dto.mobile,
+        location: dto.location,
+        profileImage: dto.profileImage || undefined,
+      }
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...safeCustomer } = customer;
+    return { success: true, customer: safeCustomer };
+  }
+
+  @UseGuards(CustomerAuthGuard)
+  @Put('password')
+  async updatePassword(@Req() req: Request, @Body() dto: CustomerPasswordUpdateDto) {
+    const user = req['user'] as { id: number };
+    const customer = await prisma.customer.findUnique({ where: { id: user.id } });
+    if (!customer) throw new UnauthorizedException();
+
+    const isMatch = await bcrypt.compare(dto.previousPassword, customer.password);
+    if (!isMatch) {
+      throw new BadRequestException('Incorrect previous password');
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(dto.newPassword, salt);
+
+    await prisma.customer.update({
+      where: { id: user.id },
+      data: { password: hashedPassword }
+    });
+
+    return { success: true };
+  }
+
+  @UseGuards(CustomerAuthGuard)
+  @Get('events')
+  async getMyEvents(@Req() req: Request) {
+    const user = req['user'] as { id: number };
+    const bookings = await prisma.ticketBooking.findMany({
+      where: { customerId: user.id },
+      orderBy: { createdAt: 'desc' }
+    });
+    
+    // Fetch full event details for each booking
+    const eventIds = bookings.map(b => b.eventId);
+    const events = await prisma.ticketEvent.findMany({
+      where: { id: { in: eventIds } }
+    });
+
+    return bookings.map(b => ({
+      ...b,
+      event: events.find(e => e.id === b.eventId)
+    }));
+  }
+
+  @UseGuards(CustomerAuthGuard)
+  @Post('events/book')
+  async bookEvent(@Req() req: Request, @Body() body: { eventId: number }) {
+    const user = req['user'] as { id: number };
+    
+    // Verify event exists and has seats
+    const event = await prisma.ticketEvent.findUnique({ where: { id: body.eventId } });
+    if (!event) throw new BadRequestException('Event not found');
+    if (event.bookedSeats >= event.totalSeats) throw new BadRequestException('Event is fully booked');
+
+    // Create booking
+    const booking = await prisma.ticketBooking.create({
+      data: {
+        customerId: user.id,
+        eventId: body.eventId,
+        tickets: 1,
+        status: 'Confirmed'
+      }
+    });
+
+    // Increment booked seats
+    await prisma.ticketEvent.update({
+      where: { id: body.eventId },
+      data: { bookedSeats: { increment: 1 } }
+    });
+
+    return { success: true, booking };
   }
 }

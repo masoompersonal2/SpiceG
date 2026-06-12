@@ -33,6 +33,7 @@ model Reservation {
   date      String
   time      String
   status    String   @default("Pending")
+  customerId Int?
   createdAt DateTime @default(now())
 }
 
@@ -124,4 +125,13 @@ model Customer {
   profileImage    String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+model TicketBooking {
+  id              Int      @id @default(autoincrement())
+  customerId      Int
+  eventId         Int
+  tickets         Int      @default(1)
+  status          String   @default("Confirmed")
+  createdAt       DateTime @default(now())
 }

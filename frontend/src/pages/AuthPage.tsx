@@ -140,6 +140,31 @@ export function AuthPage() {
 
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const handlePendingReservation = async () => {
+    const pending = localStorage.getItem("pendingReservation");
+    if (pending) {
+      try {
+        const payload = JSON.parse(pending);
+        await fetch("http://localhost:3000/api/reservations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(payload),
+        });
+        localStorage.removeItem("pendingReservation");
+        setSuccessMessage("Table Booked Successfully!");
+        setTimeout(() => {
+          window.location.replace("/dashboard?tab=Reservations");
+        }, 2000);
+        return true;
+      } catch (err) {
+        localStorage.removeItem("pendingReservation");
+      }
+    }
+    return false;
+  };
 
   const [mouseX, setMouseX] = useState<number>(0);
   const [mouseY, setMouseY] = useState<number>(0);
@@ -269,10 +294,11 @@ export function AuthPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Login failed");
       
-      if (data.customer.isSetupComplete) {
-        window.location.href = "/dashboard";
-      } else {
+      if (!data.customer.isSetupComplete) {
         setView("setup");
+      } else {
+        const hasPending = await handlePendingReservation();
+        if (!hasPending) window.location.replace("/dashboard");
       }
     } catch (err: any) {
       setError(err.message);
@@ -346,7 +372,8 @@ export function AuthPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Setup failed");
       
-      window.location.href = "/dashboard";
+      const hasPending = await handlePendingReservation();
+      if (!hasPending) window.location.replace("/dashboard");
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -452,6 +479,18 @@ export function AuthPage() {
                 <EyeBall size={16} pupilSize={6} maxDistance={4} eyeColor="white" pupilColor="#2D2D2D" isBlinking={isBlackBlinking} forceLookX={(password.length > 0 && showPassword) ? -4 : isLookingAtEachOther ? 0 : undefined} forceLookY={(password.length > 0 && showPassword) ? -4 : isLookingAtEachOther ? -4 : undefined} />
               </div>
             </div>
+
+      {successMessage && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl p-8 flex flex-col items-center max-w-sm mx-4 text-center shadow-2xl animate-in zoom-in duration-300">
+            <div className="w-16 h-16 bg-[#B2E624]/20 text-[#B2E624] rounded-full flex items-center justify-center mb-4">
+              <Sparkles className="w-8 h-8" />
+            </div>
+            <h3 className="text-2xl font-bold text-black mb-2">{successMessage}</h3>
+            <p className="text-gray-500 text-sm">Redirecting to your dashboard...</p>
+          </div>
+        </div>
+      )}
 
             {/* Orange character */}
             <div 

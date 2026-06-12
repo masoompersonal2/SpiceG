@@ -1,295 +1,504 @@
-import { useState } from "react";
-import { Search, Filter, Bell, Heart, Check, Trash2, Minus, Plus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, Plus, Settings, Calendar, Menu as MenuIcon, ShoppingBag, MapPin, User, LogOut, Upload, Info } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 
-export function CustomerDashboard() {
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [activeSize, setActiveSize] = useState("500g");
-  const [extras, setExtras] = useState({ tomato: true, parsley: true, cheese: true });
+// Shared Custom Modal
+function Modal({ isOpen, title, desc, onConfirm, onCancel, confirmText = "Confirm", isDestructive = false }: any) {
+  if (!isOpen) return null;
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="bg-white rounded-3xl p-8 max-w-sm w-full mx-4 shadow-2xl animate-in zoom-in-95 duration-200">
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">{title}</h3>
+        <p className="text-gray-500 mb-8">{desc}</p>
+        <div className="flex gap-3">
+          <button onClick={onCancel} className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full font-bold transition-colors">Cancel</button>
+          <button onClick={onConfirm} className={`flex-1 py-3 rounded-full font-bold transition-colors ${isDestructive ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-[#B2E624] hover:bg-[#a0d21d] text-black'}`}>
+            {confirmText}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-  const categories = ["All", "Pizza", "Burger", "Pasta", "Biryani", "Salad", "Drinks", "Dessert", "Rice"];
+// ------------------------ Menu Tab ------------------------
+function MenuTab() {
+  const [items, setItems] = useState<any[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const CATEGORIES = ["All", "Main Course (Non-Veg)", "Soups", "Starters", "Chinese", "Main Course (Veg)", "Beverages & Salads", "Breads", "Biryani & Rice", "Desserts"];
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/menu").then(r => r.json()).then(setItems);
+  }, []);
+
+  const filteredItems = items.filter(item => {
+    const matchesCat = selectedCategory === "All" || item.category === selectedCategory;
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCat && matchesSearch;
+  });
 
   return (
-    <div className="min-h-screen bg-[#F8F9FB] font-sans text-[#1A1A1A]">
-      {/* Top Header */}
-      <header className="bg-white px-8 py-4 flex items-center justify-between border-b border-gray-100">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-[#B2E624] flex items-center justify-center">
-            <span className="text-white font-bold text-xl leading-none">D</span>
+    <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <h1 className="text-2xl font-bold">Our Menu</h1>
+        <div className="flex gap-3">
+          <div className="relative flex-1 md:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input type="text" placeholder="Search menu..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-gray-50 border-none rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
           </div>
-          <span className="text-xl font-bold tracking-tight">DishDash</span>
         </div>
+      </div>
 
-        <nav className="hidden lg:flex items-center gap-8 text-[15px] font-medium text-gray-500">
-          <a href="#" className="flex items-center gap-2 hover:text-black transition-colors"><div className="w-4 h-4 grid grid-cols-2 gap-[2px]"><div className="bg-current rounded-[2px]" /><div className="bg-current rounded-[2px]" /><div className="bg-current rounded-[2px]" /><div className="bg-current rounded-[2px]" /></div> Dashboard</a>
-          <a href="#" className="flex items-center gap-2 hover:text-black transition-colors"><div className="w-4 h-4 border-2 border-current rounded-[4px]" /> Products</a>
-          <a href="#" className="flex items-center gap-2 text-black bg-gray-50 px-4 py-2 rounded-full"><div className="w-4 h-4 border-2 border-current rounded-[4px]" /> My Orders</a>
-          <a href="#" className="flex items-center gap-2 hover:text-black transition-colors"><Heart className="w-4 h-4" /> Wishlist</a>
-          <a href="#" className="flex items-center gap-2 hover:text-black transition-colors"><div className="w-4 h-4 border-2 border-current rounded-[4px]" /> Cart</a>
-          <a href="#" className="flex items-center gap-2 hover:text-black transition-colors"><div className="w-4 h-4 border-2 border-current rounded-[4px]" /> Settings</a>
-        </nav>
-
-        <div className="flex items-center gap-4">
-          <button className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors">
-            <Bell className="w-5 h-5" />
+      <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-4 scrollbar-hide">
+        {CATEGORIES.map(cat => (
+          <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-5 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${selectedCategory === cat ? 'bg-[#B2E624] text-black' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}>
+            {cat}
           </button>
-          <button className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors">
-            <Heart className="w-5 h-5" />
-          </button>
-          <img src="https://i.pravatar.cc/150?img=11" alt="Profile" className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm" />
-        </div>
-      </header>
+        ))}
+      </div>
 
-      {/* Main Content Layout */}
-      <main className="max-w-[1600px] mx-auto p-8 grid lg:grid-cols-[1fr_400px] gap-8">
-        
-        {/* Left Area - Cart Details */}
-        <div className="bg-white rounded-3xl p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] flex flex-col h-full">
-          
-          {/* Header & Search */}
-          <div className="flex items-center justify-between mb-8">
-            <h1 className="text-2xl font-bold">Cart Details</h1>
-            <div className="flex gap-3">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input 
-                  type="text" 
-                  placeholder="Search..." 
-                  className="pl-9 pr-4 py-2 bg-gray-50 border-none rounded-full text-sm w-48 focus:outline-none focus:ring-2 focus:ring-[#B2E624]"
-                />
+      <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredItems.map(item => (
+            <div key={item.id} className="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all group flex flex-col">
+              <div className="h-48 w-full bg-gray-100 relative overflow-hidden">
+                <img src={item.image.startsWith('http') ? item.image : (item.image.startsWith('/') && !item.image.startsWith('/uploads') ? item.image : `http://localhost:3000${item.image}`)} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
-              <button className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors">
-                Filter <Filter className="w-3 h-3" />
-              </button>
+              <div className="p-5 flex flex-col flex-1">
+                <div className="flex items-start gap-2 mb-2">
+                  <div className={`mt-1 shrink-0 w-3 h-3 rounded-sm border-2 flex items-center justify-center ${item.isVeg ? 'border-green-600' : 'border-red-600'}`}>
+                    <div className={`w-1.5 h-1.5 rounded-full ${item.isVeg ? 'bg-green-600' : 'bg-red-600'}`}></div>
+                  </div>
+                  <h3 className="font-bold text-lg leading-tight line-clamp-2">{item.name}</h3>
+                </div>
+                <div className="flex items-end justify-between mt-auto pt-4">
+                  <p className="text-xl font-extrabold">{/^\d/.test(item.priceText) ? `₹${item.priceText}` : item.priceText}</p>
+                  <button className="bg-[#B2E624] text-black px-4 py-2 rounded-full text-sm font-bold hover:bg-[#a0d21d] transition-colors shadow-lg shadow-[#B2E624]/20 flex items-center gap-1">
+                    <Plus className="w-4 h-4" /> Add
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
+          ))}
+          {filteredItems.length === 0 && <div className="col-span-full py-12 text-center text-gray-500">No dishes found.</div>}
+        </div>
+      </div>
+    </div>
+  );
+}
 
-          {/* Categories */}
-          <div className="flex items-center gap-3 overflow-x-auto pb-4 mb-4 scrollbar-hide">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-6 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${
-                  activeCategory === cat ? 'bg-[#B2E624] text-black shadow-sm' : 'bg-transparent text-gray-500 hover:bg-gray-50 border border-gray-100'
-                }`}
-              >
-                {cat}
+// ------------------------ Events Tab ------------------------
+function EventsTab() {
+  const [events, setEvents] = useState<any[]>([]);
+  const [myEvents, setMyEvents] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState("All Events");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [bookingEvent, setBookingEvent] = useState<any>(null);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/events").then(r => r.json()).then(d => setEvents(d.filter((e:any) => e.isEnabled)));
+    fetch("http://localhost:3000/api/customer/auth/events", { credentials: "include" }).then(r => r.json()).then(setMyEvents).catch(() => {});
+  }, []);
+
+  const handleBook = async () => {
+    if (!bookingEvent) return;
+    try {
+      const res = await fetch("http://localhost:3000/api/customer/auth/events/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ eventId: bookingEvent.id })
+      });
+      if (res.ok) {
+        // Refresh my events
+        fetch("http://localhost:3000/api/customer/auth/events", { credentials: "include" }).then(r => r.json()).then(setMyEvents);
+      }
+    } finally {
+      setBookingEvent(null);
+    }
+  };
+
+  const displayedEvents = activeTab === "All Events" ? events : myEvents.map(b => b.event).filter(Boolean);
+  const filteredEvents = displayedEvents.filter(e => e.title.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  return (
+    <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] relative">
+      <Modal isOpen={!!bookingEvent} title="Book Event" desc={`Are you sure you want to book a ticket for "${bookingEvent?.title}"?`} onConfirm={handleBook} onCancel={() => setBookingEvent(null)} confirmText="Yes, Book" />
+      
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <h1 className="text-2xl font-bold">Events</h1>
+        <div className="flex gap-3">
+          <div className="relative w-full md:w-48">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input type="text" placeholder="Search events..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-gray-50 border-none rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
+          </div>
+          <div className="flex bg-gray-100 rounded-full p-1 shrink-0">
+            {["All Events", "My Events"].map(tab => (
+              <button key={tab} onClick={() => setActiveTab(tab)} className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${activeTab === tab ? 'bg-white text-black shadow-sm' : 'text-gray-500'}`}>
+                {tab}
               </button>
             ))}
           </div>
+        </div>
+      </div>
 
-          {/* Featured Product */}
-          <div className="flex-1 flex flex-col xl:flex-row items-center gap-12 mb-12 relative">
-            <div className="w-full max-w-[400px] aspect-square relative z-10 shrink-0">
-              {/* Note: I'm using placeholder image logic here, real image would be a pasta plate */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-green-50 to-yellow-50 rounded-full opacity-50 blur-2xl" />
-              <img src="/assets/food/pasta.png" alt="Creamy Pasta" className="w-full h-full object-contain drop-shadow-2xl" onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=600&q=80" }} />
-            </div>
-
-            <div className="flex-1 flex flex-col justify-center">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-lg font-bold">Time</span>
-                <span className="px-3 py-1 bg-gray-100 rounded-full text-sm font-semibold text-gray-600">20 min</span>
-              </div>
-              
-              <h2 className="text-4xl font-extrabold tracking-tight mb-3">Creamy Pasta</h2>
-              <p className="text-gray-500 mb-8 max-w-md">Creamy pasta with fresh herbs, and parmesan cheese.</p>
-
-              <div className="mb-6">
-                <h3 className="font-semibold mb-3">Size</h3>
-                <div className="flex gap-3">
-                  {['500g', '750g', '1000g'].map(size => (
-                    <button
-                      key={size}
-                      onClick={() => setActiveSize(size)}
-                      className={`px-5 py-2 rounded-full text-sm font-semibold transition-colors ${
-                        activeSize === size ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mb-10">
-                <h3 className="font-semibold mb-3">Extras</h3>
-                <div className="flex gap-4">
-                  {[
-                    { id: 'tomato', name: 'Tomato', img: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=100&q=80' },
-                    { id: 'parsley', name: 'Parsley', img: 'https://images.unsplash.com/photo-1616035824838-8fa1b98816c8?auto=format&fit=crop&w=100&q=80' },
-                    { id: 'cheese', name: 'Cheese', img: 'https://images.unsplash.com/photo-1631379578550-7038263db699?auto=format&fit=crop&w=100&q=80' }
-                  ].map(extra => (
-                    <div key={extra.id} className="flex flex-col items-center gap-2">
-                      <div className="w-16 h-16 bg-gray-50 rounded-2xl p-2 relative flex items-center justify-center cursor-pointer" onClick={() => setExtras(prev => ({...prev, [extra.id]: !prev[extra.id as keyof typeof prev]}))}>
-                        <img src={extra.img} alt={extra.name} className="w-full h-full object-cover rounded-xl" />
-                        {extras[extra.id as keyof typeof extras] && (
-                          <div className="absolute -bottom-2 w-5 h-5 bg-[#B2E624] rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-                            <Check className="w-3 h-3 text-black" />
-                          </div>
-                        )}
-                      </div>
-                      <span className="text-xs font-medium text-gray-500">{extra.name}</span>
+      <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredEvents.map((ev, idx) => {
+            const booking = activeTab === "My Events" ? myEvents.find(b => b.eventId === ev.id) : null;
+            return (
+              <div key={`${ev.id}-${idx}`} className="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all group flex flex-col">
+                <div className="h-48 w-full relative overflow-hidden bg-gray-100">
+                  <img src={ev.image.startsWith('http') ? ev.image : `http://localhost:3000${ev.image}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={ev.title} />
+                  <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md rounded-xl p-2 flex flex-col items-center justify-center min-w-[50px] shadow-sm">
+                    <span className="text-gray-500 text-[10px] font-bold uppercase">{new Date(ev.date).toLocaleString('default', {month:'short'})}</span>
+                    <span className="text-black text-lg font-black leading-none">{new Date(ev.date).getDate()}</span>
+                  </div>
+                  {activeTab === "My Events" && booking && (
+                    <div className="absolute top-3 right-3 bg-[#B2E624] text-black px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                      {booking.status}
                     </div>
-                  ))}
+                  )}
+                </div>
+                <div className="p-6 flex flex-col flex-1">
+                  <div className="flex items-center gap-1 text-gray-500 text-xs font-bold uppercase mb-3"><MapPin className="w-3 h-3" /> {ev.location}</div>
+                  <h3 className="text-xl font-bold mb-2 line-clamp-1">{ev.title}</h3>
+                  <p className="text-gray-500 text-sm line-clamp-2 mb-6">{ev.subtitle}</p>
+                  
+                  <div className="mt-auto flex items-center justify-between">
+                    <div>
+                      <span className="text-2xl font-black">₹{ev.price}</span>
+                      <span className="text-xs text-gray-500 ml-1">/ticket</span>
+                    </div>
+                    {activeTab === "All Events" ? (
+                      <button onClick={() => setBookingEvent(ev)} className="bg-[#B2E624] text-black px-5 py-2.5 rounded-full text-sm font-bold hover:bg-[#a0d21d] transition-colors shadow-lg shadow-[#B2E624]/20">
+                        Book Now
+                      </button>
+                    ) : (
+                      <div className="bg-gray-100 px-4 py-2 rounded-full text-sm font-semibold text-gray-600">
+                        {booking?.tickets} Ticket(s)
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
+            );
+          })}
+          {filteredEvents.length === 0 && <div className="col-span-full py-12 text-center text-gray-500">No events found.</div>}
+        </div>
+      </div>
+    </div>
+  );
+}
 
-              <div className="flex items-center justify-between">
+// ------------------------ Reservations Tab ------------------------
+function ReservationsTab() {
+  const [reservations, setReservations] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/reservations/my", { credentials: "include" })
+      .then(r => r.json()).then(setReservations).catch(() => {});
+  }, []);
+
+  return (
+    <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)]">
+      <h1 className="text-2xl font-bold mb-8">My Reservations</h1>
+      
+      <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide">
+        {reservations.length === 0 ? (
+          <div className="text-center text-gray-500 py-12">No reservations found.</div>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {reservations.map(res => (
+              <div key={res.id} className="border border-gray-100 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-md transition-shadow">
                 <div>
-                  <div className="text-sm text-gray-500 mb-1">Total Amount</div>
-                  <div className="text-3xl font-extrabold">$30.00</div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-lg font-bold">{res.date} at {res.time}</h3>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                      res.status === 'Approved' ? 'bg-green-100 text-green-700' :
+                      res.status === 'Rejected' ? 'bg-red-100 text-red-700' :
+                      'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {res.status}
+                    </span>
+                  </div>
+                  <div className="text-gray-500 text-sm flex gap-4">
+                    <span><User className="inline w-3 h-3 mr-1"/>{res.name}</span>
+                    <span><Info className="inline w-3 h-3 mr-1"/>{res.phone}</span>
+                  </div>
                 </div>
-                <button className="bg-[#B2E624] text-black px-12 py-4 rounded-full font-bold text-lg hover:bg-[#a0d21d] transition-colors shadow-lg shadow-[#B2E624]/30">
-                  Add to cart
-                </button>
+                <div className="text-right text-sm text-gray-400">
+                  Booked on {new Date(res.createdAt).toLocaleDateString()}
+                </div>
               </div>
-            </div>
+            ))}
           </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
-          {/* Recommended */}
-          <div>
-            <h3 className="font-bold mb-4">Recommended</h3>
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-              {/* Card 1 */}
-              <div className="bg-white border border-gray-100 rounded-3xl p-3 flex items-center gap-4 min-w-[300px] shadow-sm hover:shadow-md transition-shadow">
-                <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=200&q=80" alt="Pizza" className="w-16 h-16 rounded-full object-cover" />
-                <div className="flex-1">
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-bold text-sm">BBQ Pizza</h4>
-                    <div className="bg-orange-50 w-6 h-6 rounded-full flex items-center justify-center"><Heart className="w-3 h-3 text-orange-500 fill-orange-500" /></div>
-                  </div>
-                  <div className="text-xs text-gray-500 mb-2">7-8 inci</div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-sm">$80</span>
-                    <button className="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center"><Plus className="w-3 h-3" /></button>
-                  </div>
-                </div>
-              </div>
+// ------------------------ Settings Tab ------------------------
+function SettingsTab({ user, onUpdate }: any) {
+  const [profile, setProfile] = useState({ fullName: user.fullName||'', mobile: user.mobile||'', location: user.location||'', profileImage: user.profileImage||'' });
+  const [pass, setPass] = useState({ previousPassword: '', newPassword: '', confirmPassword: '' });
+  const [msg, setMsg] = useState({ text: '', type: '' });
 
-              {/* Card 2 */}
-              <div className="bg-white border border-gray-100 rounded-3xl p-3 flex items-center gap-4 min-w-[300px] shadow-sm hover:shadow-md transition-shadow">
-                <img src="https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=200&q=80" alt="Noodles" className="w-16 h-16 rounded-full object-cover" />
-                <div className="flex-1">
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-bold text-sm">Noodles</h4>
-                    <div className="bg-gray-100 w-6 h-6 rounded-full flex items-center justify-center"><Heart className="w-3 h-3 text-gray-400 fill-gray-400" /></div>
-                  </div>
-                  <div className="text-xs text-gray-500 mb-2">100-150g</div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-sm">$25</span>
-                    <button className="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center"><Plus className="w-3 h-3" /></button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+  const handleProfileSubmit = async (e: any) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("http://localhost:3000/api/customer/auth/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(profile)
+      });
+      if (res.ok) {
+        setMsg({ text: "Profile updated successfully", type: "success" });
+        onUpdate();
+      } else throw new Error();
+    } catch {
+      setMsg({ text: "Failed to update profile", type: "error" });
+    }
+    setTimeout(() => setMsg({ text: '', type: '' }), 3000);
+  };
 
+  const handlePassSubmit = async (e: any) => {
+    e.preventDefault();
+    if (pass.newPassword !== pass.confirmPassword) return setMsg({ text: "Passwords don't match", type: "error" });
+    try {
+      const res = await fetch("http://localhost:3000/api/customer/auth/password", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ previousPassword: pass.previousPassword, newPassword: pass.newPassword })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMsg({ text: "Password updated successfully", type: "success" });
+        setPass({ previousPassword: '', newPassword: '', confirmPassword: '' });
+      } else throw new Error(data.message);
+    } catch(err:any) {
+      setMsg({ text: err.message || "Failed to update password", type: "error" });
+    }
+    setTimeout(() => setMsg({ text: '', type: '' }), 3000);
+  };
+
+  const handleImageUpload = async (e: any) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const fd = new FormData(); fd.append("image", file);
+    try {
+      const res = await fetch("http://localhost:3000/api/customer/auth/upload", { method: "POST", credentials: "include", body: fd });
+      const data = await res.json();
+      if (res.ok) setProfile({ ...profile, profileImage: data.imageUrl });
+    } catch {}
+  };
+
+  return (
+    <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] relative overflow-hidden">
+      {msg.text && (
+        <div className={`absolute top-6 right-6 px-6 py-3 rounded-full text-sm font-bold shadow-lg z-50 animate-in fade-in slide-in-from-top-4 ${msg.type === 'success' ? 'bg-[#B2E624] text-black' : 'bg-red-500 text-white'}`}>
+          {msg.text}
         </div>
-
-        {/* Right Sidebar - My Order */}
-        <div className="bg-white rounded-3xl p-6 shadow-[0_2px_20px_rgba(0,0,0,0.03)] flex flex-col h-full">
-          
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold">My Order</h2>
-            <button className="text-xs font-semibold text-orange-500 px-3 py-1 bg-orange-50 rounded-full hover:bg-orange-100 transition-colors">Delete All</button>
-          </div>
-
-          <div className="flex-1 flex flex-col gap-4 overflow-y-auto pr-2 scrollbar-hide">
+      )}
+      
+      <h1 className="text-2xl font-bold mb-8">Account Settings</h1>
+      
+      <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide flex flex-col lg:flex-row gap-12">
+        
+        {/* Profile Section */}
+        <div className="flex-1 max-w-xl">
+          <h2 className="text-lg font-bold mb-6">Profile Details</h2>
+          <form onSubmit={handleProfileSubmit} className="space-y-6">
+            <div className="flex items-center gap-6">
+              <div className="w-24 h-24 rounded-full bg-gray-100 overflow-hidden relative border-4 border-white shadow-sm">
+                {profile.profileImage ? <img src={`http://localhost:3000${profile.profileImage}`} className="w-full h-full object-cover" /> : <User className="w-10 h-10 m-6 text-gray-400" />}
+              </div>
+              <div>
+                <label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full text-sm font-semibold cursor-pointer transition-colors flex items-center gap-2">
+                  <Upload className="w-4 h-4" /> Upload Image
+                  <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
+                </label>
+                <p className="text-xs text-gray-400 mt-2">JPG, PNG or GIF up to 2MB</p>
+              </div>
+            </div>
             
-            {/* Cart Item 1 */}
-            <div className="bg-white border border-gray-100 rounded-2xl p-3 flex items-center gap-4 shadow-sm relative group">
-              <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=200&q=80" alt="Pizza" className="w-16 h-16 rounded-full object-cover" />
-              <div className="flex-1">
-                <div className="flex justify-between items-start">
-                  <h4 className="font-bold text-sm">BBQ Pizza</h4>
-                  <button className="text-gray-400 hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
-                </div>
-                <div className="text-xs text-gray-500 mb-3">7-8 inci</div>
-                <div className="flex justify-between items-center">
-                  <div className="text-xs text-gray-500 font-medium">Total <span className="text-black font-bold text-sm ml-1">$120</span></div>
-                  <div className="flex items-center gap-3">
-                    <button className="w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50"><Minus className="w-3 h-3" /></button>
-                    <span className="text-sm font-semibold">2</span>
-                    <button className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800"><Plus className="w-3 h-3" /></button>
-                  </div>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Full Name</label>
+                <input required type="text" value={profile.fullName} onChange={e=>setProfile({...profile, fullName: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Mobile Number</label>
+                <input required type="text" value={profile.mobile} onChange={e=>setProfile({...profile, mobile: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-medium text-gray-700">Location</label>
+                <input required type="text" value={profile.location} onChange={e=>setProfile({...profile, location: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
               </div>
             </div>
+            <button type="submit" className="px-8 py-3 bg-[#B2E624] text-black font-bold rounded-xl hover:bg-[#a0d21d] transition-colors shadow-lg shadow-[#B2E624]/20">Save Profile</button>
+          </form>
+        </div>
 
-            {/* Cart Item 2 */}
-            <div className="bg-white border border-gray-100 rounded-2xl p-3 flex items-center gap-4 shadow-sm relative group">
-              <img src="https://images.unsplash.com/photo-1589302168068-964664d93cb0?auto=format&fit=crop&w=200&q=80" alt="Biryani" className="w-16 h-16 rounded-full object-cover" />
-              <div className="flex-1">
-                <div className="flex justify-between items-start">
-                  <h4 className="font-bold text-sm">Biryani</h4>
-                  <button className="text-gray-400 hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
-                </div>
-                <div className="text-xs text-gray-500 mb-3">380-500g</div>
-                <div className="flex justify-between items-center">
-                  <div className="text-xs text-gray-500 font-medium">Total <span className="text-black font-bold text-sm ml-1">$100</span></div>
-                  <div className="flex items-center gap-3">
-                    <button className="w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50"><Minus className="w-3 h-3" /></button>
-                    <span className="text-sm font-semibold">2</span>
-                    <button className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800"><Plus className="w-3 h-3" /></button>
-                  </div>
-                </div>
-              </div>
+        {/* Divider */}
+        <div className="hidden lg:block w-[1px] bg-gray-100 self-stretch"></div>
+
+        {/* Password Section */}
+        <div className="flex-1 max-w-xl">
+          <h2 className="text-lg font-bold mb-6">Security</h2>
+          <form onSubmit={handlePassSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Previous Password</label>
+              <input required type="password" value={pass.previousPassword} onChange={e=>setPass({...pass, previousPassword: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
             </div>
-
-            {/* Cart Item 3 */}
-            <div className="bg-white border border-gray-100 rounded-2xl p-3 flex items-center gap-4 shadow-sm relative group">
-              <img src="https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=200&q=80" alt="Pasta" className="w-16 h-16 rounded-full object-cover" />
-              <div className="flex-1">
-                <div className="flex justify-between items-start">
-                  <h4 className="font-bold text-sm">Pasta</h4>
-                  <button className="text-gray-400 hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
-                </div>
-                <div className="text-xs text-gray-500 mb-3">80-100g</div>
-                <div className="flex justify-between items-center">
-                  <div className="text-xs text-gray-500 font-medium">Total <span className="text-black font-bold text-sm ml-1">$30</span></div>
-                  <div className="flex items-center gap-3">
-                    <button className="w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50"><Minus className="w-3 h-3" /></button>
-                    <span className="text-sm font-semibold">2</span>
-                    <button className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800"><Plus className="w-3 h-3" /></button>
-                  </div>
-                </div>
-              </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">New Password</label>
+              <input required type="password" value={pass.newPassword} onChange={e=>setPass({...pass, newPassword: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
             </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Confirm Password</label>
+              <input required type="password" value={pass.confirmPassword} onChange={e=>setPass({...pass, confirmPassword: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
+            </div>
+            <button type="submit" className="px-8 py-3 bg-black text-white font-bold rounded-xl hover:bg-gray-800 transition-colors shadow-lg">Update Password</button>
+          </form>
+        </div>
 
+      </div>
+    </div>
+  );
+}
+
+// ------------------------ Main Component ------------------------
+export function CustomerDashboard() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentTab = searchParams.get("tab") || "Menu";
+
+  const [user, setUser] = useState<any>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const fetchUser = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/customer/auth/me", { credentials: "include" });
+      if (!res.ok) throw new Error();
+      setUser(await res.json());
+    } catch {
+      window.location.replace("/auth");
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("http://localhost:3000/api/customer/auth/logout", { method: "POST", credentials: "include" });
+      window.location.replace("/");
+    } catch {
+      window.location.replace("/");
+    }
+  };
+
+  if (!user) return <div className="min-h-screen bg-[#F8F9FB] flex items-center justify-center"><div className="w-8 h-8 border-4 border-[#B2E624] border-t-transparent rounded-full animate-spin"></div></div>;
+
+  const tabs = [
+    { id: "Menu", icon: MenuIcon },
+    { id: "Orders", icon: ShoppingBag },
+    { id: "Events", icon: Calendar },
+    { id: "Reservations", icon: MapPin },
+    { id: "Settings", icon: Settings },
+  ];
+
+  return (
+    <div className="h-screen flex flex-col bg-[#F8F9FB] font-sans text-[#1A1A1A] overflow-hidden">
+      <Modal isOpen={isLoggingOut} title="Sign Out" desc="Are you sure you want to sign out from your account?" onConfirm={handleLogout} onCancel={() => setIsLoggingOut(false)} confirmText="Yes, Sign Out" isDestructive={true} />
+      
+      {/* Fixed Top Header */}
+      <header className="bg-white px-6 md:px-8 py-4 flex items-center justify-between border-b border-gray-100 shrink-0 z-50 relative">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#B2E624] flex items-center justify-center shadow-lg shadow-[#B2E624]/20">
+            <span className="text-black font-black text-xl leading-none">S</span>
+          </div>
+          <span className="text-xl font-bold tracking-tight">SpiceGarden</span>
+        </div>
+
+        {/* Desktop Nav */}
+        <nav className="hidden lg:flex items-center gap-2 text-[15px] font-medium text-gray-500 bg-gray-50 p-1.5 rounded-full">
+          {tabs.map(t => {
+            const Icon = t.icon;
+            return (
+              <button key={t.id} onClick={() => setSearchParams({ tab: t.id })} className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all ${currentTab === t.id ? 'bg-white text-black shadow-sm' : 'hover:text-black hover:bg-gray-100/50'}`}>
+                <Icon className="w-4 h-4" /> {t.id}
+              </button>
+            )
+          })}
+        </nav>
+
+        <div className="flex items-center gap-4">
+          <button onClick={() => setIsLoggingOut(true)} className="hidden md:flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-600 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-full transition-colors">
+            <LogOut className="w-4 h-4" /> Logout
+          </button>
+          {user.profileImage ? (
+            <img src={`http://localhost:3000${user.profileImage}`} alt="Profile" className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm" />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center border-2 border-white shadow-sm"><User className="w-5 h-5 text-gray-400" /></div>
+          )}
+        </div>
+      </header>
+
+      {/* Main Scrollable Content Layout */}
+      <main className="flex-1 overflow-y-auto w-full p-4 md:p-8 relative">
+        <div className="max-w-[1600px] mx-auto h-full grid lg:grid-cols-[1fr_350px] gap-6 lg:gap-8">
+          
+          {/* Left Area - Active Tab Content */}
+          <div className="h-full overflow-hidden">
+            {currentTab === "Menu" && <MenuTab />}
+            {currentTab === "Events" && <EventsTab />}
+            {currentTab === "Reservations" && <ReservationsTab />}
+            {currentTab === "Settings" && <SettingsTab user={user} onUpdate={fetchUser} />}
+            {currentTab === "Orders" && (
+              <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] items-center justify-center text-center">
+                <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+                  <ShoppingBag className="w-10 h-10 text-gray-300" />
+                </div>
+                <h2 className="text-2xl font-bold mb-2">No Past Orders</h2>
+                <p className="text-gray-500 max-w-sm">You haven't placed any online orders yet. Explore our menu to discover delicious meals!</p>
+              </div>
+            )}
           </div>
 
-          {/* Checkout Section */}
-          <div className="mt-6 pt-6 border-t border-gray-100">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2 text-sm font-semibold">
-                <div className="w-6 h-6 rounded-md bg-gray-100 flex items-center justify-center"><Check className="w-3 h-3" /></div> Discount
-              </div>
-              <button className="px-3 py-1.5 bg-[#B2E624] text-black text-xs font-semibold rounded-full">Change Promo</button>
+          {/* Right Sidebar - My Cart (Fixed context) */}
+          <div className="bg-white rounded-3xl p-6 shadow-[0_2px_20px_rgba(0,0,0,0.03)] flex flex-col h-full overflow-hidden">
+            <div className="flex justify-between items-center mb-6 shrink-0">
+              <h2 className="text-xl font-bold">My Cart</h2>
+              <button className="text-xs font-semibold text-gray-500 bg-gray-50 px-3 py-1.5 rounded-full hover:bg-gray-100 hover:text-red-500 transition-colors">Clear All</button>
             </div>
 
-            <div className="space-y-4 mb-6">
-              <div className="flex justify-between text-sm font-medium">
-                <span className="text-gray-500">Total Product Price</span>
-                <span>$250</span>
+            <div className="flex-1 flex flex-col items-center justify-center text-center px-4">
+              <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                <ShoppingBag className="w-10 h-10 text-gray-300" />
               </div>
-              <div className="flex justify-between text-sm font-medium">
-                <span className="text-gray-500">Discount</span>
-                <span className="text-red-500">-$25</span>
-              </div>
-              <div className="flex justify-between font-bold text-lg pt-4 border-t border-gray-100">
-                <span>Total Payment</span>
-                <span>$225</span>
-              </div>
+              <h3 className="font-bold text-gray-800 mb-2">Your cart is empty</h3>
+              <p className="text-sm text-gray-500">Looks like you haven't added anything to your cart yet.</p>
             </div>
 
-            <button className="w-full py-4 bg-[#B2E624] text-black font-bold rounded-full hover:bg-[#a0d21d] transition-colors shadow-lg shadow-[#B2E624]/30">
-              Proceed to Order
-            </button>
+            <div className="mt-6 pt-6 border-t border-gray-100 shrink-0">
+              <div className="flex justify-between text-sm font-medium text-gray-500 mb-4">
+                <span>Subtotal</span>
+                <span>$0.00</span>
+              </div>
+              <button disabled className="w-full py-4 bg-gray-100 text-gray-400 font-bold rounded-full cursor-not-allowed">
+                Checkout
+              </button>
+            </div>
           </div>
 
         </div>
-
       </main>
     </div>
   );

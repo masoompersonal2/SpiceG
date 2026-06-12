@@ -31,3 +31,26 @@ export class CustomerSetupDto {
   @IsOptional()
   profileImage?: string;
 }
+
+export class CustomerProfileUpdateDto {
+  @IsNotEmpty()
+  fullName: string;
+
+  @IsNotEmpty()
+  mobile: string;
+
+  @IsNotEmpty()
+  location: string;
+
+  @IsOptional()
+  profileImage?: string;
+}
+
+export class CustomerPasswordUpdateDto {
+  @IsNotEmpty()
+  previousPassword: string;
+
+  @IsNotEmpty()
+  @MinLength(4)
+  newPassword: string;
+}
