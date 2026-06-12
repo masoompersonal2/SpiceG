@@ -1,4 +1,8 @@
-import { Body, Controller, Delete, Get, Post, Put, Req, Res, UnauthorizedException, UseGuards, HttpException, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Put, Req, Res, UnauthorizedException, UseGuards, HttpException, HttpStatus, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { v4 as uuidv4 } from 'uuid';
 import { PrismaClient } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
@@ -132,5 +136,23 @@ export class CustomerAuthController {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...safeCustomer } = customer;
     return safeCustomer;
+  }
+
+  @UseGuards(CustomerAuthGuard)
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('image', {
+    storage: diskStorage({
+      destination: './uploads',
+      filename: (req, file, cb) => {
+        const uniqueName = uuidv4() + extname(file.originalname);
+        cb(null, uniqueName);
+      }
+    })
+  }))
+  async uploadProfileImage(@UploadedFile() file: Express.Multer.File) {
+    if (!file) throw new BadRequestException('No file provided');
+
+    const imageUrl = `/uploads/${file.filename}`;
+    return { imageUrl };
   }
 }

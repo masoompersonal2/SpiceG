@@ -135,7 +135,8 @@ export function AuthPage() {
   const [fullName, setFullName] = useState("");
   const [mobile, setMobile] = useState("");
   const [location, setLocation] = useState("");
-  const [profileImage, setProfileImage] = useState("");
+  const [profileImage] = useState("");
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
 
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -262,6 +263,7 @@ export function AuthPage() {
       const res = await fetch("http://localhost:3000/api/customer/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
@@ -298,6 +300,7 @@ export function AuthPage() {
       const res = await fetch("http://localhost:3000/api/customer/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
@@ -319,10 +322,26 @@ export function AuthPage() {
     setIsLoading(true);
 
     try {
+      let imageUrl = profileImage;
+
+      if (profileImageFile) {
+        const formData = new FormData();
+        formData.append("image", profileImageFile);
+        const uploadRes = await fetch("http://localhost:3000/api/customer/auth/upload", {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        });
+        const uploadData = await uploadRes.json();
+        if (!uploadRes.ok) throw new Error(uploadData.message || "Image upload failed");
+        imageUrl = uploadData.imageUrl;
+      }
+
       const res = await fetch("http://localhost:3000/api/customer/auth/setup", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullName, mobile, location, profileImage }),
+        credentials: "include",
+        body: JSON.stringify({ fullName, mobile, location, profileImage: imageUrl }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Setup failed");
@@ -340,6 +359,7 @@ export function AuthPage() {
     try {
       await fetch("http://localhost:3000/api/customer/auth/cancel-setup", {
         method: "POST",
+        credentials: "include",
       });
       setEmail("");
       setPassword("");
@@ -572,15 +592,21 @@ export function AuthPage() {
                 </div>
 
                 <div className="space-y-2 text-left">
-                  <label htmlFor="profileImage" className="text-sm font-medium">Profile Image URL (Optional)</label>
+                  <label htmlFor="profileImage" className="text-sm font-medium">Profile Image (Optional)</label>
                   <input
                     id="profileImage"
-                    type="url"
-                    placeholder="https://example.com/avatar.jpg"
-                    value={profileImage}
-                    onChange={(e) => setProfileImage(e.target.value)}
-                    className="flex h-12 w-full rounded-md border border-zinc-800 bg-black px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setProfileImageFile(e.target.files[0]);
+                      }
+                    }}
+                    className="flex h-12 w-full rounded-md border border-zinc-800 bg-black px-3 py-2 text-sm text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-zinc-800 file:text-white hover:file:bg-zinc-700 cursor-pointer"
                   />
+                  {profileImageFile && (
+                    <div className="text-xs text-zinc-500 mt-2">Selected: {profileImageFile.name}</div>
+                  )}
                 </div>
 
                 {error && (
