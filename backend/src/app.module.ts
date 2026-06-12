@@ -10,9 +10,15 @@ import { ContentController } from './content.controller';
 import { ContactController } from './contact.controller';
 import { EventsController } from './events.controller';
 import { CustomerAuthController } from './customer-auth.controller';
+import { StaffAuthController } from './staff-auth.controller';
+import { CustomerOrderController } from './customer-order.controller';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { JwtModule } from '@nestjs/jwt';
+import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
+
+const prisma = new PrismaClient();
 
 @Module({
   imports: [
@@ -30,7 +36,7 @@ import { JwtModule } from '@nestjs/jwt';
       signOptions: { expiresIn: '1d' },
     }),
   ],
-  controllers: [AuthController, AdminController, MenuController, ReservationController, SettingsController, ContentController, ContactController, EventsController, CustomerAuthController],
+  controllers: [AuthController, AdminController, MenuController, ReservationController, SettingsController, ContentController, ContactController, EventsController, CustomerAuthController, StaffAuthController, CustomerOrderController],
   providers: [
     {
       provide: APP_GUARD,
@@ -38,4 +44,19 @@ import { JwtModule } from '@nestjs/jwt';
     },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  async onModuleInit() {
+    // Seed staff user
+    const existingStaff = await prisma.staff.findUnique({ where: { username: 'spiceStaff' } });
+    if (!existingStaff) {
+      const hashedPassword = await bcrypt.hash('staffSPICE', 10);
+      await prisma.staff.create({
+        data: {
+          username: 'spiceStaff',
+          password: hashedPassword
+        }
+      });
+      console.log('Seeded default spiceStaff account');
+    }
+  }
+}

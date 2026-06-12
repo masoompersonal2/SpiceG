@@ -20,6 +20,77 @@ function Modal({ isOpen, title, desc, onConfirm, onCancel, confirmText = "Confir
   );
 }
 
+// ------------------------ Orders Tab ------------------------
+function OrdersTab() {
+  const [orders, setOrders] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/orders", { credentials: "include" })
+      .then(r => r.json()).then(setOrders).catch(() => {});
+  }, []);
+
+  return (
+    <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)]">
+      <h1 className="text-2xl font-bold mb-8">My Past Orders</h1>
+      <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide">
+        {orders.length === 0 ? (
+          <div className="h-full flex flex-col items-center justify-center text-center">
+            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+              <ShoppingBag className="w-10 h-10 text-gray-300" />
+            </div>
+            <h2 className="text-2xl font-bold mb-2">No Past Orders</h2>
+            <p className="text-gray-500 max-w-sm">You haven't placed any online orders yet. Explore our menu to discover delicious meals!</p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-6">
+            {orders.map((order: any) => (
+              <div key={order.id} className="border border-gray-100 rounded-2xl p-6 flex flex-col hover:shadow-md transition-shadow relative">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-lg font-bold">Order #{order.id}</h3>
+                    <div className="text-sm text-gray-500 mt-1">{new Date(order.createdAt).toLocaleString()}</div>
+                  </div>
+                  <span className={`px-4 py-1.5 rounded-full text-xs font-bold ${
+                    order.status === 'Approved' ? 'bg-green-100 text-green-700' :
+                    order.status === 'Rejected' ? 'bg-red-100 text-red-700' :
+                    'bg-yellow-100 text-yellow-700'
+                  }`}>
+                    {order.status}
+                  </span>
+                </div>
+                
+                {order.staffMessage && (
+                  <div className={`mb-4 p-3 rounded-xl text-sm ${order.status === 'Rejected' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
+                    <span className="font-bold">Staff Note: </span>{order.staffMessage}
+                  </div>
+                )}
+
+                <div className="space-y-2 mb-4 bg-gray-50 p-4 rounded-xl">
+                  {order.items.map((item: any, idx: number) => (
+                    <div key={idx} className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-2.5 h-2.5 rounded-full ${item.isVeg === "true" || item.isVeg === true ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                        <span className="font-medium">{item.name}</span>
+                        <span className="text-gray-500">x{item.quantity}</span>
+                      </div>
+                      <span className="font-bold text-gray-700">₹{parseInt(item.priceText.replace(/[^\d]/g, '')) * item.quantity}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-between items-center pt-4 border-t border-gray-100 mt-auto">
+                  <span className="text-sm font-medium text-gray-500">Payment: {order.paymentMethod}</span>
+                  <div className="text-lg font-black">₹{order.totalAmount}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ------------------------ Menu Tab ------------------------
 function MenuTab({ cart, setCart }: any) {
   const [items, setItems] = useState<any[]>([]);
@@ -399,6 +470,36 @@ export function CustomerDashboard() {
   const [cart, setCart] = useState<any[]>([]);
   const [attemptingToLeave, setAttemptingToLeave] = useState(false);
   const [reservationSuccessMsg, setReservationSuccessMsg] = useState("");
+  
+  // Checkout Modal State
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [checkoutPaymentMethod, setCheckoutPaymentMethod] = useState("Cash on Delivery");
+
+  const totalCartAmount = cart.reduce((total: number, item: any) => total + (parseInt(item.priceText.replace(/[^\d]/g, '')) * item.quantity), 0);
+
+  const handlePlaceOrder = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          items: cart,
+          totalAmount: totalCartAmount,
+          paymentMethod: checkoutPaymentMethod
+        })
+      });
+      if (res.ok) {
+        setIsCheckoutOpen(false);
+        setCart([]);
+        setReservationSuccessMsg("Order Placed Successfully!");
+        setTimeout(() => setReservationSuccessMsg(""), 4000);
+        handleTabChange("Orders");
+      }
+    } catch (e) {
+      console.error("Order failed", e);
+    }
+  };
 
   useEffect(() => {
     // Process any pending reservations
@@ -472,6 +573,49 @@ export function CustomerDashboard() {
           {reservationSuccessMsg}
         </div>
       )}
+      
+      {/* Checkout Hidden Modal */}
+      {isCheckoutOpen && (
+        <div className="fixed inset-0 z-[250] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl animate-in zoom-in-95 duration-200">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">Review Your Order</h3>
+            
+            <div className="max-h-48 overflow-y-auto mb-6 pr-2">
+              {cart.map((item: any, idx: number) => (
+                <div key={idx} className="flex justify-between text-sm mb-2">
+                  <span>{item.quantity}x {item.name}</span>
+                  <span className="font-bold">₹{parseInt(item.priceText.replace(/[^\d]/g, '')) * item.quantity}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="border-t border-gray-100 pt-4 mb-6 flex justify-between text-lg font-black">
+              <span>Total Amount</span>
+              <span>₹{totalCartAmount.toLocaleString()}</span>
+            </div>
+
+            <div className="mb-8">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Payment Method</label>
+              <select 
+                value={checkoutPaymentMethod}
+                onChange={(e) => setCheckoutPaymentMethod(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B2E624] font-medium"
+              >
+                <option value="Cash on Delivery">Cash on Delivery</option>
+                <option value="Online Payment" disabled>Online Payment (Coming Soon)</option>
+              </select>
+            </div>
+
+            <div className="flex gap-3">
+              <button onClick={() => setIsCheckoutOpen(false)} className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full font-bold transition-colors">Cancel</button>
+              <button onClick={handlePlaceOrder} className="flex-[2] py-3 bg-[#B2E624] hover:bg-[#a0d21d] text-black rounded-full font-bold transition-colors shadow-lg shadow-[#B2E624]/30">
+                Place Order
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Modal isOpen={attemptingToLeave} title="Leave Dashboard?" desc="Are you sure you want to go back to the home page?" onConfirm={() => window.location.replace("/")} onCancel={() => setAttemptingToLeave(false)} confirmText="Yes, Leave" isDestructive={true} />
       <Modal isOpen={isLoggingOut} title="Sign Out" desc="Are you sure you want to sign out from your account?" onConfirm={handleLogout} onCancel={() => setIsLoggingOut(false)} confirmText="Yes, Sign Out" isDestructive={true} />
       
@@ -518,15 +662,7 @@ export function CustomerDashboard() {
             {currentTab === "Events" && <EventsTab />}
             {currentTab === "Reservations" && <ReservationsTab />}
             {currentTab === "Settings" && <SettingsTab user={user} onUpdate={fetchUser} />}
-            {currentTab === "Orders" && (
-              <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] items-center justify-center text-center">
-                <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6">
-                  <ShoppingBag className="w-10 h-10 text-gray-300" />
-                </div>
-                <h2 className="text-2xl font-bold mb-2">No Past Orders</h2>
-                <p className="text-gray-500 max-w-sm">You haven't placed any online orders yet. Explore our menu to discover delicious meals!</p>
-              </div>
-            )}
+            {currentTab === "Orders" && <OrdersTab />}
           </div>
 
           {/* Right Sidebar - My Cart (Only visible on Menu tab) */}
@@ -588,8 +724,8 @@ export function CustomerDashboard() {
                     ₹{cart.reduce((total: number, item: any) => total + (parseInt(item.priceText.replace(/[^\d]/g, '')) * item.quantity), 0).toLocaleString()}
                   </span>
                 </div>
-                <button disabled={cart.length === 0} className={`w-full py-4 font-bold rounded-full transition-colors ${cart.length === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-black text-white hover:bg-gray-800'}`}>
-                  Checkout
+                <button onClick={() => setIsCheckoutOpen(true)} disabled={cart.length === 0} className={`w-full py-4 font-bold rounded-full transition-colors ${cart.length === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-black text-white hover:bg-gray-800'}`}>
+                  Proceed
                 </button>
               </div>
             </div>

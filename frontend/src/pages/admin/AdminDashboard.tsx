@@ -65,6 +65,9 @@ export function AdminDashboard() {
   const [querySearch, setQuerySearch] = useState("");
   const [queryFilter, setQueryFilter] = useState("Recent");
 
+  // Staff Requests State
+  const [staffRequests, setStaffRequests] = useState<any[]>([]);
+
   const [toastMessage, setToastMessage] = useState("");
 
   const CATEGORIES = [
@@ -238,7 +241,32 @@ export function AdminDashboard() {
     if (activeTab === 4) {
       fetchQueries();
     }
+    if (activeTab === 6) {
+      fetchStaffRequests();
+    }
   }, [activeTab]);
+
+  const fetchStaffRequests = async () => {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const res = await fetch(`${apiUrl}/admin/credential-requests`, { credentials: "include" });
+    if (res.ok) {
+      const data = await res.json();
+      setStaffRequests(data);
+    }
+  };
+
+  const handleStaffRequest = async (id: number, action: 'approve' | 'reject') => {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const res = await fetch(`${apiUrl}/admin/credential-requests/${id}/${action}`, {
+      method: "PUT",
+      credentials: "include"
+    });
+    if (res.ok) {
+      setToastMessage(`Request ${action}d successfully`);
+      setTimeout(() => setToastMessage(""), 3000);
+      fetchStaffRequests();
+    }
+  };
 
   const updateReservationStatus = async (id: number, status: string) => {
     const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
@@ -320,6 +348,7 @@ export function AdminDashboard() {
                   { id: 3, label: "Reservations", icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
                   { id: 4, label: "Queries", icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> },
                   { id: 5, label: "Header Pages", icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><path d="m9 16 3-3 3 3"/></svg> },
+                  { id: 6, label: "Staff Requests", icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
                 ].map(tab => (
                   <button 
                     key={tab.id}
@@ -396,6 +425,14 @@ export function AdminDashboard() {
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><path d="m9 16 3-3 3 3"/></svg>
           </button>
+
+          {/* Staff Requests Tab */}
+          <button 
+            onClick={() => setActiveTab(6)}
+            className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${activeTab === 6 ? 'bg-[#2D211F] text-[#F36B39] shadow-lg transform scale-105' : 'text-gray-400 hover:text-gray-800'}`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </button>
           
           <div className="mt-auto"></div>
           
@@ -425,7 +462,7 @@ export function AdminDashboard() {
             </div>
             
             <h2 className="text-lg md:text-2xl font-bold text-gray-800 md:ml-12 truncate max-w-[150px] md:max-w-none">
-              {activeTab === 0 ? 'Dashboard' : activeTab === 1 ? 'Profile Settings' : activeTab === 2 ? 'Menu Management' : activeTab === 3 ? 'Reservations' : activeTab === 4 ? 'Contact Queries' : 'Header Pages Management'}
+              {activeTab === 0 ? 'Dashboard' : activeTab === 1 ? 'Profile Settings' : activeTab === 2 ? 'Menu Management' : activeTab === 3 ? 'Reservations' : activeTab === 4 ? 'Contact Queries' : activeTab === 5 ? 'Header Pages Management' : 'Staff Requests'}
             </h2>
           </div>
 
@@ -766,6 +803,44 @@ export function AdminDashboard() {
             }} />
           )}
 
+          {activeTab === 6 && (
+            <div className="w-full min-h-[60vh] bg-white rounded-3xl md:rounded-[2rem] shadow-sm p-4 md:p-8 max-w-4xl mx-auto flex flex-col gap-6 md:gap-8">
+              <h3 className="text-xl md:text-2xl font-bold text-[#2D211F]">Staff Credential Requests</h3>
+              <p className="text-gray-500 mb-4">Approve or reject staff requests to change their username/password.</p>
+              
+              <div className="flex flex-col gap-4">
+                {staffRequests.map(req => (
+                  <div key={req.id} className="bg-gray-50 border border-gray-200 rounded-2xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                      <div className="font-bold text-gray-800">Staff ID: {req.staffId}</div>
+                      <div className="text-sm text-gray-500 mt-1">Requested New Username: <span className="font-semibold text-black">{req.newUsername}</span></div>
+                      <div className="text-xs text-gray-400 mt-1">{new Date(req.createdAt).toLocaleString()}</div>
+                    </div>
+                    <div className="flex gap-3">
+                      <button 
+                        onClick={() => handleStaffRequest(req.id, 'approve')}
+                        className="bg-green-500 text-white px-4 py-2 rounded-xl font-bold hover:bg-green-600 transition-colors shadow-sm text-sm"
+                      >
+                        Approve
+                      </button>
+                      <button 
+                        onClick={() => handleStaffRequest(req.id, 'reject')}
+                        className="bg-red-500 text-white px-4 py-2 rounded-xl font-bold hover:bg-red-600 transition-colors shadow-sm text-sm"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {staffRequests.length === 0 && (
+                  <div className="text-center py-12 text-gray-400">
+                    No pending credential requests from staff.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>

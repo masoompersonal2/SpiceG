@@ -3,6 +3,7 @@ import { useState } from "react";
 export function AdminLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("Admin");
   const [errorMsg, setErrorMsg] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -10,16 +11,17 @@ export function AdminLogin() {
     setErrorMsg("");
     try {
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
-      const res = await fetch(`${apiUrl}/auth/login`, {
+      const endpoint = role === "Admin" ? `${apiUrl}/auth/login` : `${apiUrl}/staff/login`;
+      
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // Required to set HTTP-Only cookies
+        credentials: "include",
         body: JSON.stringify({ username, password })
       });
       const data = await res.json();
       if (res.ok) {
-        // Success: Token is now stored securely in an HTTP-Only cookie by the browser
-        window.location.href = "/admin/dashboard";
+        window.location.href = role === "Admin" ? "/admin/dashboard" : "/staff/dashboard";
       } else {
         setErrorMsg(data.error || "Login failed");
       }
@@ -43,6 +45,17 @@ export function AdminLogin() {
         )}
 
         <form onSubmit={handleLogin} className="flex flex-col gap-5">
+          <div>
+            <label className="block text-sm font-semibold text-gray-600 mb-2">Role</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#E04D2D] focus:ring-1 focus:ring-[#E04D2D] transition-colors"
+            >
+              <option value="Admin">Admin</option>
+              <option value="Staff">Support Staff</option>
+            </select>
+          </div>
           <div>
             <label className="block text-sm font-semibold text-gray-600 mb-2">Username</label>
             <input 

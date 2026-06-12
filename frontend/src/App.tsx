@@ -13,6 +13,7 @@ import { AuthPage } from "./pages/AuthPage";
 import { CustomerDashboard } from "./pages/customer/CustomerDashboard";
 import { AdminQueries } from "./pages/admin/AdminQueries";
 import { AdminGalleryImages } from "./pages/admin/AdminGalleryImages";
+import { StaffDashboard } from "./pages/staff/StaffDashboard";
 import { ContentProvider } from './context/ContentContext';
 
 function App() {
@@ -80,6 +81,10 @@ function AppContent() {
 
   if (path === "/dashboard") {
     return <CustomerDashboard />;
+  }
+
+  if (path === "/staff/dashboard") {
+    return <StaffDashboard />;
   }
 
   return <Home />;

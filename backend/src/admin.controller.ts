@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Post, Body, UseGuards, Req, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Put, Post, Body, UseGuards, Req, UploadedFile, UseInterceptors, BadRequestException, Param, UnauthorizedException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from './auth.guard';
 import { PrismaClient } from '@prisma/client';
