@@ -9,6 +9,7 @@ import { AboutPage } from "./pages/AboutPage";
 import { EventsPage } from "./pages/EventsPage";
 import { ContactPage } from "./pages/ContactPage";
 import { GalleryPage } from "./pages/GalleryPage";
+import { AuthPage } from "./pages/AuthPage";
 import { AdminQueries } from "./pages/admin/AdminQueries";
 import { AdminGalleryImages } from "./pages/admin/AdminGalleryImages";
 import { ContentProvider } from './context/ContentContext';
@@ -70,6 +71,10 @@ function AppContent() {
 
   if (path === "/contact") {
     return <ContactPage />;
+  }
+
+  if (path === "/auth") {
+    return <AuthPage />;
   }
 
   return <Home />;

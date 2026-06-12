@@ -40,7 +40,7 @@ export function Navbar() {
     { name: "Menu", href: "/menu" },
     { name: "Gallery", href: "/gallery" },
     { name: "Events", href: "/events" },
-    { name: "Reservations", href: "/#reservation" },
+    { name: "Order Online", href: "/auth" },
     { name: "Contact", href: "/contact" }
   ];
 
@@ -77,15 +77,15 @@ export function Navbar() {
           <a href="/menu" className="hover:text-[#E04D2D] transition-colors">Menu</a>
           <a href="/gallery" className="hover:text-[#E04D2D] transition-colors">Gallery</a>
           <a href="/events" className="hover:text-[#E04D2D] transition-colors">Events</a>
-          <a href="/#reservation" className="hover:text-[#E04D2D] transition-colors">Reservations</a>
+          <a href="/auth" className="hover:text-[#E04D2D] transition-colors">Order Online</a>
           <a href="/contact" className="hover:text-[#E04D2D] transition-colors">Contact</a>
         </div>
 
         {/* Right Action */}
         <div className="flex-1 flex justify-end items-center">
           {/* Desktop Reserve Button */}
-          <a href="/#reservation" className={`hidden md:flex items-center space-x-2 text-sm font-semibold hover:opacity-70 transition-opacity ${scrolled ? 'text-white' : ''}`}>
-            <span>Reserve a Table</span>
+          <a href="/auth" className={`hidden md:flex items-center space-x-2 text-sm font-semibold hover:opacity-70 transition-opacity ${scrolled ? 'text-white' : ''}`}>
+            <span>Order Online</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </a>
           

@@ -99,7 +99,7 @@ export function Footer() {
               <a href="/gallery" className="group text-sm font-medium text-white/70 hover:text-[#E04D2D] transition-colors flex items-center gap-2">
                 <LinkArrow /> Gallery
               </a>
-              <a href="/order" className="group text-sm font-medium text-white/70 hover:text-[#E04D2D] transition-colors flex items-center gap-2">
+              <a href="/auth" className="group text-sm font-medium text-white/70 hover:text-[#E04D2D] transition-colors flex items-center gap-2">
                 <LinkArrow /> Order Online
               </a>
               <a href="/contact" className="group text-sm font-medium text-white/70 hover:text-[#E04D2D] transition-colors flex items-center gap-2">
