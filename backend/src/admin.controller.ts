@@ -66,4 +66,20 @@ export class AdminController {
 
     return { imageUrl };
   }
+
+  @Post('upload-file')
+  @UseInterceptors(FileInterceptor('file', {
+    storage: diskStorage({
+      destination: './uploads',
+      filename: (req, file, cb) => {
+        const uniqueName = uuidv4() + extname(file.originalname);
+        cb(null, uniqueName);
+      }
+    })
+  }))
+  async uploadGenericFile(@Req() req: any, @UploadedFile() file: Express.Multer.File) {
+    if (!file) throw new BadRequestException('No file provided');
+    const fileUrl = `/uploads/${file.filename}`;
+    return { fileUrl };
+  }
 }

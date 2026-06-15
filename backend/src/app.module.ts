@@ -12,6 +12,9 @@ import { EventsController } from './events.controller';
 import { CustomerAuthController } from './customer-auth.controller';
 import { StaffAuthController } from './staff-auth.controller';
 import { CustomerOrderController } from './customer-order.controller';
+import { DeliveryFriendAuthController } from './delivery-friend-auth.controller';
+import { AdminDeliveryFriendController } from './admin-delivery-friend.controller';
+import { PaymentController } from './payment.controller';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { JwtModule } from '@nestjs/jwt';
@@ -36,7 +39,7 @@ const prisma = new PrismaClient();
       signOptions: { expiresIn: '1d' },
     }),
   ],
-  controllers: [AuthController, AdminController, MenuController, ReservationController, SettingsController, ContentController, ContactController, EventsController, CustomerAuthController, StaffAuthController, CustomerOrderController],
+  controllers: [AuthController, AdminController, MenuController, ReservationController, SettingsController, ContentController, ContactController, EventsController, CustomerAuthController, StaffAuthController, CustomerOrderController, DeliveryFriendAuthController, AdminDeliveryFriendController, PaymentController],
   providers: [
     {
       provide: APP_GUARD,

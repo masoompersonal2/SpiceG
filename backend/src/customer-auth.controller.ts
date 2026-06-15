@@ -7,7 +7,7 @@ import { PrismaClient } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 import * as bcrypt from 'bcryptjs';
-import { CustomerLoginDto, CustomerSignupDto, CustomerSetupDto, CustomerProfileUpdateDto, CustomerPasswordUpdateDto } from './dto/customer.dto';
+import { CustomerLoginDto, CustomerSignupDto, CustomerSetupDto, CustomerProfileUpdateDto, CustomerPasswordUpdateDto, CustomerDeliveryDetailsDto } from './dto/customer.dto';
 import { CustomerAuthGuard } from './customer.guard';
 
 const prisma = new PrismaClient();
@@ -117,7 +117,7 @@ export class CustomerAuthController {
       data: {
         fullName: dto.fullName,
         mobile: dto.mobile,
-        location: dto.location,
+        liveLocation: dto.liveLocation,
         profileImage: dto.profileImage || null,
         isSetupComplete: true,
       }
@@ -165,8 +165,26 @@ export class CustomerAuthController {
       data: {
         fullName: dto.fullName,
         mobile: dto.mobile,
-        location: dto.location,
         profileImage: dto.profileImage || undefined,
+      }
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...safeCustomer } = customer;
+    return { success: true, customer: safeCustomer };
+  }
+
+  @UseGuards(CustomerAuthGuard)
+  @Put('delivery-details')
+  async updateDeliveryDetails(@Req() req: Request, @Body() dto: CustomerDeliveryDetailsDto) {
+    const user = req['user'] as { id: number };
+    const customer = await prisma.customer.update({
+      where: { id: user.id },
+      data: {
+        deliveryLocation: dto.deliveryLocation,
+        streetAddress: dto.streetAddress,
+        receiverName: dto.receiverName,
+        receiverMobile: dto.receiverMobile,
+        homeImage: dto.homeImage || undefined,
       }
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -228,21 +246,17 @@ export class CustomerAuthController {
     if (!event) throw new BadRequestException('Event not found');
     if (event.bookedSeats >= event.totalSeats) throw new BadRequestException('Event is fully booked');
 
-    // Create booking
+    // Create booking as Pending Payment
     const booking = await prisma.ticketBooking.create({
       data: {
         customerId: user.id,
         eventId: body.eventId,
         tickets: 1,
-        status: 'Confirmed'
+        status: 'Pending Payment'
       }
     });
 
-    // Increment booked seats
-    await prisma.ticketEvent.update({
-      where: { id: body.eventId },
-      data: { bookedSeats: { increment: 1 } }
-    });
+    // Seat increment will be handled upon successful payment verification.
 
     return { success: true, booking };
   }

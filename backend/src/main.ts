@@ -24,7 +24,7 @@ async function bootstrap() {
 
   // Strict CORS configuration
   app.enableCors({
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], // Add production frontend domains later
+    origin: true, // Dynamically accepts the request origin (Vercel domain)
     credentials: true,
   });
 

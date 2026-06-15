@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>Spice Garden | Authentic Indian & Chinese Cuisine</title>
+    <meta name="description" content="Welcome to Spice Garden. Experience the finest blend of authentic Indian spices and exquisite Chinese cuisine in a luxurious setting." />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN for static site) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Tailwind Config -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              serif: ['Playfair Display', 'serif'],
+              display: ['Outfit', 'sans-serif'],
+            },
+            colors: {
+              background: '#F6EEED',
+              'primary': '#E04D2D',
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body class="bg-background font-sans text-gray-900 antialiased overflow-x-hidden">
+
+    <!-- Fake header to prevent layout shift from fixed navbar -->
+    <div class="h-[72px] md:h-[80px] w-full shrink-0"></div>
+
+    <!-- Main Navbar -->
+    <nav id="main-nav" class="fixed z-[9999] transition-all duration-500 ease-in-out flex items-center justify-between top-0 left-0 w-full bg-transparent py-4 md:py-5 px-6 md:px-12">
+      <!-- Logo -->
+      <div class="flex-1 cursor-pointer">
+        <a href="#" class="inline-block" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;">
+          <img src="assets/logo.jpg" alt="Spice Garden Logo" class="h-8 md:h-10 w-auto object-contain rounded-xl" />
+        </a>
+      </div>
+
+      <!-- Center Links (Desktop) -->
+      <div id="nav-links" class="hidden lg:flex flex-1 justify-center space-x-8 text-sm font-medium text-gray-400">
+        <a href="#" class="hover:text-[#E04D2D] transition-colors">Home</a>
+        <a href="#about" class="hover:text-[#E04D2D] transition-colors">About</a>
+        <a href="#menu" class="hover:text-[#E04D2D] transition-colors">Menu</a>
+        <a href="#gallery" class="hover:text-[#E04D2D] transition-colors">Gallery</a>
+        <a href="#events" class="hover:text-[#E04D2D] transition-colors">Events</a>
+        <a href="#contact" class="hover:text-[#E04D2D] transition-colors">Contact</a>
+      </div>
+
+      <!-- Right Action -->
+      <div class="flex-1 flex justify-end items-center">
+        <!-- Desktop Reserve Button -->
+        <a href="#" id="order-online-btn" class="hidden md:flex items-center space-x-2 text-sm font-semibold hover:opacity-70 transition-opacity">
+          <span>Order Online</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden flex items-center space-x-2 text-sm font-semibold hover:opacity-70 transition-opacity bg-black text-white px-4 py-2 rounded-full">
+          <span>Menu</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-[9999] bg-[#3b2314] text-white flex flex-col h-[100dvh] overscroll-contain transition-transform duration-500 ease-out translate-y-[-100%]">
+      <!-- Header -->
+      <div class="flex justify-between items-center p-6 pb-4">
+        <img src="assets/logo.jpg" alt="Spice Garden Logo" class="h-10 w-auto object-contain rounded-xl" />
+        <button id="mobile-close-btn" class="flex items-center gap-2 px-4 py-2 rounded-full border border-white/30 text-sm font-bold uppercase tracking-wider hover:bg-white/10 transition-colors">
+          Close <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Links List -->
+      <div class="flex-1 overflow-y-auto px-6 py-6 flex flex-col">
+        <a href="#" class="mobile-link flex items-center justify-between py-6 sm:py-8 border-b border-white/10 group">
+          <span class="font-sans text-2xl sm:text-4xl font-black uppercase tracking-[0.1em] sm:tracking-[0.2em] group-hover:text-[#E04D2D] transition-colors truncate pr-4">Home</span>
+          <span class="font-sans text-sm sm:text-base font-bold text-[#00E5B5] shrink-0">01</span>
+        </a>
+        <a href="#about" class="mobile-link flex items-center justify-between py-6 sm:py-8 border-b border-white/10 group">
+          <span class="font-sans text-2xl sm:text-4xl font-black uppercase tracking-[0.1em] sm:tracking-[0.2em] group-hover:text-[#E04D2D] transition-colors truncate pr-4">About</span>
+          <span class="font-sans text-sm sm:text-base font-bold text-[#00E5B5] shrink-0">02</span>
+        </a>
+        <a href="#menu" class="mobile-link flex items-center justify-between py-6 sm:py-8 border-b border-white/10 group">
+          <span class="font-sans text-2xl sm:text-4xl font-black uppercase tracking-[0.1em] sm:tracking-[0.2em] group-hover:text-[#E04D2D] transition-colors truncate pr-4">Menu</span>
+          <span class="font-sans text-sm sm:text-base font-bold text-[#00E5B5] shrink-0">03</span>
+        </a>
+        <a href="#gallery" class="mobile-link flex items-center justify-between py-6 sm:py-8 border-b border-white/10 group">
+          <span class="font-sans text-2xl sm:text-4xl font-black uppercase tracking-[0.1em] sm:tracking-[0.2em] group-hover:text-[#E04D2D] transition-colors truncate pr-4">Gallery</span>
+          <span class="font-sans text-sm sm:text-base font-bold text-[#00E5B5] shrink-0">04</span>
+        </a>
+        <a href="#events" class="mobile-link flex items-center justify-between py-6 sm:py-8 border-b border-white/10 group">
+          <span class="font-sans text-2xl sm:text-4xl font-black uppercase tracking-[0.1em] sm:tracking-[0.2em] group-hover:text-[#E04D2D] transition-colors truncate pr-4">Events</span>
+          <span class="font-sans text-sm sm:text-base font-bold text-[#00E5B5] shrink-0">05</span>
+        </a>
+        <a href="#contact" class="mobile-link flex items-center justify-between py-6 sm:py-8 border-b border-white/10 group">
+          <span class="font-sans text-2xl sm:text-4xl font-black uppercase tracking-[0.1em] sm:tracking-[0.2em] group-hover:text-[#E04D2D] transition-colors truncate pr-4">Contact</span>
+          <span class="font-sans text-sm sm:text-base font-bold text-[#00E5B5] shrink-0">06</span>
+        </a>
+      </div>
+    </div>
+
+    <main class="relative z-10 flex flex-col w-full overflow-hidden bg-background mb-[100vh] shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-b-[2rem] md:rounded-b-[3rem]">
+      
+      <!-- HERO SECTION -->
+      <section class="relative w-full px-3 md:px-6 pt-8 pb-12 md:pb-24 flex flex-col items-center">
+        <!-- Main Typography -->
+        <div class="text-center w-full max-w-6xl mx-auto flex flex-col items-center relative z-10 fade-in-up delay-100">
+          <h1 class="font-serif text-6xl sm:text-7xl md:text-[8.5rem] leading-none tracking-tight text-[#3b2314] uppercase">
+            Spice Garden
+          </h1>
+          
+          <div class="mt-4 md:mt-6 px-4 fade-in delay-500">
+            <span class="font-serif text-3xl md:text-5xl italic text-[#3b2314] tracking-tight leading-tight block">
+              <span>Authentic Indian, <br class="hidden md:block" /></span>
+              <span>Exquisite Chinese </span>
+            </span>
+            <span class="text-[#3b2314]/80 font-medium text-sm md:text-base leading-relaxed mt-6 block max-w-2xl mx-auto">
+              Experience the finest blend of authentic Indian spices and exquisite Chinese cuisine in a luxurious setting.
+            </span>
+          </div>
+        </div>
+
+        <!-- Floating Pointer Decoration -->
+        <div class="absolute right-[12%] top-[15%] hidden xl:block pointer-events-none z-20 fade-in slide-in-right delay-500">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 4L20 10L14 14L10 20L4 4Z" fill="black" stroke="white" stroke-width="1.5" />
+          </svg>
+        </div>
+
+        <!-- Metadata Row -->
+        <div class="w-full max-w-7xl mx-auto mt-8 md:mt-10 mb-6 grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 md:gap-8 text-sm px-4 md:px-0 fade-in-up delay-300">
+          <!-- Location -->
+          <div class="flex flex-col items-start text-left order-1 md:order-1">
+            <div class="inline-flex flex-col items-start">
+              <span class="text-[#3b2314]/70 font-medium mb-1">Location</span>
+              <div class="flex items-center space-x-2">
+                <span class="font-bold tracking-wider uppercase text-base text-[#3b2314]">New Delhi, India</span>
+              </div>
+              <a href="#" class="text-[#3b2314]/60 hover:text-[#3b2314] hover:underline transition-colors block mt-1 text-[10px] md:text-xs pr-2 max-w-[150px] md:max-w-[200px]">
+                123 Spice Garden Road, Connaught Place, New Delhi
+              </a>
+            </div>
+          </div>
+
+          <!-- Happy Diners -->
+          <div class="flex flex-col items-start md:items-center text-left md:text-center order-3 md:order-2">
+            <span class="text-[#3b2314]/70 font-medium mb-1">Happy Diners</span>
+            <span class="font-bold tracking-wider uppercase text-base text-[#3b2314]">50,000+</span>
+          </div>
+
+          <!-- Menu Items -->
+          <div class="flex flex-col items-end md:items-center text-right md:text-center order-4 md:order-3">
+            <span class="text-[#3b2314]/70 font-medium mb-1">Menu Items</span>
+            <span class="font-bold tracking-wider uppercase text-base text-[#3b2314]">150+</span>
+          </div>
+
+          <!-- Google Rating -->
+          <div class="flex flex-col items-end md:items-end text-right order-2 md:order-4">
+            <span class="text-[#3b2314]/70 font-medium mb-1">Google Rating</span>
+            <span class="font-bold tracking-wider uppercase text-base text-[#3b2314]">4.5★</span>
+          </div>
+        </div>
+
+        <!-- Video Card -->
+        <div class="w-full max-w-[1600px] mx-auto relative z-10 fade-in-up delay-400">
+          <div class="relative w-full bg-black rounded-[2rem] overflow-hidden shadow-2xl origin-center group video-container" style="transform: scale(0.9);">
+            <video autoplay loop muted playsinline class="w-full h-[55vh] md:h-[80vh] block object-cover bg-gray-900 relative">
+              <source src="assets/hero-video.mp4" type="video/mp4" onerror="this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-white/50 font-mono text-xl\'>[ Video Placeholder ]</div>'" />
+            </video>
+            <!-- Liquid Glass Border Overlay -->
+            <div class="absolute inset-0 pointer-events-none rounded-[2rem] shadow-[inset_0_0_20px_rgba(255,255,255,0.192),inset_0_0_5px_rgba(255,255,255,0.274)] z-50 transition-all duration-500 group-hover:bg-white/5"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT SECTION -->
+      <section id="about" class="w-full px-4 md:px-6 pt-12 md:pt-24 pb-4 md:pb-8 flex flex-col items-center scroll-mt-24">
+        <div class="w-full max-w-[1600px] mx-auto flex flex-col">
+          <h2 class="text-sm md:text-base font-semibold tracking-[0.3em] uppercase text-gray-500 mb-8 md:mb-12 ml-4 fade-in-up">
+            ABOUT THE RESTAURANT
+          </h2>
+
+          <!-- Bento Grid -->
+          <div class="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 w-full">
+            
+            <!-- Top Left: Orange Card -->
+            <div class="col-span-1 bg-[#E04D2D] rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-6 md:p-8 flex flex-col justify-between relative overflow-hidden text-white min-h-[150px] sm:min-h-[220px] md:min-h-[240px] lg:min-h-[260px] fade-in-up delay-100">
+              <div class="flex justify-between items-start">
+                <span class="px-2 sm:px-4 py-1 sm:py-1.5 border border-white/40 rounded-full text-[8px] sm:text-[10px] md:text-xs font-semibold tracking-wider uppercase truncate max-w-[80%]">
+                  Since 1995
+                </span>
+                <div class="w-8 h-8 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center text-black shrink-0 hidden sm:flex">
+                  <i data-lucide="arrow-up-right" class="w-4 h-4 sm:w-6 sm:h-6"></i>
+                </div>
+              </div>
+
+              <div class="mt-2 sm:mt-10 md:mt-auto flex flex-col items-start w-full">
+                <h3 class="font-serif text-[1.25rem] leading-[1.05] sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-3 sm:mb-6 uppercase break-words w-full whitespace-pre-line">
+                  A Legacy of Flavour
+                </h3>
+                <a href="#about" class="btn-12 !text-[10px] sm:!text-sm !px-3 sm:!px-12 !py-2 sm:!py-3 shadow-lg mt-1 sm:mt-4 whitespace-nowrap self-start">
+                  <span>Explore More</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Top Right: Image Card -->
+            <div class="col-span-1 relative rounded-[1.5rem] md:rounded-[2rem] overflow-hidden min-h-[150px] sm:min-h-[220px] md:min-h-[240px] lg:min-h-[260px] bg-zinc-800 flex items-center justify-center group fade-in-up delay-200">
+              <span class="absolute z-0 text-white/30 font-mono">[ About Image Placeholder ]</span>
+              <img src="assets/about-image.jpg" alt="Restaurant Cuisine" class="w-full h-full object-cover relative z-10" onerror="this.style.display='none';" />
+              <!-- Liquid Glass Border Overlay -->
+              <div class="absolute inset-0 pointer-events-none rounded-[2rem] shadow-[inset_0_0_20px_rgba(255,255,255,0.192),inset_0_0_5px_rgba(255,255,255,0.274)] z-50 transition-all duration-500 group-hover:bg-white/5"></div>
+            </div>
+
+            <!-- Bottom Card (Spans both columns) -->
+            <div class="col-span-2 bg-[#141414] rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 md:p-12 lg:p-16 flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-16 items-start lg:items-center text-white fade-in-up delay-300">
+              <div class="flex-1">
+                <h3 class="font-serif text-4xl md:text-5xl lg:text-6xl italic tracking-tight mb-6 lg:mb-0">
+                  Where Every Meal Is a Celebration
+                </h3>
+              </div>
+              
+              <div class="flex-1 flex flex-col items-start">
+                <p class="text-gray-400 font-medium leading-relaxed mb-4 text-base md:text-lg">
+                  We take pride in our heritage, bringing you recipes passed down through generations.
+                </p>
+                <p class="text-gray-400 font-medium leading-relaxed mb-8 text-base md:text-lg">
+                  Every dish is crafted with passion, using only the finest ingredients to ensure an unforgettable dining experience.
+                </p>
+                <a href="#about" class="relative isolate inline-flex items-center justify-center bg-transparent text-white px-8 py-4 rounded-full text-sm font-semibold tracking-wider uppercase hover:scale-105 transition-all duration-300">
+                  <div class="absolute top-0 left-0 z-0 h-full w-full rounded-full shadow-[0_0_8px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3.5px_rgba(255,255,255,0.09),inset_-3px_-3px_0.5px_-3.5px_rgba(255,255,255,0.85),inset_1px_1px_1px_-0.5px_rgba(255,255,255,0.6),inset_-1px_-1px_1px_-0.5px_rgba(255,255,255,0.6),inset_0_0_6px_6px_rgba(255,255,255,0.12),inset_0_0_2px_2px_rgba(255,255,255,0.06),0_0_12px_rgba(0,0,0,0.15)] transition-all"></div>
+                  <div class="absolute top-0 left-0 isolate -z-10 h-full w-full overflow-hidden rounded-full" style="backdrop-filter: url('#container-glass');"></div>
+                  <div class="pointer-events-none relative z-10 flex items-center gap-2">
+                    Read Our Story <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                  </div>
+                  
+                  <!-- SVG Filter for Glass Effect -->
+                  <svg class="hidden">
+                    <defs>
+                      <filter id="container-glass">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"></feGaussianBlur>
+                        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="container-glass"></feColorMatrix>
+                        <feComposite in="SourceGraphic" in2="container-glass" operator="atop"></feComposite>
+                      </filter>
+                    </defs>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- POPULAR DISHES -->
+      <section class="w-full px-4 md:px-6 pt-12 md:pt-24 pb-6 md:pb-12 flex flex-col items-center bg-background">
+        <div class="w-full max-w-[1600px] mx-auto flex flex-col">
+          <div class="mb-12">
+            <h2 class="text-sm md:text-base font-semibold tracking-[0.3em] uppercase text-gray-500 mb-4 ml-2 md:ml-4 fade-in-up">
+              CHEF'S SPECIAL
+            </h2>
+            <h3 class="font-serif text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-[#1A1A1A] uppercase ml-2 md:ml-4 fade-in-up delay-100">
+              POPULAR DISHES
+            </h3>
+          </div>
+
+          <!-- Mobile Layout (1-2-1 grid) -->
+          <div class="grid grid-cols-2 gap-4 w-full md:hidden fade-in-up delay-200">
+            <div class="col-span-2 relative overflow-hidden rounded-[2rem] group cursor-pointer w-full shadow-2xl h-[300px] bg-zinc-800 flex items-center justify-center">
+              <span class="absolute z-0 text-white/30 font-mono">[ Dish Image ]</span>
+              <img src="assets/dish1.jpg" alt="Popular Dish 1" class="w-full h-full object-cover relative z-10 transition-transform duration-1000 group-hover:scale-110" onerror="this.style.display='none'" />
+              <div class="absolute inset-0 pointer-events-none rounded-[2rem] shadow-[inset_0_0_20px_rgba(255,255,255,0.192),inset_0_0_5px_rgba(255,255,255,0.274)] z-50 transition-all duration-500 group-hover:bg-white/5"></div>
+              <div class="absolute top-4 right-4 bg-white text-[#E04D2D] text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-xl z-10 transition-transform duration-300 group-hover:scale-105">
+                Butter Chicken <span class="text-black bg-gray-100 rounded-full w-5 h-5 flex items-center justify-center ml-0.5"><i data-lucide="arrow-up-right" class="w-3 h-3"></i></span>
+              </div>
+            </div>
+            <div class="col-span-1 relative overflow-hidden rounded-[2rem] group cursor-pointer w-full shadow-2xl h-[220px] bg-zinc-800 flex items-center justify-center">
+              <span class="absolute z-0 text-white/30 font-mono text-center text-xs">[ Dish Image ]</span>
+              <img src="assets/dish2.jpg" alt="Popular Dish 2" class="w-full h-full object-cover relative z-10 transition-transform duration-1000 group-hover:scale-110" onerror="this.style.display='none'" />
+              <div class="absolute inset-0 pointer-events-none rounded-[2rem] shadow-[inset_0_0_20px_rgba(255,255,255,0.192),inset_0_0_5px_rgba(255,255,255,0.274)] z-50 transition-all duration-500 group-hover:bg-white/5"></div>
+              <div class="absolute top-4 right-4 bg-white text-[#E04D2D] text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-xl z-10 transition-transform duration-300 group-hover:scale-105">
+                Dim Sum <span class="text-black bg-gray-100 rounded-full w-5 h-5 flex items-center justify-center ml-0.5"><i data-lucide="arrow-up-right" class="w-3 h-3"></i></span>
+              </div>
+            </div>
+            <div class="col-span-1 relative overflow-hidden rounded-[2rem] group cursor-pointer w-full shadow-2xl h-[220px] bg-zinc-800 flex items-center justify-center">
+              <span class="absolute z-0 text-white/30 font-mono text-center text-xs">[ Dish Image ]</span>
+              <img src="assets/dish3.jpg" alt="Popular Dish 3" class="w-full h-full object-cover relative z-10 transition-transform duration-1000 group-hover:scale-110" onerror="this.style.display='none'" />
+              <div class="absolute inset-0 pointer-events-none rounded-[2rem] shadow-[inset_0_0_20px_rgba(255,255,255,0.192),inset_0_0_5px_rgba(255,255,255,0.274)] z-50 transition-all duration-500 group-hover:bg-white/5"></div>
+              <div class="absolute top-4 right-4 bg-white text-[#E04D2D] text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-xl z-10 transition-transform duration-300 group-hover:scale-105">
+                Garlic Naan <span class="text-black bg-gray-100 rounded-full w-5 h-5 flex items-center justify-center ml-0.5"><i data-lucide="arrow-up-right" class="w-3 h-3"></i></span>
+              </div>
+            </div>
+            <div class="col-span-2 relative overflow-hidden rounded-[2rem] group cursor-pointer w-full shadow-2xl h-[300px] bg-zinc-800 flex items-center justify-center">
+              <span class="absolute z-0 text-white/30 font-mono">[ Dish Image ]</span>
+              <img src="assets/dish4.jpg" alt="Popular Dish 4" class="w-full h-full object-cover relative z-10 transition-transform duration-1000 group-hover:scale-110" onerror="this.style.display='none'" />
+              <div class="absolute inset-0 pointer-events-none rounded-[2rem] shadow-[inset_0_0_20px_rgba(255,255,255,0.192),inset_0_0_5px_rgba(255,255,255,0.274)] z-50 transition-all duration-500 group-hover:bg-white/5"></div>
+              <div class="absolute top-4 right-4 bg-white text-[#E04D2D] text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-xl z-10 transition-transform duration-300 group-hover:scale-105">
+                Hakka Noodles <span class="text-black bg-gray-100 rounded-full w-5 h-5 flex items-center justify-center ml-0.5"><i data-lucide="arrow-up-right" class="w-3 h-3"></i></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Desktop Layout (Masonry) -->
+          <div class="hidden md:grid grid-cols-2 gap-6 w-full fade-in-up delay-200">
+            <!-- Left Column -->
+            <div class="flex flex-col gap-6">
+              <div class="relative overflow-hidden rounded-[2rem] group cursor-pointer w-full shadow-2xl h-[420px] bg-zinc-800 flex items-center justify-center">
+                <span class="absolute z-0 text-white/30 font-mono text-center">[ Dish Image Placeholder ]</span>
+                <img src="assets/dish1.jpg" alt="Popular Dish 1" class="w-full h-full object-cover relative z-10 transition-transform duration-1000 group-hover:scale-110" onerror="this.style.display='none'" />
+                <div class="absolute inset-0 pointer-events-none rounded-[2rem] shadow-[inset_0_0_20px_rgba(255,255,255,0.192),inset_0_0_5px_rgba(255,255,255,0.274)] z-50 transition-all duration-500 group-hover:bg-white/5"></div>
+                <div class="absolute top-8 right-8 bg-white text-[#E04D2D] text-sm font-bold px-4 py-2 rounded-full flex items-center gap-2 shadow-xl z-10 transition-transform duration-300 group-hover:scale-105">
+                  Butter Chicken <span class="text-black bg-gray-100 rounded-full w-6 h-6 flex items-center justify-center ml-1"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></span>
+                </div>
+              </div>
+              <div class="relative overflow-hidden rounded-[2rem] group cursor-pointer w-full shadow-2xl h-[300px] bg-zinc-800 flex items-center justify-center">
+                <span class="absolute z-0 text-white/30 font-mono text-center">[ Dish Image Placeholder ]</span>
+                <img src="assets/dish2.jpg" alt="Popular Dish 2" class="w-full h-full object-cover relative z-10 transition-transform duration-1000 group-hover:scale-110" onerror="this.style.display='none'" />
+                <div class="absolute inset-0 pointer-events-none rounded-[2rem] shadow-[inset_0_0_20px_rgba(255,255,255,0.192),inset_0_0_5px_rgba(255,255,255,0.274)] z-50 transition-all duration-500 group-hover:bg-white/5"></div>
+                <div class="absolute top-8 right-8 bg-white text-[#E04D2D] text-sm font-bold px-4 py-2 rounded-full flex items-center gap-2 shadow-xl z-10 transition-transform duration-300 group-hover:scale-105">
+                  Dim Sum <span class="text-black bg-gray-100 rounded-full w-6 h-6 flex items-center justify-center ml-1"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></span>
+                </div>
+              </div>
+            </div>
+            <!-- Right Column -->
+            <div class="flex flex-col gap-6">
+              <div class="relative overflow-hidden rounded-[2rem] group cursor-pointer w-full shadow-2xl h-[300px] bg-zinc-800 flex items-center justify-center">
+                <span class="absolute z-0 text-white/30 font-mono text-center">[ Dish Image Placeholder ]</span>
+                <img src="assets/dish3.jpg" alt="Popular Dish 3" class="w-full h-full object-cover relative z-10 transition-transform duration-1000 group-hover:scale-110" onerror="this.style.display='none'" />
+                <div class="absolute inset-0 pointer-events-none rounded-[2rem] shadow-[inset_0_0_20px_rgba(255,255,255,0.192),inset_0_0_5px_rgba(255,255,255,0.274)] z-50 transition-all duration-500 group-hover:bg-white/5"></div>
+                <div class="absolute top-8 right-8 bg-white text-[#E04D2D] text-sm font-bold px-4 py-2 rounded-full flex items-center gap-2 shadow-xl z-10 transition-transform duration-300 group-hover:scale-105">
+                  Garlic Naan <span class="text-black bg-gray-100 rounded-full w-6 h-6 flex items-center justify-center ml-1"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></span>
+                </div>
+              </div>
+              <div class="relative overflow-hidden rounded-[2rem] group cursor-pointer w-full shadow-2xl h-[420px] bg-zinc-800 flex items-center justify-center">
+                <span class="absolute z-0 text-white/30 font-mono text-center">[ Dish Image Placeholder ]</span>
+                <img src="assets/dish4.jpg" alt="Popular Dish 4" class="w-full h-full object-cover relative z-10 transition-transform duration-1000 group-hover:scale-110" onerror="this.style.display='none'" />
+                <div class="absolute inset-0 pointer-events-none rounded-[2rem] shadow-[inset_0_0_20px_rgba(255,255,255,0.192),inset_0_0_5px_rgba(255,255,255,0.274)] z-50 transition-all duration-500 group-hover:bg-white/5"></div>
+                <div class="absolute top-8 right-8 bg-white text-[#E04D2D] text-sm font-bold px-4 py-2 rounded-full flex items-center gap-2 shadow-xl z-10 transition-transform duration-300 group-hover:scale-105">
+                  Hakka Noodles <span class="text-black bg-gray-100 rounded-full w-6 h-6 flex items-center justify-center ml-1"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MENU PREVIEW -->
+      <section id="recipes" class="w-full px-4 md:px-6 pt-8 pb-12 md:pb-24 flex flex-col items-center scroll-mt-24">
+        <div class="w-full max-w-[1600px] mx-auto bg-[#E04D2D] rounded-[3rem] p-6 md:p-12 shadow-2xl fade-in-up">
+          <!-- Header Row -->
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-12 gap-4 md:gap-6">
+            <h2 class="font-serif text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white uppercase w-full md:w-auto text-center md:text-left">
+              RECIPES
+            </h2>
+            
+            <div class="flex flex-row gap-2 w-full md:w-auto items-center">
+              <!-- Search Bar -->
+              <div class="relative flex-1 md:w-[400px]">
+                <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-white/80"></i>
+                <input type="text" placeholder="Search menu (e.g. Biryani)..." class="w-full bg-black/10 border-2 border-white/30 rounded-full py-3 md:py-4 pl-10 md:pl-14 pr-4 md:pr-6 text-xs md:text-sm text-white placeholder-white/70 focus:outline-none focus:border-white focus:bg-black/20 transition-colors" />
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 w-full">
+            <!-- Desktop Categories -->
+            <div class="hidden md:flex flex-col w-[280px] shrink-0 border-r border-white/20 pr-6 gap-2">
+              <button class="w-full flex items-center justify-between px-6 py-4 rounded-2xl transition-all duration-300 text-left font-bold text-lg bg-white shadow-lg text-[#E04D2D]">
+                <span class="uppercase tracking-wider">Starters</span>
+                <div class="w-2 h-2 rounded-full bg-[#E04D2D]"></div>
+              </button>
+              <button class="w-full flex items-center justify-between px-6 py-4 rounded-2xl transition-all duration-300 text-left font-bold text-lg text-white/70 hover:bg-white/10 hover:text-white">
+                <span class="uppercase tracking-wider">Main Course</span>
+                <div class="w-2 h-2 rounded-full bg-transparent"></div>
+              </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="flex-1 min-w-0 min-h-[400px]">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full">
+                <!-- Item 1 -->
+                <div class="bg-white rounded-2xl p-4 shadow-xl flex flex-col gap-3 group relative overflow-hidden h-fit">
+                  <div class="w-full aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative flex items-center justify-center">
+                    <span class="absolute z-0 text-gray-500 font-mono text-sm">[ Recipe Image ]</span>
+                    <img src="assets/item1.jpg" onerror="this.style.display='none'" alt="Item" class="w-full h-full object-cover relative z-10 transition-transform duration-700 group-hover:scale-105" />
+                    <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <div class="flex justify-between items-start gap-2">
+                      <h3 class="font-bold text-gray-900 text-base md:text-lg line-clamp-1 font-serif">Samosa Chaat</h3>
+                      <span class="font-bold text-[#E04D2D] whitespace-nowrap text-lg">$8.99</span>
+                    </div>
+                    <p class="text-sm text-gray-500 line-clamp-2 leading-relaxed">Crispy samosas topped with tangy chutneys, yogurt, and spices.</p>
+                  </div>
+                </div>
+                <!-- Item 2 -->
+                <div class="bg-white rounded-2xl p-4 shadow-xl flex flex-col gap-3 group relative overflow-hidden h-fit">
+                  <div class="w-full aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative flex items-center justify-center">
+                    <span class="absolute z-0 text-gray-500 font-mono text-sm">[ Recipe Image ]</span>
+                    <img src="assets/item2.jpg" onerror="this.style.display='none'" alt="Item" class="w-full h-full object-cover relative z-10 transition-transform duration-700 group-hover:scale-105" />
+                    <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <div class="flex justify-between items-start gap-2">
+                      <h3 class="font-bold text-gray-900 text-base md:text-lg line-clamp-1 font-serif">Chicken Tikka</h3>
+                      <span class="font-bold text-[#E04D2D] whitespace-nowrap text-lg">$14.99</span>
+                    </div>
+                    <p class="text-sm text-gray-500 line-clamp-2 leading-relaxed">Tender chicken marinated in yogurt and spices, grilled to perfection.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Actions -->
+          <div class="mt-8 md:mt-12 flex justify-center w-full">
+            <a href="#menu" class="btn-12 !px-8 md:!px-12 !py-3 md:!py-4 shadow-2xl !bg-black !text-white text-sm md:text-base border border-white/20">
+              <span class="uppercase tracking-wider">View Full Menu</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESERVATION SECTION -->
+      <section id="reservation" class="w-full px-4 md:px-6 pt-12 md:pt-24 pb-6 md:pb-12 flex flex-col items-center bg-black relative">
+        <div class="w-full max-w-[1600px] mx-auto flex flex-col items-center">
+          <!-- Header -->
+          <div class="text-center max-w-3xl mb-16 px-4">
+            <h2 class="font-serif text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white uppercase mb-6 fade-in-up">
+              ONLINE RESERVATION
+            </h2>
+            <p class="text-gray-400 text-base md:text-lg lg:text-xl leading-relaxed whitespace-pre-line fade-in-up delay-100">
+              Spice Garden is one of the most popular restaurants. Special menus made by our passionate chefs and quality that will impress you.
+            </p>
+          </div>
+
+          <!-- Two Columns Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 w-full items-stretch lg:h-[600px]">
+            <!-- Left: Form Card -->
+            <div class="bg-transparent p-8 md:p-12 lg:p-16 flex flex-col justify-center w-full fade-in slide-in-left delay-200">
+              <form class="flex flex-col gap-10 w-full max-w-md mx-auto lg:mx-0" onsubmit="event.preventDefault(); alert('Reservation feature is disabled in static preview.');">
+                <div class="relative border-b border-gray-600 pb-3 group">
+                  <input type="text" required placeholder="Name" class="w-full bg-transparent text-white placeholder-gray-400 focus:outline-none text-lg md:text-xl transition-colors" />
+                  <div class="absolute bottom-0 left-0 h-[2px] bg-[#E04D2D] w-0 group-focus-within:w-full transition-all duration-300"></div>
+                </div>
+
+                <div class="relative border-b border-gray-600 pb-3 group">
+                  <input type="tel" required placeholder="Phone Number" class="w-full bg-transparent text-white placeholder-gray-400 focus:outline-none text-lg md:text-xl transition-colors" />
+                  <div class="absolute bottom-0 left-0 h-[2px] bg-[#E04D2D] w-0 group-focus-within:w-full transition-all duration-300"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-8">
+                  <div class="relative border-b border-gray-600 pb-3 group">
+                    <input type="date" required class="w-full bg-transparent text-white placeholder-gray-400 focus:outline-none text-lg md:text-xl transition-colors cursor-pointer" />
+                    <div class="absolute bottom-0 left-0 h-[2px] bg-[#E04D2D] w-0 group-focus-within:w-full transition-all duration-300"></div>
+                  </div>
+                  
+                  <div class="relative border-b border-gray-600 pb-3 group flex items-center justify-between">
+                    <select class="bg-transparent text-white focus:outline-none flex-1 appearance-none cursor-pointer">
+                      <option value="18:00" class="bg-zinc-900">06:00 PM</option>
+                      <option value="18:30" class="bg-zinc-900">06:30 PM</option>
+                      <option value="19:00" class="bg-zinc-900">07:00 PM</option>
+                      <option value="19:30" class="bg-zinc-900">07:30 PM</option>
+                      <option value="20:00" class="bg-zinc-900">08:00 PM</option>
+                      <option value="20:30" class="bg-zinc-900">08:30 PM</option>
+                    </select>
+                    <div class="absolute bottom-0 left-0 h-[2px] bg-[#E04D2D] w-0 group-focus-within:w-full transition-all duration-300"></div>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn-12 !px-12 !py-4 shadow-[0_0_20px_rgba(224,77,45,0.4)] hover:shadow-[0_0_30px_rgba(224,77,45,0.6)] !bg-[#E04D2D] mt-8 self-start md:self-auto">
+                  <span>Confirm Reservation</span>
+                </button>
+              </form>
+            </div>
+
+            <!-- Right: Image Card -->
+            <div class="relative w-full h-[400px] lg:h-full rounded-[2rem] overflow-hidden group fade-in slide-in-right delay-300 bg-zinc-800 flex items-center justify-center">
+              <span class="absolute z-0 text-white/30 font-mono">[ Reservation Image ]</span>
+              <img src="assets/reservation-image.jpg" onerror="this.style.display='none'" alt="Restaurant Interior" class="w-full h-full object-cover relative z-10 transition-transform duration-1000 group-hover:scale-110" />
+              <!-- Glass Overlay Elements -->
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+              
+              <div class="absolute bottom-8 left-8 right-8">
+                <div class="relative overflow-hidden p-6 md:p-8 rounded-[1.5rem] bg-white/5 backdrop-blur-md border border-white/20 shadow-[inset_0_0_20px_rgba(255,255,255,0.1),0_8px_32px_rgba(0,0,0,0.3)]">
+                  <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-full bg-[#E04D2D] flex items-center justify-center">
+                      <i data-lucide="calendar" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                      <h4 class="text-white font-bold text-lg">Opening Hours</h4>
+                      <p class="text-gray-300 text-sm">Everyday</p>
+                    </div>
+                  </div>
+                  <div class="flex justify-between items-center text-white">
+                    <span class="text-gray-400">Dinner</span>
+                    <span class="font-bold text-[#E04D2D] font-serif text-xl tracking-wider">06:00 PM - 11:00 PM</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ORDER CTA SECTION -->
+      <section class="w-full px-4 md:px-6 pt-8 md:pt-16 pb-12 md:pb-32 flex flex-col items-center bg-black">
+        <div class="w-full max-w-4xl mx-auto flex flex-col items-center text-center fade-in-up">
+          <h2 class="text-sm md:text-base font-semibold tracking-[0.3em] uppercase text-[#E04D2D] mb-6">
+            ORDER FROM HOME
+          </h2>
+          <h3 class="font-serif text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-8 whitespace-pre-line">
+            Craving Something Delicious?
+          </h3>
+          <p class="text-gray-400 text-lg md:text-xl leading-relaxed mb-12 max-w-2xl whitespace-pre-line fade-in-up delay-100">
+            Browse our full menu, add your favorites to the cart, and get hot food delivered right to your doorstep. Pay with Cash on Delivery or UPI.
+          </p>
+
+          <div class="flex flex-row justify-center gap-2 sm:gap-6 w-full sm:w-auto px-2 sm:px-0 fade-in-up delay-200">
+            <a href="#menu" class="flex flex-1 sm:flex-initial justify-center gap-1 sm:gap-2 items-center shadow-[0_0_20px_rgba(224,77,45,0.4)] text-[10px] sm:text-sm md:text-lg font-semibold uppercase tracking-wider isolation-auto border-[#E04D2D] before:absolute before:w-full before:transition-all before:duration-700 hover:before:w-full before:-left-full hover:before:left-0 before:rounded-full before:bg-white text-white hover:text-[#E04D2D] transition-colors duration-500 before:-z-10 before:aspect-square hover:before:scale-150 relative z-10 px-2 py-3 sm:px-6 sm:py-3 md:px-10 md:py-4 overflow-hidden border-2 rounded-full group bg-[#E04D2D]">
+              Order Online
+              <svg class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 justify-end group-hover:rotate-90 text-white group-hover:text-[#E04D2D] ease-linear duration-300 rounded-full border border-white group-hover:border-[#E04D2D] p-0.5 sm:p-1 rotate-45" viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z" class="fill-white group-hover:fill-[#E04D2D] transition-colors duration-500" />
+              </svg>
+            </a>
+            <a href="tel:+1234567890" class="relative overflow-hidden flex flex-1 sm:flex-initial items-center justify-center gap-1 md:gap-3 border border-white/20 hover:border-white/50 text-white px-2 py-3 sm:px-6 sm:py-3 md:px-10 md:py-4 rounded-full text-[10px] sm:text-sm md:text-base font-semibold tracking-wider uppercase transition-all shadow-[inset_0_0_20px_rgba(255,255,255,0.192),inset_0_0_5px_rgba(255,255,255,0.274)] bg-white/5 backdrop-blur-md hover:bg-white/10 group whitespace-nowrap">
+              <i data-lucide="phone" class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#E04D2D] group-hover:scale-110 transition-transform"></i>
+              Call to Order
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- EVENTS CTA SECTION -->
+      <section class="w-full px-4 md:px-6 pt-16 pb-24 md:pb-32 flex flex-col items-center bg-background">
+        <div class="w-full max-w-[1400px] mx-auto bg-zinc-900 rounded-[3rem] p-8 md:p-16 lg:p-24 relative overflow-hidden text-center fade-in-up">
+          <div class="absolute inset-0 bg-gradient-to-br from-[#E04D2D]/20 to-transparent opacity-50"></div>
+          
+          <div class="relative z-10 flex flex-col items-center">
+            <h2 class="text-sm md:text-base font-semibold tracking-[0.3em] uppercase text-[#E04D2D] mb-6">
+              PRIVATE EVENTS
+            </h2>
+            <h3 class="font-serif text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-8">
+              Host Your Special Moment With Us
+            </h3>
+            <p class="text-gray-400 text-lg md:text-xl leading-relaxed mb-12 max-w-2xl">
+              From intimate gatherings to large celebrations, our venue offers the perfect setting for your events.
+            </p>
+            <a href="#contact" class="btn-12 !px-8 md:!px-12 !py-4 shadow-2xl !bg-[#E04D2D] text-white font-semibold">
+              <span>Inquire Now</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- WHY DINE SECTION -->
+      <section class="hidden md:block w-full bg-white relative z-10 fade-in-up">
+        <div class="w-full px-4 md:px-6 pt-0 pb-24 md:pb-32 flex flex-col items-center bg-black origin-top shadow-2xl rounded-b-[3rem]">
+          <div class="w-full max-w-[1400px] mx-auto pt-16">
+            <div class="bg-[#0a0a0a] rounded-[3rem] p-8 md:p-12 lg:p-20 border border-gray-800/60 shadow-2xl relative overflow-hidden flex flex-col items-center text-center group fade-in-up delay-100">
+              <!-- Liquid Glass Border Overlay -->
+              <div class="absolute inset-0 pointer-events-none rounded-[3rem] shadow-[inset_0_0_20px_rgba(255,255,255,0.192),inset_0_0_5px_rgba(255,255,255,0.274)] z-50 transition-all duration-500 group-hover:bg-white/5"></div>
+              <!-- Decorative subtle accent -->
+              <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-[2px] bg-gradient-to-r from-transparent via-[#E04D2D] to-transparent"></div>
+
+              <h2 class="text-sm md:text-base font-semibold tracking-[0.3em] uppercase text-[#E04D2D] mb-6">
+                OUR PROMISE
+              </h2>
+              
+              <h3 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-10 whitespace-pre-line">
+                Why Dine at Spice Garden?
+              </h3>
+
+              <p class="text-gray-300 text-lg md:text-xl lg:text-2xl leading-relaxed max-w-5xl font-light whitespace-pre-line">
+                Looking for the best family restaurant? Spice Garden has been the go-to destination for lovers of authentic Indian and Chinese cuisine. Our chefs use only the freshest ingredients and traditional spice blends to create dishes that burst with flavour — from creamy butter chicken and smoky tandoori kebabs to sizzling Hakka noodles and crispy Manchurian. Whether it's a cozy family dinner, a birthday celebration, or a casual outing with friends, our warm ambiance and attentive service make every visit special. We take pride in using authentic masalas and time-honoured recipes passed down through generations, ensuring every dish delivers rich aroma and unmatched taste. With convenient online ordering, easy table booking, and fast home delivery, enjoying a restaurant-quality meal has never been easier. Visit Spice Garden today and discover why thousands of happy diners keep coming back for more.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TESTIMONIALS SECTION -->
+      <section class="w-full px-4 md:px-6 pt-12 md:pt-24 pb-16 md:pb-32 flex flex-col items-center bg-white relative overflow-hidden">
+        <div class="w-full max-w-[1600px] mx-auto flex flex-col items-center relative fade-in-up">
+          
+          <h2 class="text-sm md:text-base font-semibold tracking-[0.3em] uppercase text-gray-500 mb-4 z-20">
+            TESTIMONIALS
+          </h2>
+          <h3 class="font-serif text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-black uppercase mb-16 md:mb-24 z-20 text-center">
+            WHAT PEOPLE SAY
+          </h3>
+
+          <!-- Testimonials Carousel Container (Static Representation) -->
+          <div class="relative w-full h-[500px] sm:h-[450px] flex items-center justify-center -mt-8 sm:mt-0">
+            <!-- Left Card -->
+            <div class="absolute left-1/2 top-1/2 cursor-pointer border-2 p-8 transition-all duration-500 ease-in-out z-0 bg-white text-black border-gray-200" style="width: 365px; height: 365px; clip-path: polygon(50px 0%, calc(100% - 50px) 0%, 100% 50px, 100% 100%, calc(100% - 50px) 100%, 50px 100%, 0 100%, 0 0); transform: translate(-50%, -50%) translateX(-243px) translateY(15px) rotate(2.5deg); box-shadow: transparent 0px 0px 0px 0px;">
+              <span class="absolute block origin-top-right rotate-45 bg-gray-200" style="right: -2px; top: 48px; width: 70.7107px; height: 2px;"></span>
+              <img src="https://ui-avatars.com/api/?name=John+Doe&background=random" alt="John Doe" class="mb-4 h-14 w-14 rounded-full bg-gray-100 object-cover object-top border-2 border-white shadow-md" />
+              <h3 class="text-base sm:text-xl font-medium text-black">
+                "The best Indian food I have ever had! The ambiance is simply amazing."
+              </h3>
+              <p class="absolute bottom-8 left-8 right-8 mt-2 text-sm italic text-gray-500">
+                - John Doe
+              </p>
+            </div>
+
+            <!-- Center Card -->
+            <div class="absolute left-1/2 top-1/2 cursor-pointer border-2 p-8 transition-all duration-500 ease-in-out z-10 bg-[#E04D2D] text-white border-[#E04D2D]" style="width: 365px; height: 365px; clip-path: polygon(50px 0%, calc(100% - 50px) 0%, 100% 50px, 100% 100%, calc(100% - 50px) 100%, 50px 100%, 0 100%, 0 0); transform: translate(-50%, -50%) translateX(0px) translateY(-65px) rotate(0deg); box-shadow: rgba(224, 77, 45, 0.3) 0px 8px 0px 4px;">
+              <span class="absolute block origin-top-right rotate-45 bg-[#c44226]" style="right: -2px; top: 48px; width: 70.7107px; height: 2px;"></span>
+              <img src="https://ui-avatars.com/api/?name=Jane+Smith&background=random" alt="Jane Smith" class="mb-4 h-14 w-14 rounded-full bg-gray-100 object-cover object-top border-2 border-white shadow-md" />
+              <h3 class="text-base sm:text-xl font-medium text-white">
+                "Absolutely delicious! Every dish is crafted with so much flavor and care."
+              </h3>
+              <p class="absolute bottom-8 left-8 right-8 mt-2 text-sm italic text-white/80">
+                - Jane Smith
+              </p>
+            </div>
+
+            <!-- Right Card -->
+            <div class="absolute left-1/2 top-1/2 cursor-pointer border-2 p-8 transition-all duration-500 ease-in-out z-0 bg-white text-black border-gray-200" style="width: 365px; height: 365px; clip-path: polygon(50px 0%, calc(100% - 50px) 0%, 100% 50px, 100% 100%, calc(100% - 50px) 100%, 50px 100%, 0 100%, 0 0); transform: translate(-50%, -50%) translateX(243px) translateY(-15px) rotate(-2.5deg); box-shadow: transparent 0px 0px 0px 0px;">
+              <span class="absolute block origin-top-right rotate-45 bg-gray-200" style="right: -2px; top: 48px; width: 70.7107px; height: 2px;"></span>
+              <img src="https://ui-avatars.com/api/?name=Alice+Brown&background=random" alt="Alice Brown" class="mb-4 h-14 w-14 rounded-full bg-gray-100 object-cover object-top border-2 border-white shadow-md" />
+              <h3 class="text-base sm:text-xl font-medium text-black">
+                "Great service, wonderful food. The Hakka Noodles were a standout!"
+              </h3>
+              <p class="absolute bottom-8 left-8 right-8 mt-2 text-sm italic text-gray-500">
+                - Alice Brown
+              </p>
+            </div>
+          </div>
+          
+          <!-- Navigation Buttons -->
+          <div class="flex gap-4 mt-8 md:mt-16 z-20">
+            <button class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:text-[#E04D2D] hover:border-[#E04D2D] transition-colors">
+              <i data-lucide="chevron-left" class="w-6 h-6"></i>
+            </button>
+            <button class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:text-[#E04D2D] hover:border-[#E04D2D] transition-colors">
+              <i data-lucide="chevron-right" class="w-6 h-6"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER SECTION -->
+    <footer class="relative md:fixed bottom-0 left-0 w-full min-h-screen md:h-screen z-10 md:-z-10 bg-[#0a0a0a] flex flex-col justify-end overflow-hidden">
+      <!-- Video or Image Background (Full Screen) -->
+      <video src="assets/footer-video.mp4" autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-90"></video>
+
+      <!-- Centered Cutout Badge Shape -->
+      <div class="absolute inset-0 flex items-start md:items-center justify-center pointer-events-none pt-16 md:pt-0 md:mb-[16rem]">
+        <svg viewBox="0 0 1000 400" class="w-[95vw] max-w-[1200px] h-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+          <defs>
+            <mask id="spiceMask">
+              <rect width="1000" height="400" fill="white" />
+              <text x="500" y="220" text-anchor="middle" dominant-baseline="central" class="font-serif font-black tracking-tighter" style="font-size: 300px;" fill="black">
+                SPICE
+              </text>
+            </mask>
+          </defs>
+          <path d="M 20,80 Q 500,-20 980,80 L 920,400 L 80,400 Z" fill="white" mask="url(#spiceMask)" />
+        </svg>
+      </div>
+
+      <!-- Footer Content -->
+      <div class="relative z-10 w-full max-w-[1600px] mx-auto px-6 pb-6 pt-[20rem] sm:pt-[24rem] md:pt-[40rem] flex flex-col bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/50 to-transparent mt-auto">
+        <div class="flex flex-col lg:flex-row justify-between items-end gap-12 border-b border-white/10 pb-6">
+          <!-- Left Column -->
+          <div class="flex flex-col gap-6 max-w-sm">
+            <img src="assets/logo.jpg" alt="Spice Garden" class="h-10 md:h-12 w-auto object-contain rounded-xl mix-blend-screen self-start" />
+            <p class="text-gray-300 font-medium text-sm leading-relaxed">
+              Gokak's premier family dining restaurant. Authentic Indian & Chinese cuisine.
+            </p>
+            <div class="flex flex-col gap-3 text-white/80 text-sm mt-2">
+              <span class="flex items-center gap-3">
+                <i data-lucide="phone" class="w-4 h-4 text-[#E04D2D]"></i>
+                097418 00400
+              </span>
+              <a href="#" class="flex items-center gap-3 hover:text-white transition-colors">
+                <i data-lucide="map-pin" class="w-4 h-4 text-[#E04D2D] shrink-0"></i>
+                <span class="line-clamp-2">Jadhav Farm, Gokak, Karnataka</span>
+              </a>
+            </div>
+          </div>
+          
+          <!-- Right Columns -->
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-x-12 md:gap-x-20 gap-y-10 w-full lg:w-auto">
+            <!-- Links 1 -->
+            <div class="flex flex-col gap-4">
+              <h4 class="text-white/40 text-xs font-bold tracking-widest uppercase mb-2">Links</h4>
+              <a href="#" class="group text-sm font-medium text-white/70 hover:text-[#E04D2D] transition-colors flex items-center gap-2">
+                <i data-lucide="arrow-up-right" class="w-3 h-3 text-white/40 group-hover:text-[#E04D2D]"></i> Home
+              </a>
+              <a href="#menu" class="group text-sm font-medium text-white/70 hover:text-[#E04D2D] transition-colors flex items-center gap-2">
+                <i data-lucide="arrow-up-right" class="w-3 h-3 text-white/40 group-hover:text-[#E04D2D]"></i> Menu
+              </a>
+              <a href="#about" class="group text-sm font-medium text-white/70 hover:text-[#E04D2D] transition-colors flex items-center gap-2">
+                <i data-lucide="arrow-up-right" class="w-3 h-3 text-white/40 group-hover:text-[#E04D2D]"></i> About
+              </a>
+            </div>
+            
+            <!-- Links 2 -->
+            <div class="flex flex-col gap-4">
+              <h4 class="text-white/40 text-xs font-bold tracking-widest uppercase mb-2 opacity-0">Links</h4>
+              <a href="#gallery" class="group text-sm font-medium text-white/70 hover:text-[#E04D2D] transition-colors flex items-center gap-2">
+                <i data-lucide="arrow-up-right" class="w-3 h-3 text-white/40 group-hover:text-[#E04D2D]"></i> Gallery
+              </a>
+              <a href="#" class="group text-sm font-medium text-white/70 hover:text-[#E04D2D] transition-colors flex items-center gap-2">
+                <i data-lucide="arrow-up-right" class="w-3 h-3 text-white/40 group-hover:text-[#E04D2D]"></i> Order Online
+              </a>
+              <a href="#contact" class="group text-sm font-medium text-white/70 hover:text-[#E04D2D] transition-colors flex items-center gap-2">
+                <i data-lucide="arrow-up-right" class="w-3 h-3 text-white/40 group-hover:text-[#E04D2D]"></i> Contact
+              </a>
+            </div>
+            
+            <!-- Legal -->
+            <div class="flex flex-col gap-4">
+              <h4 class="text-white/40 text-xs font-bold tracking-widest uppercase mb-2">Legal</h4>
+              <a href="#" class="group text-sm font-medium text-white/70 hover:text-[#E04D2D] transition-colors flex items-center gap-2">
+                <i data-lucide="arrow-up-right" class="w-3 h-3 text-white/40 group-hover:text-[#E04D2D]"></i> Terms
+              </a>
+              <a href="#" class="group text-sm font-medium text-white/70 hover:text-[#E04D2D] transition-colors flex items-center gap-2">
+                <i data-lucide="arrow-up-right" class="w-3 h-3 text-white/40 group-hover:text-[#E04D2D]"></i> Privacy
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="flex flex-col md:flex-row justify-between items-center text-xs text-white/50 pt-4 gap-4">
+          <span>© 2026 Spice Garden. All rights reserved.</span>
+          <div class="flex gap-6 text-[#E04D2D] font-medium">
+            <a href="#" class="group hover:text-white transition-colors flex items-center gap-2"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+            <a href="#" class="group hover:text-white transition-colors flex items-center gap-2"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+          </div>
+          <span>info@spicegarden.info</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+  </body>
+</html>

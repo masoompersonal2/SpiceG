@@ -29,7 +29,7 @@ export function AboutSection() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="col-span-1 bg-[#E04D2D] rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-6 md:p-12 flex flex-col justify-between relative overflow-hidden text-white min-h-[200px] sm:min-h-[300px] md:min-h-[380px]"
+            className="col-span-1 bg-[#E04D2D] rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-6 md:p-8 flex flex-col justify-between relative overflow-hidden text-white min-h-[150px] sm:min-h-[220px] md:min-h-[240px] lg:min-h-[260px]"
           >
             <div className="flex justify-between items-start">
               <span className="px-2 sm:px-4 py-1 sm:py-1.5 border border-white/40 rounded-full text-[8px] sm:text-[10px] md:text-xs font-semibold tracking-wider uppercase truncate max-w-[80%]">
@@ -40,8 +40,8 @@ export function AboutSection() {
               </div>
             </div>
 
-            <div className="mt-2 sm:mt-16 flex flex-col items-start w-full">
-              <h3 className="font-serif text-[1.25rem] leading-[1.1] sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-3 sm:mb-8 uppercase break-words w-full whitespace-pre-line">
+            <div className="mt-2 sm:mt-10 md:mt-auto flex flex-col items-start w-full">
+              <h3 className="font-serif text-[1.25rem] leading-[1.05] sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-3 sm:mb-6 uppercase break-words w-full whitespace-pre-line">
                 {siteData.about.aboutTitle.replace(/\\n/g, '\n')}
               </h3>
               <a href={siteData.about.aboutButtonLink} className="btn-12 !text-[10px] sm:!text-sm !px-3 sm:!px-12 !py-2 sm:!py-3 shadow-lg mt-1 sm:mt-4 whitespace-nowrap self-start">
@@ -56,7 +56,7 @@ export function AboutSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="col-span-1 relative rounded-[1.5rem] md:rounded-[2rem] overflow-hidden min-h-[200px] sm:min-h-[300px] md:min-h-[380px] bg-zinc-900 group"
+            className="col-span-1 relative rounded-[1.5rem] md:rounded-[2rem] overflow-hidden min-h-[150px] sm:min-h-[220px] md:min-h-[240px] lg:min-h-[260px] bg-zinc-900 group"
           >
             <img 
               src={siteData.about.aboutImage?.startsWith('http') ? siteData.about.aboutImage : (siteData.about.aboutImage?.startsWith('/') && !siteData.about.aboutImage?.startsWith('/uploads') ? siteData.about.aboutImage : `http://localhost:3000${siteData.about.aboutImage}`)} 

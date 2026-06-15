@@ -25,8 +25,8 @@ export class CustomerSetupDto {
   @IsNotEmpty()
   mobile: string;
 
-  @IsNotEmpty()
-  location: string;
+  @IsOptional()
+  liveLocation?: string;
 
   @IsOptional()
   profileImage?: string;
@@ -39,11 +39,25 @@ export class CustomerProfileUpdateDto {
   @IsNotEmpty()
   mobile: string;
 
-  @IsNotEmpty()
-  location: string;
-
   @IsOptional()
   profileImage?: string;
+}
+
+export class CustomerDeliveryDetailsDto {
+  @IsNotEmpty()
+  deliveryLocation: string;
+
+  @IsNotEmpty()
+  streetAddress: string;
+
+  @IsNotEmpty()
+  receiverName: string;
+
+  @IsNotEmpty()
+  receiverMobile: string;
+
+  @IsOptional()
+  homeImage?: string;
 }
 
 export class CustomerPasswordUpdateDto {

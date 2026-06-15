@@ -34,13 +34,24 @@ model Reservation {
   time      String
   status    String   @default("Pending")
   customerId Int?
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  razorpaySignature String?
+  isPaid            Boolean  @default(false)
+  amount            Int      @default(0)
   createdAt DateTime @default(now())
 }
 
 model RestaurantSettings {
-  id        Int      @id @default(1)
-  openTime  String   @default("18:00")
-  closeTime String   @default("23:00")
+  id             Int      @id @default(1)
+  openTime       String   @default("18:00")
+  closeTime      String   @default("23:00")
+  gstEnabled     Boolean  @default(true)
+  gstPercentage  Int      @default(18)
+  platformFee    Int      @default(0)
+  deliveryCharge Int      @default(0)
+  tableBookingFee Int     @default(0)
+  customFees     Json     @default("[]")
 }
 
 model SiteContent {
@@ -122,6 +133,12 @@ model Customer {
   fullName        String?
   mobile          String?
   location        String?
+  liveLocation    String?
+  deliveryLocation String?
+  streetAddress   String?
+  receiverName    String?
+  receiverMobile  String?
+  homeImage       String?
   profileImage    String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -133,6 +150,10 @@ model TicketBooking {
   eventId         Int
   tickets         Int      @default(1)
   status          String   @default("Confirmed")
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  razorpaySignature String?
+  isPaid            Boolean  @default(false)
   createdAt       DateTime @default(now())
 }
 
@@ -154,13 +175,54 @@ model CredentialRequest {
 }
 
 model FoodOrder {
-  id           Int      @id @default(autoincrement())
-  customerId   Int
-  items        Json     // Stores array of { id, name, priceText, quantity, isVeg, image }
-  totalAmount  Int
-  status       String   @default("Pending") // Pending, Approved, Rejected
-  paymentMethod String   @default("Cash on Delivery")
-  staffMessage String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id               Int      @id @default(autoincrement())
+  customerId       Int
+  items            Json     // Stores array of { id, name, priceText, quantity, isVeg, image }
+  totalAmount      Int
+  status           String   @default("Pending") // Pending, Approved, Out for Delivery, Delivered, Rejected, Cancelled
+  paymentMethod    String   @default("Cash on Delivery")
+  staffMessage     String?
+  deliveryFriendId Int?
+  customerLocation String?
+  deliveryType     String   @default("Delivery") // Delivery or Pickup
+  streetAddress    String?
+  receiverName     String?
+  receiverMobile   String?
+  homeImage        String?
+  feeBreakdown     Json     @default("{}")
+  razorpayOrderId  String?
+  razorpayPaymentId String?
+  razorpaySignature String?
+  isPaid           Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
+
+model DeliveryFriend {
+  id              Int      @id @default(autoincrement())
+  uniqueId        String   @unique
+  password        String
+  name            String
+  email           String
+  mobile          String
+  idCardImage     String
+  idCardNumber    String
+  address         String
+  resumeFile      String?
+  profileImage    String?
+  status          String   @default("Available") // Available, Delivering, On Leave
+  availableSince  DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model DeliveryFriendRequest {
+  id               Int      @id @default(autoincrement())
+  deliveryFriendId Int
+  newMobile        String?
+  newEmail         String?
+  newAddress       String?
+  status           String   @default("Pending") // Pending, Approved, Rejected
+  createdAt        DateTime @default(now())
+}
+

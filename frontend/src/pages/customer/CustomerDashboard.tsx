@@ -1,88 +1,332 @@
 import { useState, useEffect } from "react";
-import { Search, Plus, Minus, Settings, Calendar, Menu as MenuIcon, ShoppingBag, MapPin, User, LogOut, Upload, Info, Check } from "lucide-react";
-
-// Shared Custom Modal
-function Modal({ isOpen, title, desc, onConfirm, onCancel, confirmText = "Confirm", isDestructive = false }: any) {
-  if (!isOpen) return null;
-  return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="bg-white rounded-3xl p-8 max-w-sm w-full mx-4 shadow-2xl animate-in zoom-in-95 duration-200">
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">{title}</h3>
-        <p className="text-gray-500 mb-8">{desc}</p>
-        <div className="flex gap-3">
-          <button onClick={onCancel} className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full font-bold transition-colors">Cancel</button>
-          <button onClick={onConfirm} className={`flex-1 py-3 rounded-full font-bold transition-colors ${isDestructive ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-[#B2E624] hover:bg-[#a0d21d] text-black'}`}>
-            {confirmText}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+import { Search, Plus, Minus, Settings, Calendar, Menu as MenuIcon, ShoppingBag, MapPin, User, LogOut, Upload, Info, Check, ArrowLeft } from "lucide-react";
+import { Modal } from "../../components/ui/Modal";
 
 // ------------------------ Orders Tab ------------------------
-function OrdersTab() {
+function OrdersTab({ setCart, handleTabChange }: any) {
   const [orders, setOrders] = useState<any[]>([]);
+  const [isViewingHistory, setIsViewingHistory] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [historyStatusFilter, setHistoryStatusFilter] = useState("All");
+  const [historySortOrder, setHistorySortOrder] = useState("Recent");
+  const [selectedOrderIds, setSelectedOrderIds] = useState<number[]>([]);
+  const [showBulkDeleteModal, setShowBulkDeleteModal] = useState(false);
 
-  useEffect(() => {
+  const fetchOrders = () => {
     fetch("http://localhost:3000/api/orders", { credentials: "include" })
       .then(r => r.json()).then(setOrders).catch(() => {});
+  };
+
+  useEffect(() => {
+    fetchOrders();
   }, []);
+
+  const handleCancelOrder = async (orderId: number) => {
+    try {
+      const res = await fetch(`http://localhost:3000/api/orders/${orderId}/cancel`, {
+        method: "PUT",
+        credentials: "include"
+      });
+      if (res.ok) {
+        fetchOrders();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedOrderIds.length === 0) return;
+    try {
+      const res = await fetch("http://localhost:3000/api/orders/bulk-delete", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ orderIds: selectedOrderIds })
+      });
+      if (res.ok) {
+        setSelectedOrderIds([]);
+        setShowBulkDeleteModal(false);
+        fetchOrders();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const toggleSelectOrder = (id: number) => {
+    if (selectedOrderIds.includes(id)) {
+      setSelectedOrderIds(selectedOrderIds.filter(i => i !== id));
+    } else {
+      setSelectedOrderIds([...selectedOrderIds, id]);
+    }
+  };
+
+  const activeOrders = orders.filter(o => !['Delivered', 'Rejected', 'Cancelled'].includes(o.status));
+  const historyOrders = orders.filter(o => ['Delivered', 'Rejected', 'Cancelled'].includes(o.status));
+
+  const displayedHistoryOrders = historyOrders
+    .filter(o => {
+      if (historyStatusFilter !== "All" && o.status !== historyStatusFilter) return false;
+      if (!searchQuery) return true;
+      const q = searchQuery.toLowerCase();
+      return o.items.some((item: any) => item.name.toLowerCase().includes(q));
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return historySortOrder === "Recent" ? dateB - dateA : dateA - dateB;
+    });
+
+  const toggleSelectAll = () => {
+    const displayedOrderIds = displayedHistoryOrders.map(o => o.id);
+    const allSelected = displayedOrderIds.length > 0 && displayedOrderIds.every(id => selectedOrderIds.includes(id));
+    if (allSelected) {
+      setSelectedOrderIds(selectedOrderIds.filter(id => !displayedOrderIds.includes(id)));
+    } else {
+      const newSelections = displayedOrderIds.filter(id => !selectedOrderIds.includes(id));
+      setSelectedOrderIds([...selectedOrderIds, ...newSelections]);
+    }
+  };
+
+  const handleReorder = (order: any) => {
+    const newCart = order.items.map((item: any) => ({ ...item, quantity: item.quantity || 1 }));
+    setCart(newCart);
+    handleTabChange("Checkout");
+  };
+
+  const OrderCard = ({ order, selectable = false }: { order: any, selectable?: boolean }) => (
+    <div className={`border rounded-2xl p-6 shadow-sm flex flex-col relative transition-shadow ${
+      selectable ? 'cursor-pointer hover:shadow-md' : ''
+    } ${
+      selectedOrderIds.includes(order.id) 
+        ? 'border-[#B2E624] bg-[#B2E624]/5' 
+        : order.status === 'Delivered' 
+          ? 'border-green-200 bg-green-50' 
+          : 'border-gray-100 bg-white'
+    }`}>
+      {selectable && (
+        <div className="absolute top-4 right-4 z-10">
+          <input 
+            type="checkbox" 
+            checked={selectedOrderIds.includes(order.id)}
+            onChange={() => toggleSelectOrder(order.id)}
+            className="w-5 h-5 accent-black cursor-pointer"
+          />
+        </div>
+      )}
+      <div className={`flex justify-between items-start mb-4 ${selectable ? 'pr-8' : ''}`}>
+        <div>
+          <h3 className="text-lg font-bold">Order #{order.id}</h3>
+          <div className="text-sm text-gray-500 mt-1">{new Date(order.createdAt).toLocaleString()}</div>
+        </div>
+        <div className="flex flex-col items-end gap-2">
+          <span className={`px-4 py-1.5 rounded-full text-xs font-bold ${
+            order.status === 'Approved' ? 'bg-green-100 text-green-700' :
+            order.status === 'Rejected' || order.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+            'bg-yellow-100 text-yellow-700'
+          }`}>
+            {order.status}
+          </span>
+          {order.status === 'Pending' && (
+            <button 
+              onClick={(e) => { e.stopPropagation(); handleCancelOrder(order.id); }}
+              className="text-xs text-red-500 font-bold hover:underline"
+            >
+              Cancel Order
+            </button>
+          )}
+        </div>
+      </div>
+      
+      {order.staffMessage && order.status !== 'Approved' && (
+        <div className={`mb-4 p-3 rounded-xl text-sm ${order.status === 'Rejected' || order.status === 'Cancelled' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
+          <span className="font-bold">Staff Note: </span>{order.staffMessage}
+        </div>
+      )}
+      
+      {order.status === 'Approved' && (
+        <div className="mb-4 text-lg font-bold text-green-600 bg-green-50 p-3 rounded-xl border border-green-200">
+          {order.deliveryType === 'Pickup' ? 'Preparing your order' : 'Preparing your order'}
+        </div>
+      )}
+
+      {order.status === 'Ready for Pickup' && order.deliveryType === 'Pickup' && (
+        <div className="mb-4 text-lg font-bold text-green-600 bg-green-50 p-3 rounded-xl border border-green-200">
+          Order prepared please pick it up
+        </div>
+      )}
+
+      {order.deliveryFriend && (
+        <div className="mb-4 bg-gray-50 border border-gray-200 rounded-xl p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[#B2E624] bg-white">
+              <img src={order.deliveryFriend.profileImage ? (order.deliveryFriend.profileImage.startsWith('http') ? order.deliveryFriend.profileImage : `http://localhost:3000${order.deliveryFriend.profileImage}`) : "https://i.pravatar.cc/150?img=11"} className="w-full h-full object-cover" alt="Delivery Partner" />
+            </div>
+            <div>
+              <h4 className="font-bold text-gray-800 text-sm">Delivery Partner Assigned</h4>
+              <p className="text-gray-600 font-semibold">{order.deliveryFriend.name}</p>
+            </div>
+          </div>
+          {order.status !== 'Delivered' && (
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                alert(`Calling ${order.deliveryFriend.name}...`);
+              }}
+              className="bg-black text-white px-4 py-2 rounded-xl font-bold shadow-md hover:bg-gray-800 transition-colors flex items-center gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Call
+            </button>
+          )}
+        </div>
+      )}
+
+      <div className="space-y-2 mb-4 bg-gray-50 p-4 rounded-xl">
+        {order.items.map((item: any, idx: number) => (
+          <div key={idx} className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-2">
+              <span className={`w-2.5 h-2.5 rounded-full ${item.isVeg === "true" || item.isVeg === true ? 'bg-green-500' : 'bg-red-500'}`}></span>
+              <span className="font-medium">{item.name}</span>
+              <span className="text-gray-500">x{item.quantity}</span>
+            </div>
+            <span className="font-bold text-gray-700">₹{parseInt(item.priceText.replace(/[^\d]/g, '')) * item.quantity}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex justify-between items-center pt-4 border-t border-gray-100 mt-auto">
+        <span className="text-sm font-medium text-gray-500">Payment: {order.paymentMethod}</span>
+        <div className="text-lg font-black">₹{order.totalAmount}</div>
+      </div>
+      {selectable && (
+        <button 
+          onClick={(e) => { e.stopPropagation(); handleReorder(order); }}
+          className="mt-4 w-full py-2 bg-black hover:bg-gray-800 text-[#B2E624] font-bold rounded-xl transition-colors shadow-md"
+        >
+          Reorder
+        </button>
+      )}
+    </div>
+  );
+
+  if (isViewingHistory) {
+    return (
+      <div className="h-full flex flex-col bg-white rounded-3xl overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.03)] relative">
+        <Modal 
+          isOpen={showBulkDeleteModal} 
+          title="Delete Orders" 
+          desc={`Are you sure you want to delete ${selectedOrderIds.length} selected order(s)? This action cannot be undone.`} 
+          onConfirm={handleBulkDelete} 
+          onCancel={() => setShowBulkDeleteModal(false)} 
+          confirmText="Yes, Delete" 
+          isDestructive={true} 
+        />
+        <div className="md:sticky md:top-0 bg-white/95 backdrop-blur-md z-20 border-b border-gray-100 px-6 py-4 flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setIsViewingHistory(false)} className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold rounded-xl transition-colors flex items-center gap-2 shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+              Back
+            </button>
+            <h1 className="text-2xl font-bold">Order History</h1>
+          </div>
+          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+            <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+              <div className="relative w-full sm:w-[250px]">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input 
+                  type="text" 
+                  placeholder="Search by dish name..." 
+                  value={searchQuery} 
+                  onChange={(e) => setSearchQuery(e.target.value)} 
+                  className="w-full pl-9 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624]" 
+                />
+              </div>
+              <select 
+                value={historyStatusFilter}
+                onChange={(e) => setHistoryStatusFilter(e.target.value)}
+                className="bg-gray-50 border-none rounded-xl text-sm px-4 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-[#B2E624]"
+              >
+                <option value="All">All Statuses</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+              <select 
+                value={historySortOrder}
+                onChange={(e) => setHistorySortOrder(e.target.value)}
+                className="bg-gray-50 border-none rounded-xl text-sm px-4 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-[#B2E624]"
+              >
+                <option value="Recent">Recent First</option>
+                <option value="Oldest">Oldest First</option>
+              </select>
+            </div>
+            
+            <div className="flex items-center gap-4 w-full lg:w-auto mt-2 lg:mt-0">
+              <label className="flex items-center gap-2 cursor-pointer text-sm font-bold text-gray-700 shrink-0">
+                <input 
+                  type="checkbox" 
+                  checked={displayedHistoryOrders.length > 0 && displayedHistoryOrders.every(o => selectedOrderIds.includes(o.id))}
+                  onChange={toggleSelectAll}
+                  className="w-5 h-5 accent-black"
+                />
+                Select All
+              </label>
+              <button 
+                onClick={() => setShowBulkDeleteModal(true)}
+                disabled={selectedOrderIds.length === 0}
+                className={`px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-colors shrink-0 ${selectedOrderIds.length > 0 ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
+              >
+                Delete ({selectedOrderIds.length})
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
+          {displayedHistoryOrders.length === 0 ? (
+            <div className="text-center py-12 text-gray-500 font-bold">No history orders found.</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {displayedHistoryOrders.map((order: any) => (
+                <div key={order.id} onClick={() => toggleSelectOrder(order.id)} className="cursor-pointer">
+                  <OrderCard order={order} selectable={true} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)]">
-      <h1 className="text-2xl font-bold mb-8">My Past Orders</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-bold">Active Orders</h1>
+        {historyOrders.length > 0 && (
+          <button 
+            onClick={() => setIsViewingHistory(true)}
+            className="text-sm font-bold text-[#B2E624] bg-black px-6 py-2 rounded-full shadow-md hover:bg-gray-800 transition-colors flex items-center gap-2"
+          >
+            History
+          </button>
+        )}
+      </div>
       <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide">
-        {orders.length === 0 ? (
+        {activeOrders.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center">
             <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6">
               <ShoppingBag className="w-10 h-10 text-gray-300" />
             </div>
-            <h2 className="text-2xl font-bold mb-2">No Past Orders</h2>
-            <p className="text-gray-500 max-w-sm">You haven't placed any online orders yet. Explore our menu to discover delicious meals!</p>
+            <h2 className="text-2xl font-bold mb-2">No Active Orders</h2>
+            <p className="text-gray-500 max-w-sm">You don't have any pending orders. Explore our menu to place a new order!</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-6">
-            {orders.map((order: any) => (
-              <div key={order.id} className="border border-gray-100 rounded-2xl p-6 flex flex-col hover:shadow-md transition-shadow relative">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-bold">Order #{order.id}</h3>
-                    <div className="text-sm text-gray-500 mt-1">{new Date(order.createdAt).toLocaleString()}</div>
-                  </div>
-                  <span className={`px-4 py-1.5 rounded-full text-xs font-bold ${
-                    order.status === 'Approved' ? 'bg-green-100 text-green-700' :
-                    order.status === 'Rejected' ? 'bg-red-100 text-red-700' :
-                    'bg-yellow-100 text-yellow-700'
-                  }`}>
-                    {order.status}
-                  </span>
-                </div>
-                
-                {order.staffMessage && (
-                  <div className={`mb-4 p-3 rounded-xl text-sm ${order.status === 'Rejected' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
-                    <span className="font-bold">Staff Note: </span>{order.staffMessage}
-                  </div>
-                )}
-
-                <div className="space-y-2 mb-4 bg-gray-50 p-4 rounded-xl">
-                  {order.items.map((item: any, idx: number) => (
-                    <div key={idx} className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        <span className={`w-2.5 h-2.5 rounded-full ${item.isVeg === "true" || item.isVeg === true ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                        <span className="font-medium">{item.name}</span>
-                        <span className="text-gray-500">x{item.quantity}</span>
-                      </div>
-                      <span className="font-bold text-gray-700">₹{parseInt(item.priceText.replace(/[^\d]/g, '')) * item.quantity}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex justify-between items-center pt-4 border-t border-gray-100 mt-auto">
-                  <span className="text-sm font-medium text-gray-500">Payment: {order.paymentMethod}</span>
-                  <div className="text-lg font-black">₹{order.totalAmount}</div>
-                </div>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {activeOrders.map((order: any) => (
+              <OrderCard key={order.id} order={order} selectable={false} />
             ))}
           </div>
         )}
@@ -185,15 +429,62 @@ function EventsTab() {
   const handleBook = async () => {
     if (!bookingEvent) return;
     try {
+      // 1. Create booking (Pending Payment)
       const res = await fetch("http://localhost:3000/api/customer/auth/events/book", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ eventId: bookingEvent.id })
       });
-      if (res.ok) {
-        // Refresh my events
+      if (!res.ok) throw new Error("Failed to book");
+      const bookingData = await res.json();
+      const bookingId = bookingData.booking.id;
+
+      if (bookingEvent.price > 0) {
+        // 2. Load Razorpay
+        const loadRazorpayScript = () => new Promise((resolve) => {
+          const script = document.createElement('script');
+          script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+          script.onload = () => resolve(true);
+          script.onerror = () => resolve(false);
+          document.body.appendChild(script);
+        });
+        const resScript = await loadRazorpayScript();
+        if (!resScript) { alert("Razorpay SDK failed to load."); return; }
+
+        // 3. Create Order
+        const rzpRes = await fetch("http://localhost:3000/api/payments/razorpay/create-order", {
+          method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include",
+          body: JSON.stringify({ type: 'ticket_booking', id: bookingId })
+        });
+        const rzpOrder = await rzpRes.json();
+
+        // 4. Open Razorpay
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_dummy_key", 
+          amount: rzpOrder.amount, currency: rzpOrder.currency, name: "Spice Garden",
+          description: "Event Ticket Booking", order_id: rzpOrder.id,
+          handler: async function (response: any) {
+            const verifyRes = await fetch("http://localhost:3000/api/payments/razorpay/verify", {
+              method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include",
+              body: JSON.stringify({
+                type: 'ticket_booking', id: bookingId, razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id, razorpay_signature: response.razorpay_signature
+              })
+            });
+            if (verifyRes.ok) {
+              fetch("http://localhost:3000/api/customer/auth/events", { credentials: "include" }).then(r => r.json()).then(setMyEvents);
+              alert("Payment successful! Ticket confirmed.");
+            } else {
+              alert("Payment verification failed.");
+            }
+          }, theme: { color: "#B2E624" }
+        };
+        const paymentObject = new (window as any).Razorpay(options);
+        paymentObject.open();
+      } else {
         fetch("http://localhost:3000/api/customer/auth/events", { credentials: "include" }).then(r => r.json()).then(setMyEvents);
+        alert("Event booked successfully!");
       }
     } finally {
       setBookingEvent(null);
@@ -274,7 +565,7 @@ function EventsTab() {
 }
 
 // ------------------------ Reservations Tab ------------------------
-function ReservationsTab() {
+function ReservationsTab({ onPay }: { onPay: (id: number) => void }) {
   const [reservations, setReservations] = useState<any[]>([]);
 
   useEffect(() => {
@@ -298,6 +589,7 @@ function ReservationsTab() {
                     <h3 className="text-lg font-bold">{res.date} at {res.time}</h3>
                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                       res.status === 'Approved' ? 'bg-green-100 text-green-700' :
+                      res.status === 'Payment Pending' ? 'bg-orange-100 text-orange-700' :
                       res.status === 'Rejected' ? 'bg-red-100 text-red-700' :
                       'bg-yellow-100 text-yellow-700'
                     }`}>
@@ -309,8 +601,16 @@ function ReservationsTab() {
                     <span><Info className="inline w-3 h-3 mr-1"/>{res.phone}</span>
                   </div>
                 </div>
-                <div className="text-right text-sm text-gray-400">
-                  Booked on {new Date(res.createdAt).toLocaleDateString()}
+                <div className="flex flex-col items-end gap-2 text-sm text-gray-400">
+                  <span>Booked on {new Date(res.createdAt).toLocaleDateString()}</span>
+                  {res.status === 'Payment Pending' && (
+                    <button 
+                      onClick={() => onPay(res.id)}
+                      className="px-4 py-2 bg-[#B2E624] text-black font-bold rounded-xl shadow-md hover:bg-[#a1d020] transition-colors"
+                    >
+                      Pay Now
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -323,7 +623,14 @@ function ReservationsTab() {
 
 // ------------------------ Settings Tab ------------------------
 function SettingsTab({ user, onUpdate }: any) {
-  const [profile, setProfile] = useState({ fullName: user.fullName||'', mobile: user.mobile||'', location: user.location||'', profileImage: user.profileImage||'' });
+  const [profile, setProfile] = useState({ fullName: user.fullName||'', mobile: user.mobile||'', profileImage: user.profileImage||'' });
+  const [delivery, setDelivery] = useState({ 
+    deliveryLocation: user.deliveryLocation||'', 
+    streetAddress: user.streetAddress||'', 
+    receiverName: user.receiverName||'', 
+    receiverMobile: user.receiverMobile||'', 
+    homeImage: user.homeImage||'' 
+  });
   const [pass, setPass] = useState({ previousPassword: '', newPassword: '', confirmPassword: '' });
   const [msg, setMsg] = useState({ text: '', type: '' });
 
@@ -342,6 +649,25 @@ function SettingsTab({ user, onUpdate }: any) {
       } else throw new Error();
     } catch {
       setMsg({ text: "Failed to update profile", type: "error" });
+    }
+    setTimeout(() => setMsg({ text: '', type: '' }), 3000);
+  };
+
+  const handleDeliverySubmit = async (e: any) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("http://localhost:3000/api/customer/auth/delivery-details", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(delivery)
+      });
+      if (res.ok) {
+        setMsg({ text: "Delivery details updated successfully", type: "success" });
+        onUpdate();
+      } else throw new Error();
+    } catch {
+      setMsg({ text: "Failed to update delivery details", type: "error" });
     }
     setTimeout(() => setMsg({ text: '', type: '' }), 3000);
   };
@@ -375,6 +701,17 @@ function SettingsTab({ user, onUpdate }: any) {
       const res = await fetch("http://localhost:3000/api/customer/auth/upload", { method: "POST", credentials: "include", body: fd });
       const data = await res.json();
       if (res.ok) setProfile({ ...profile, profileImage: data.imageUrl });
+    } catch {}
+  };
+
+  const handleHomeImageUpload = async (e: any) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const fd = new FormData(); fd.append("image", file);
+    try {
+      const res = await fetch("http://localhost:3000/api/customer/auth/upload", { method: "POST", credentials: "include", body: fd });
+      const data = await res.json();
+      if (res.ok) setDelivery({ ...delivery, homeImage: data.imageUrl });
     } catch {}
   };
 
@@ -416,12 +753,45 @@ function SettingsTab({ user, onUpdate }: any) {
                 <label className="text-sm font-medium text-gray-700">Mobile Number</label>
                 <input required type="text" value={profile.mobile} onChange={e=>setProfile({...profile, mobile: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
               </div>
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-sm font-medium text-gray-700">Location</label>
-                <input required type="text" value={profile.location} onChange={e=>setProfile({...profile, location: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
-              </div>
             </div>
             <button type="submit" className="px-8 py-3 bg-[#B2E624] text-black font-bold rounded-xl hover:bg-[#a0d21d] transition-colors shadow-lg shadow-[#B2E624]/20">Save Profile</button>
+          </form>
+
+          {/* Delivery Details Section */}
+          <h2 className="text-lg font-bold mt-12 mb-6">Order Receiving Details</h2>
+          <form onSubmit={handleDeliverySubmit} className="space-y-6">
+            <div className="flex items-center gap-6">
+              <div className="w-32 h-24 rounded-xl bg-gray-100 overflow-hidden relative border-4 border-white shadow-sm flex items-center justify-center text-gray-400">
+                {delivery.homeImage ? <img src={`http://localhost:3000${delivery.homeImage}`} className="w-full h-full object-cover" /> : <span className="text-xs font-semibold">Home Image</span>}
+              </div>
+              <div>
+                <label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full text-sm font-semibold cursor-pointer transition-colors flex items-center gap-2">
+                  <Upload className="w-4 h-4" /> Upload Home Image
+                  <input type="file" className="hidden" accept="image/*" onChange={handleHomeImageUpload} />
+                </label>
+                <p className="text-xs text-gray-400 mt-2">Help drivers find your door faster</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-medium text-gray-700">Delivery Location</label>
+                <input required type="text" value={delivery.deliveryLocation} onChange={e=>setDelivery({...delivery, deliveryLocation: e.target.value})} placeholder="City, Area (e.g. Gokak, Belagavi)" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-medium text-gray-700">Street Address</label>
+                <input required type="text" value={delivery.streetAddress} onChange={e=>setDelivery({...delivery, streetAddress: e.target.value})} placeholder="House No., Street Name, Landmark" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Receiver's Name</label>
+                <input required type="text" value={delivery.receiverName} onChange={e=>setDelivery({...delivery, receiverName: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Receiver's Mobile</label>
+                <input required type="text" value={delivery.receiverMobile} onChange={e=>setDelivery({...delivery, receiverMobile: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
+              </div>
+            </div>
+            <button type="submit" className="px-8 py-3 bg-black text-[#B2E624] font-bold rounded-xl hover:bg-gray-800 transition-colors shadow-lg">Save Delivery Details</button>
           </form>
         </div>
 
@@ -453,6 +823,282 @@ function SettingsTab({ user, onUpdate }: any) {
   );
 }
 
+// ------------------------ Checkout Tab ------------------------
+function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSuccessMsg, settings }: any) {
+  const [checkoutPaymentMethod, setCheckoutPaymentMethod] = useState("Cash on Delivery");
+  const [checkoutDeliveryType, setCheckoutDeliveryType] = useState("Delivery");
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  
+  const subtotal = cart.reduce((total: number, item: any) => total + (parseInt(item.priceText.replace(/[^\d]/g, '')) * item.quantity), 0);
+
+  // Dynamic Calculations
+  const platformFee = settings?.platformFee || 0;
+  const deliveryCharge = checkoutDeliveryType === "Delivery" ? (settings?.deliveryCharge || 0) : 0;
+  const gstAmount = settings?.gstEnabled ? Math.round(subtotal * ((settings?.gstPercentage || 18) / 100)) : 0;
+  
+  // Custom Fees logic
+  const customFees = settings?.customFees || [];
+  let customFeesTotal = 0;
+  const calculatedCustomFees = customFees.map((fee: any) => {
+    const amount = fee.isDiscount ? -Math.abs(fee.value) : Math.abs(fee.value);
+    customFeesTotal += amount;
+    return { ...fee, amount };
+  });
+
+  const finalTotal = subtotal + platformFee + deliveryCharge + gstAmount + customFeesTotal;
+
+  const feeBreakdown = {
+    subtotal,
+    platformFee,
+    deliveryCharge,
+    gstEnabled: settings?.gstEnabled,
+    gstPercentage: settings?.gstPercentage,
+    gstAmount,
+    customFees: calculatedCustomFees
+  };
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handlePlaceOrder = async () => {
+    try {
+      // 1. Create Order in Backend (Pending Payment)
+      const res = await fetch("http://localhost:3000/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          items: cart,
+          totalAmount: finalTotal,
+          paymentMethod: "Razorpay", // Enforced Online Payment
+          deliveryType: checkoutDeliveryType,
+          streetAddress: user.streetAddress,
+          receiverName: user.receiverName,
+          receiverMobile: user.receiverMobile,
+          homeImage: user.homeImage,
+          feeBreakdown
+        })
+      });
+
+      if (!res.ok) throw new Error("Order creation failed");
+      const orderData = await res.json();
+      const orderId = orderData.order.id;
+
+      // 2. Load Razorpay Script
+      const resScript = await loadRazorpayScript();
+      if (!resScript) {
+        alert("Razorpay SDK failed to load. Are you online?");
+        return;
+      }
+
+      // 3. Create Razorpay Order
+      const razorpayOrderRes = await fetch("http://localhost:3000/api/payments/razorpay/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ type: 'food_order', id: orderId })
+      });
+      const razorpayOrder = await razorpayOrderRes.json();
+
+      if (!razorpayOrder.id) {
+        alert("Server error. Are you online?");
+        return;
+      }
+
+      // 4. Open Razorpay Checkout
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_dummy_key", 
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: "Spice Garden",
+        description: "Food Order Payment",
+        order_id: razorpayOrder.id,
+        handler: async function (response: any) {
+          // 5. Verify Payment
+          const verifyRes = await fetch("http://localhost:3000/api/payments/razorpay/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              type: 'food_order',
+              id: orderId,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            })
+          });
+
+          if (verifyRes.ok) {
+            setShowConfirmModal(false);
+            setCart([]);
+            setReservationSuccessMsg("Payment Successful! Order Placed.");
+            setTimeout(() => setReservationSuccessMsg(""), 4000);
+            handleTabChange("Orders");
+          } else {
+            alert("Payment Verification Failed!");
+          }
+        },
+        prefill: {
+          name: user.fullName || "Customer",
+          email: user.email || "",
+          contact: user.mobile || ""
+        },
+        theme: {
+          color: "#B2E624"
+        }
+      };
+
+      const paymentObject = new (window as any).Razorpay(options);
+      paymentObject.on('payment.failed', function (response: any){
+        alert("Payment Failed. Reason: " + response.error.description);
+      });
+      paymentObject.open();
+
+    } catch (e) {
+      console.error("Order failed", e);
+      alert("Failed to process order.");
+    }
+  };
+
+  if (cart.length === 0) {
+    return (
+      <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] items-center justify-center">
+        <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
+        <button onClick={() => handleTabChange("Menu")} className="px-6 py-3 bg-[#B2E624] text-black font-bold rounded-full">Go to Menu</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] relative">
+      <Modal 
+        isOpen={showConfirmModal} 
+        title="Confirm Cash on Delivery" 
+        desc="Are you sure you want to place this order using Cash on Delivery?" 
+        onConfirm={handlePlaceOrder} 
+        onCancel={() => setShowConfirmModal(false)} 
+        confirmText="Yes, Confirm" 
+      />
+      
+      <div className="flex items-center gap-4 mb-8">
+        <button onClick={() => handleTabChange("Menu")} className="flex items-center gap-2 p-2 px-4 hover:bg-gray-100 rounded-full transition-colors font-bold text-gray-700">
+          <ArrowLeft className="w-5 h-5" /> Back to Menu
+        </button>
+        <h1 className="text-2xl font-bold ml-4">Secure Checkout</h1>
+      </div>
+
+      <div className="flex-1 overflow-y-auto pr-2 pb-4 flex flex-col lg:flex-row gap-8">
+        <div className="flex-[2] space-y-6">
+          <div className="bg-gray-50 rounded-2xl p-6">
+            <h2 className="text-lg font-bold mb-4">Order Summary</h2>
+            <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2">
+              {cart.map((item: any, idx: number) => (
+                <div key={idx} className="flex justify-between items-center text-sm bg-white p-3 rounded-xl border border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <img src={item.image.startsWith('http') ? item.image : `http://localhost:3000${item.image}`} className="w-10 h-10 rounded-lg object-cover" />
+                    <div>
+                      <span className="font-bold">{item.name}</span>
+                      <div className="text-gray-500">Qty: {item.quantity}</div>
+                    </div>
+                  </div>
+                  <span className="font-bold text-lg">₹{parseInt(item.priceText.replace(/[^\d]/g, '')) * item.quantity}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-gray-50 rounded-2xl p-6">
+            <h2 className="text-lg font-bold mb-4">Payment Options</h2>
+            <div className="space-y-3">
+              <label className="flex items-center justify-between p-4 border-2 border-[#B2E624] bg-white rounded-xl cursor-pointer">
+                <div className="flex items-center gap-3">
+                  <input type="radio" checked={checkoutPaymentMethod === "Cash on Delivery"} onChange={() => setCheckoutPaymentMethod("Cash on Delivery")} className="w-4 h-4 text-[#B2E624]" />
+                  <span className="font-bold">Cash on Delivery</span>
+                </div>
+              </label>
+              <label className="flex items-center justify-between p-4 border-2 border-gray-100 opacity-50 bg-white rounded-xl cursor-not-allowed">
+                <div className="flex items-center gap-3">
+                  <input type="radio" disabled className="w-4 h-4" />
+                  <span className="font-bold">Online Payment</span>
+                </div>
+                <span className="text-xs bg-gray-200 px-2 py-1 rounded">Soon</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-[1] flex flex-col gap-6">
+          <div className="bg-gray-50 rounded-2xl p-6">
+            <h2 className="text-lg font-bold mb-4">Delivery Method</h2>
+            <div className="space-y-3">
+              <label className={`flex items-center justify-between p-4 border-2 ${checkoutDeliveryType === "Delivery" ? 'border-[#B2E624]' : 'border-gray-100'} bg-white rounded-xl cursor-pointer`}>
+                <div className="flex items-center gap-3">
+                  <input type="radio" checked={checkoutDeliveryType === "Delivery"} onChange={() => setCheckoutDeliveryType("Delivery")} className="w-4 h-4 text-[#B2E624]" />
+                  <span className="font-bold">Delivery Partner</span>
+                </div>
+              </label>
+              <label className={`flex items-center justify-between p-4 border-2 ${checkoutDeliveryType === "Pickup" ? 'border-[#B2E624]' : 'border-gray-100'} bg-white rounded-xl cursor-pointer`}>
+                <div className="flex items-center gap-3">
+                  <input type="radio" checked={checkoutDeliveryType === "Pickup"} onChange={() => setCheckoutDeliveryType("Pickup")} className="w-4 h-4 text-[#B2E624]" />
+                  <span className="font-bold">I will pick up</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div className="bg-gray-900 text-white rounded-2xl p-6 mt-auto">
+            <div className="flex justify-between text-gray-400 mb-2"><span>Subtotal</span><span>₹{subtotal.toLocaleString()}</span></div>
+            {settings?.gstEnabled && (
+              <div className="flex justify-between text-gray-400 mb-2"><span>GST ({settings?.gstPercentage || 18}%)</span><span>₹{gstAmount.toLocaleString()}</span></div>
+            )}
+            {platformFee > 0 && (
+              <div className="flex justify-between text-gray-400 mb-2"><span>Platform Fee</span><span>₹{platformFee.toLocaleString()}</span></div>
+            )}
+            {checkoutDeliveryType === "Delivery" && deliveryCharge > 0 && (
+              <div className="flex justify-between text-gray-400 mb-2"><span>Delivery Charge</span><span>₹{deliveryCharge.toLocaleString()}</span></div>
+            )}
+            {calculatedCustomFees.map((fee: any, idx: number) => (
+              <div key={idx} className={`flex justify-between mb-2 ${fee.amount < 0 ? 'text-green-400' : 'text-gray-400'}`}>
+                <span>{fee.title}</span>
+                <span>{fee.amount < 0 ? '-' : ''}₹{Math.abs(fee.amount).toLocaleString()}</span>
+              </div>
+            ))}
+            
+            <div className="flex justify-between text-2xl font-black mt-4 pt-4 border-t border-gray-800 mb-6"><span>Total</span><span className="text-[#B2E624]">₹{finalTotal.toLocaleString()}</span></div>
+            
+            {checkoutDeliveryType === "Delivery" && (!user.streetAddress || !user.receiverMobile || !user.receiverName || !user.deliveryLocation) ? (
+              <div className="text-center">
+                <p className="text-sm text-red-400 mb-4 font-bold">Please set up your order receiving details in Settings before ordering.</p>
+                <button 
+                  onClick={() => handleTabChange("Settings")}
+                  className="w-full py-4 bg-white hover:bg-gray-200 text-black rounded-xl font-black transition-all flex items-center justify-center gap-2"
+                >
+                  Configure Settings
+                </button>
+              </div>
+            ) : (
+              <button 
+                onClick={() => handlePlaceOrder()} 
+                className="w-full mt-6 bg-[#B2E624] text-black font-bold py-4 rounded-xl shadow-lg hover:bg-[#a0d21d] transition-colors flex items-center justify-center gap-2"
+              >
+                <Check className="w-5 h-5" />
+                Place Order
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ------------------------ Main Component ------------------------
 export function CustomerDashboard() {
   const queryParams = new URLSearchParams(window.location.search);
@@ -469,82 +1115,148 @@ export function CustomerDashboard() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [cart, setCart] = useState<any[]>([]);
   const [attemptingToLeave, setAttemptingToLeave] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [reservationSuccessMsg, setReservationSuccessMsg] = useState("");
-  
-  // Checkout Modal State
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const [checkoutPaymentMethod, setCheckoutPaymentMethod] = useState("Cash on Delivery");
+  const [pendingReservation, setPendingReservation] = useState<any>(null);
 
-  const totalCartAmount = cart.reduce((total: number, item: any) => total + (parseInt(item.priceText.replace(/[^\d]/g, '')) * item.quantity), 0);
-
-  const handlePlaceOrder = async () => {
-    try {
-      const res = await fetch("http://localhost:3000/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          items: cart,
-          totalAmount: totalCartAmount,
-          paymentMethod: checkoutPaymentMethod
-        })
-      });
-      if (res.ok) {
-        setIsCheckoutOpen(false);
-        setCart([]);
-        setReservationSuccessMsg("Order Placed Successfully!");
-        setTimeout(() => setReservationSuccessMsg(""), 4000);
-        handleTabChange("Orders");
-      }
-    } catch (e) {
-      console.error("Order failed", e);
-    }
-  };
+  // Prevent accidental back button navigation
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.href);
+    const handlePopState = () => {
+      window.history.pushState(null, "", window.location.href);
+      setAttemptingToLeave(true);
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   useEffect(() => {
-    // Process any pending reservations
+    // Check for pending reservations
     const pending = localStorage.getItem("pendingReservation");
     if (pending) {
       try {
-        const payload = JSON.parse(pending);
-        fetch("http://localhost:3000/api/reservations", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(payload),
-        }).then(() => {
-          localStorage.removeItem("pendingReservation");
-          setReservationSuccessMsg("Table Booked Successfully!");
-          setTimeout(() => setReservationSuccessMsg(""), 4000);
-        });
+        setPendingReservation(JSON.parse(pending));
+        localStorage.removeItem("pendingReservation");
       } catch (e) {
         localStorage.removeItem("pendingReservation");
       }
     }
 
     // Trap the browser back button
-    window.history.pushState({ page: 'dashboard' }, '', window.location.href);
     const handlePopState = () => {
-      window.history.pushState({ page: 'dashboard' }, '', window.location.href);
       setAttemptingToLeave(true);
+      window.history.pushState(null, '', window.location.href);
     };
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    };
+    window.history.pushState(null, '', window.location.href);
     window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
   }, []);
 
-  const fetchUser = async () => {
+  const [settings, setSettings] = useState<any>(null);
+
+  const fetchUserAndSettings = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/customer/auth/me", { credentials: "include" });
-      if (!res.ok) throw new Error();
-      setUser(await res.json());
+      const [resUser, resSettings] = await Promise.all([
+        fetch("http://localhost:3000/api/customer/auth/me", { credentials: "include" }),
+        fetch("http://localhost:3000/api/settings")
+      ]);
+      if (!resUser.ok) throw new Error();
+      setUser(await resUser.json());
+      if (resSettings.ok) {
+        const settingsData = await resSettings.json();
+        setSettings({
+          ...settingsData,
+          customFees: typeof settingsData.customFees === 'string' ? JSON.parse(settingsData.customFees) : (settingsData.customFees || [])
+        });
+        setIsAuthenticated(true);
+      } else {
+        window.location.replace("/auth");
+      }
     } catch {
       window.location.replace("/auth");
     }
   };
 
   useEffect(() => {
-    fetchUser();
+    fetchUserAndSettings();
   }, []);
+
+  const handlePendingReservationConfirm = async () => {
+    if (!pendingReservation) return;
+    try {
+      const res = await fetch("http://localhost:3000/api/reservations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(pendingReservation),
+      });
+      if (!res.ok) throw new Error();
+      setReservationSuccessMsg("Reservation request sent to admin for approval!");
+      setTimeout(() => setReservationSuccessMsg(""), 4000);
+    } catch (e) {
+      console.error(e);
+      alert("Failed to book table.");
+    } finally {
+      setPendingReservation(null);
+    }
+  };
+
+  const handlePayReservation = async (reservationId: number) => {
+    try {
+      const loadRazorpayScript = () => new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+      });
+      const resScript = await loadRazorpayScript();
+      if (!resScript) { alert("Razorpay SDK failed to load."); return; }
+
+      const rzpRes = await fetch("http://localhost:3000/api/payments/razorpay/create-order", {
+        method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include",
+        body: JSON.stringify({ type: 'table_reservation', id: reservationId })
+      });
+      const rzpOrder = await rzpRes.json();
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_dummy_key", 
+        amount: rzpOrder.amount, currency: rzpOrder.currency, name: "Spice Garden",
+        description: "Table Booking Fee", order_id: rzpOrder.id,
+        handler: async function (response: any) {
+          const verifyRes = await fetch("http://localhost:3000/api/payments/razorpay/verify", {
+            method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include",
+            body: JSON.stringify({
+              type: 'table_reservation', id: reservationId, razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id, razorpay_signature: response.razorpay_signature
+            })
+          });
+          if (verifyRes.ok) {
+            setReservationSuccessMsg("Payment successful! Table booked.");
+            setTimeout(() => setReservationSuccessMsg(""), 4000);
+            window.location.reload(); // Reload to fetch updated reservations
+          } else {
+            alert("Payment verification failed.");
+          }
+        }, theme: { color: "#B2E624" }
+      };
+      const paymentObject = new (window as any).Razorpay(options);
+      paymentObject.open();
+    } catch (e) {
+      console.error(e);
+      alert("Failed to initiate payment.");
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -555,7 +1267,13 @@ export function CustomerDashboard() {
     }
   };
 
-  if (!user) return <div className="min-h-screen bg-[#F8F9FB] flex items-center justify-center"><div className="w-8 h-8 border-4 border-[#B2E624] border-t-transparent rounded-full animate-spin"></div></div>;
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#F6EEED] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#E04D2D]"></div>
+      </div>
+    );
+  }
 
   const tabs = [
     { id: "Menu", icon: MenuIcon },
@@ -573,50 +1291,16 @@ export function CustomerDashboard() {
           {reservationSuccessMsg}
         </div>
       )}
-      
-      {/* Checkout Hidden Modal */}
-      {isCheckoutOpen && (
-        <div className="fixed inset-0 z-[250] flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl animate-in zoom-in-95 duration-200">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Review Your Order</h3>
-            
-            <div className="max-h-48 overflow-y-auto mb-6 pr-2">
-              {cart.map((item: any, idx: number) => (
-                <div key={idx} className="flex justify-between text-sm mb-2">
-                  <span>{item.quantity}x {item.name}</span>
-                  <span className="font-bold">₹{parseInt(item.priceText.replace(/[^\d]/g, '')) * item.quantity}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="border-t border-gray-100 pt-4 mb-6 flex justify-between text-lg font-black">
-              <span>Total Amount</span>
-              <span>₹{totalCartAmount.toLocaleString()}</span>
-            </div>
-
-            <div className="mb-8">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Payment Method</label>
-              <select 
-                value={checkoutPaymentMethod}
-                onChange={(e) => setCheckoutPaymentMethod(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B2E624] font-medium"
-              >
-                <option value="Cash on Delivery">Cash on Delivery</option>
-                <option value="Online Payment" disabled>Online Payment (Coming Soon)</option>
-              </select>
-            </div>
-
-            <div className="flex gap-3">
-              <button onClick={() => setIsCheckoutOpen(false)} className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full font-bold transition-colors">Cancel</button>
-              <button onClick={handlePlaceOrder} className="flex-[2] py-3 bg-[#B2E624] hover:bg-[#a0d21d] text-black rounded-full font-bold transition-colors shadow-lg shadow-[#B2E624]/30">
-                Place Order
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       <Modal isOpen={attemptingToLeave} title="Leave Dashboard?" desc="Are you sure you want to go back to the home page?" onConfirm={() => window.location.replace("/")} onCancel={() => setAttemptingToLeave(false)} confirmText="Yes, Leave" isDestructive={true} />
+      <Modal
+        isOpen={!!pendingReservation}
+        title="Confirm Table Booking"
+        desc={`Do you want to confirm your table reservation request for ${pendingReservation?.date} at ${pendingReservation?.time}?`}
+        onConfirm={handlePendingReservationConfirm}
+        onCancel={() => setPendingReservation(null)}
+        confirmText="Confirm Request"
+      />
       <Modal isOpen={isLoggingOut} title="Sign Out" desc="Are you sure you want to sign out from your account?" onConfirm={handleLogout} onCancel={() => setIsLoggingOut(false)} confirmText="Yes, Sign Out" isDestructive={true} />
       
       {/* Fixed Top Header */}
@@ -660,9 +1344,10 @@ export function CustomerDashboard() {
           <div className="h-full overflow-hidden">
             {currentTab === "Menu" && <MenuTab cart={cart} setCart={setCart} />}
             {currentTab === "Events" && <EventsTab />}
-            {currentTab === "Reservations" && <ReservationsTab />}
-            {currentTab === "Settings" && <SettingsTab user={user} onUpdate={fetchUser} />}
-            {currentTab === "Orders" && <OrdersTab />}
+            {currentTab === "Reservations" && <ReservationsTab onPay={handlePayReservation} />}
+            {currentTab === "Settings" && <SettingsTab user={user} onUpdate={fetchUserAndSettings} />}
+            {currentTab === "Orders" && <OrdersTab setCart={setCart} handleTabChange={handleTabChange} />}
+            {currentTab === "Checkout" && <CheckoutTab user={user} cart={cart} setCart={setCart} handleTabChange={handleTabChange} setReservationSuccessMsg={setReservationSuccessMsg} settings={settings} />}
           </div>
 
           {/* Right Sidebar - My Cart (Only visible on Menu tab) */}
@@ -724,7 +1409,7 @@ export function CustomerDashboard() {
                     ₹{cart.reduce((total: number, item: any) => total + (parseInt(item.priceText.replace(/[^\d]/g, '')) * item.quantity), 0).toLocaleString()}
                   </span>
                 </div>
-                <button onClick={() => setIsCheckoutOpen(true)} disabled={cart.length === 0} className={`w-full py-4 font-bold rounded-full transition-colors ${cart.length === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-black text-white hover:bg-gray-800'}`}>
+                <button onClick={() => handleTabChange("Checkout")} disabled={cart.length === 0} className={`w-full py-4 font-bold rounded-full transition-colors ${cart.length === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-black text-white hover:bg-gray-800'}`}>
                   Proceed
                 </button>
               </div>

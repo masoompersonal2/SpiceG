@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AdminContentTab } from "./AdminContentTab";
 import { AdminHeaderPagesTab } from "./AdminHeaderPagesTab";
+import { Modal } from "../../components/ui/Modal";
 
 const TimeSelector = ({ value, onChange }: { value: string, onChange: (v: string) => void }) => {
   const [h, m] = (value || "12:00").split(":");
@@ -37,7 +38,29 @@ const TimeSelector = ({ value, onChange }: { value: string, onChange: (v: string
 export function AdminDashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const [attemptingToLeave, setAttemptingToLeave] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   
+  // Prevent accidental back button navigation
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.href);
+    const handlePopState = () => {
+      window.history.pushState(null, "", window.location.href);
+      setAttemptingToLeave(true);
+    };
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    };
+    window.addEventListener("popstate", handlePopState);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
   const [profile, setProfile] = useState({ username: "Admin User", profileImage: "https://i.pravatar.cc/150?img=47" });
   
   // Profile Update State
@@ -67,8 +90,20 @@ export function AdminDashboard() {
 
   // Staff Requests State
   const [staffRequests, setStaffRequests] = useState<any[]>([]);
+  const [deliveryRequests, setDeliveryRequests] = useState<any[]>([]);
+
+  // Delivery Partner Hiring States
+  const [idInputType, setIdInputType] = useState<"url" | "file">("url");
+  const [resumeInputType, setResumeInputType] = useState<"url" | "file">("url");
+  const [idFile, setIdFile] = useState<File | null>(null);
+  const [resumeUploadFile, setResumeUploadFile] = useState<File | null>(null);
 
   const [toastMessage, setToastMessage] = useState("");
+
+  // Reservation Custom Pricing
+  const [showPriceModal, setShowPriceModal] = useState(false);
+  const [selectedResId, setSelectedResId] = useState<number | null>(null);
+  const [customPrice, setCustomPrice] = useState("");
 
   const CATEGORIES = [
     "Main Course (Non-Veg)", "Soups", "Starters", "Chinese", 
@@ -103,6 +138,7 @@ export function AdminDashboard() {
           profileImage: data.profileImage ? (data.profileImage.startsWith('http') ? data.profileImage : `http://localhost:3000${data.profileImage}?v=2`) : "https://i.pravatar.cc/150?img=47"
         });
         setUpdateUsername(data.username);
+        setIsAuthenticated(true);
       } else if (res.status === 401) {
         window.location.replace("/admin/login");
       }
@@ -253,6 +289,10 @@ export function AdminDashboard() {
       const data = await res.json();
       setStaffRequests(data);
     }
+    const resDel = await fetch(`${apiUrl}/admin/delivery-friends/requests-detailed`, { credentials: "include" });
+    if (resDel.ok) {
+      setDeliveryRequests(await resDel.json());
+    }
   };
 
   const handleStaffRequest = async (id: number, action: 'approve' | 'reject') => {
@@ -268,6 +308,19 @@ export function AdminDashboard() {
     }
   };
 
+  const handleDeliveryRequest = async (id: number, action: 'approve' | 'reject') => {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const res = await fetch(`${apiUrl}/admin/delivery-friends/requests/${id}/${action}`, {
+      method: "PUT",
+      credentials: "include"
+    });
+    if (res.ok) {
+      setToastMessage(`Delivery Partner Request ${action}d successfully`);
+      setTimeout(() => setToastMessage(""), 3000);
+      fetchStaffRequests();
+    }
+  };
+
   const updateReservationStatus = async (id: number, status: string) => {
     const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
     await fetch(`${apiUrl}/reservations/${id}/status`, {
@@ -277,6 +330,30 @@ export function AdminDashboard() {
       body: JSON.stringify({ status })
     });
     fetchReservations();
+  };
+
+  const handleAcceptWithPrice = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedResId || !customPrice) return;
+    
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const res = await fetch(`${apiUrl}/reservations/${selectedResId}/accept-with-price`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount: parseInt(customPrice) })
+    });
+    
+    if (res.ok) {
+      setToastMessage("Reservation accepted with custom price.");
+      setTimeout(() => setToastMessage(""), 3000);
+      setShowPriceModal(false);
+      setSelectedResId(null);
+      setCustomPrice("");
+      fetchReservations();
+    } else {
+      alert("Failed to update reservation");
+    }
   };
 
   const filteredReservations = reservations
@@ -295,8 +372,19 @@ export function AdminDashboard() {
       return 0;
     });
 
+
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#F6EEED] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#E04D2D]"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#F6EEED] flex overflow-hidden relative">
+    <div className="min-h-screen bg-[#F6EEED] font-sans flex relative overflow-hidden">
+      <Modal isOpen={attemptingToLeave} title="Leave Dashboard?" desc="Are you sure you want to go back to the home page?" onConfirm={() => window.location.replace("/")} onCancel={() => setAttemptingToLeave(false)} confirmText="Yes, Leave" isDestructive={true} />
       
       {/* Toast Notification */}
       <AnimatePresence>
@@ -348,7 +436,8 @@ export function AdminDashboard() {
                   { id: 3, label: "Reservations", icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
                   { id: 4, label: "Queries", icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> },
                   { id: 5, label: "Header Pages", icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><path d="m9 16 3-3 3 3"/></svg> },
-                  { id: 6, label: "Staff Requests", icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
+                  { id: 6, label: "Requests", icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
+                  { id: 7, label: "Delivery Partners", icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21 8-2 2-1.5-3.7A2 2 0 0 0 15.64 5H3"/><path d="m7 14-3 5"/><path d="m11 14 3 5"/><path d="m15 14-3 5"/><rect width="2" height="4" x="18" y="10" rx="1"/><circle cx="5" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg> },
                 ].map(tab => (
                   <button 
                     key={tab.id}
@@ -434,6 +523,14 @@ export function AdminDashboard() {
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </button>
           
+          {/* Delivery Friends Tab */}
+          <button 
+            onClick={() => setActiveTab(7)}
+            className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${activeTab === 7 ? 'bg-[#2D211F] text-[#F36B39] shadow-lg transform scale-105' : 'text-gray-400 hover:text-gray-800'}`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21 8-2 2-1.5-3.7A2 2 0 0 0 15.64 5H3"/><path d="m7 14-3 5"/><path d="m11 14 3 5"/><path d="m15 14-3 5"/><rect width="2" height="4" x="18" y="10" rx="1"/><circle cx="5" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg>
+          </button>
+          
           <div className="mt-auto"></div>
           
           <button className="w-12 h-12 text-gray-400 hover:text-gray-800 rounded-full flex items-center justify-center transition-colors mb-4">
@@ -462,7 +559,7 @@ export function AdminDashboard() {
             </div>
             
             <h2 className="text-lg md:text-2xl font-bold text-gray-800 md:ml-12 truncate max-w-[150px] md:max-w-none">
-              {activeTab === 0 ? 'Dashboard' : activeTab === 1 ? 'Profile Settings' : activeTab === 2 ? 'Menu Management' : activeTab === 3 ? 'Reservations' : activeTab === 4 ? 'Contact Queries' : activeTab === 5 ? 'Header Pages Management' : 'Staff Requests'}
+              {activeTab === 0 ? 'Dashboard' : activeTab === 1 ? 'Profile Settings' : activeTab === 2 ? 'Menu Management' : activeTab === 3 ? 'Reservations' : activeTab === 4 ? 'Contact Queries' : activeTab === 5 ? 'Header Pages Management' : activeTab === 6 ? 'Update Requests' : 'Delivery Partners'}
             </h2>
           </div>
 
@@ -707,11 +804,11 @@ export function AdminDashboard() {
                     {(res.status === 'Pending' || res.status === 'New') && (
                       <div className="flex gap-3 mt-6">
                         <button 
-                          onClick={() => updateReservationStatus(res.id, 'Approved')}
+                          onClick={() => { setSelectedResId(res.id); setShowPriceModal(true); }}
                           className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded-xl font-bold shadow-md transition-colors flex items-center justify-center gap-2"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                          Approve
+                          Accept & Set Price
                         </button>
                         <button 
                           onClick={() => updateReservationStatus(res.id, 'Rejected')}
@@ -839,10 +936,212 @@ export function AdminDashboard() {
                   </div>
                 )}
               </div>
+
+              <h3 className="text-xl md:text-2xl font-bold text-[#2D211F] mt-8">Delivery Partner Requests</h3>
+              <p className="text-gray-500 mb-4">Approve or reject delivery partners requests to change their details.</p>
+
+              <div className="flex flex-col gap-4">
+                {deliveryRequests.map(req => (
+                  <div key={req.id} className="bg-yellow-50 border border-yellow-200 rounded-2xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                      <div className="font-bold text-gray-800">{req.friendName} ({req.friendUniqueId})</div>
+                      {req.newMobile && <div className="text-sm text-gray-500 mt-1">New Mobile: <span className="font-semibold text-black">{req.newMobile}</span></div>}
+                      {req.newEmail && <div className="text-sm text-gray-500 mt-1">New Email: <span className="font-semibold text-black">{req.newEmail}</span></div>}
+                      {req.newAddress && <div className="text-sm text-gray-500 mt-1">New Address: <span className="font-semibold text-black">{req.newAddress}</span></div>}
+                      <div className="text-xs text-gray-400 mt-1">{new Date(req.createdAt).toLocaleString()}</div>
+                    </div>
+                    <div className="flex gap-3">
+                      <button 
+                        onClick={() => handleDeliveryRequest(req.id, 'approve')}
+                        className="bg-green-500 text-white px-4 py-2 rounded-xl font-bold hover:bg-green-600 transition-colors shadow-sm text-sm"
+                      >
+                        Approve
+                      </button>
+                      <button 
+                        onClick={() => handleDeliveryRequest(req.id, 'reject')}
+                        className="bg-red-500 text-white px-4 py-2 rounded-xl font-bold hover:bg-red-600 transition-colors shadow-sm text-sm"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {deliveryRequests.length === 0 && (
+                  <div className="text-center py-12 text-gray-400">
+                    No pending requests from delivery partners.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 7 && (
+            <div className="w-full min-h-[60vh] bg-white rounded-3xl md:rounded-[2rem] shadow-sm p-4 md:p-8 max-w-4xl mx-auto flex flex-col gap-6 md:gap-8 overflow-y-auto">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl md:text-2xl font-bold text-[#2D211F]">Hire Delivery Partner</h3>
+                <button 
+                  onClick={() => window.location.href = '/admin/delivery-friends'}
+                  className="bg-[#2D211F] text-[#F36B39] px-6 py-2 rounded-xl font-bold shadow-lg transition-transform hover:scale-105"
+                >
+                  View All Partners
+                </button>
+              </div>
+
+              <form className="space-y-6" onSubmit={async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                
+                let finalIdCard = formData.get("idCardImage") as string;
+                let finalResume = formData.get("resumeFile") as string;
+
+                const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+
+                // Upload ID Card if file
+                if (idInputType === "file" && idFile) {
+                  const fd = new FormData();
+                  fd.append("file", idFile);
+                  const uploadRes = await fetch(`${apiUrl}/admin/upload-file`, { method: "POST", credentials: "include", body: fd });
+                  if (uploadRes.ok) {
+                    const data = await uploadRes.json();
+                    finalIdCard = data.fileUrl;
+                  }
+                }
+
+                // Upload Resume if file
+                if (resumeInputType === "file" && resumeUploadFile) {
+                  const fd = new FormData();
+                  fd.append("file", resumeUploadFile);
+                  const uploadRes = await fetch(`${apiUrl}/admin/upload-file`, { method: "POST", credentials: "include", body: fd });
+                  if (uploadRes.ok) {
+                    const data = await uploadRes.json();
+                    finalResume = data.fileUrl;
+                  }
+                }
+
+                const res = await fetch(`${apiUrl}/admin/delivery-friends/hire`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  credentials: "include",
+                  body: JSON.stringify({
+                    name: formData.get("name"),
+                    email: formData.get("email"),
+                    mobile: formData.get("mobile"),
+                    idCardImage: finalIdCard || "",
+                    idCardNumber: formData.get("idCardNumber"),
+                    address: formData.get("address"),
+                    resumeFile: finalResume || "",
+                    password: formData.get("password"),
+                  })
+                });
+                if (res.ok) {
+                  const data = await res.json();
+                  setToastMessage(`Hired successfully! Unique ID: ${data.friend.uniqueId}`);
+                  setTimeout(() => setToastMessage(""), 5000);
+                  (e.target as HTMLFormElement).reset();
+                  setIdFile(null);
+                  setResumeUploadFile(null);
+                }
+              }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">Full Name</label>
+                    <input name="name" required className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#E04D2D]" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">Email Address</label>
+                    <input name="email" type="email" required className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#E04D2D]" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">Mobile Number</label>
+                    <input name="mobile" required className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#E04D2D]" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">Setup Login Password</label>
+                    <input name="password" required className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#E04D2D]" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">ID Card Number (Aadhar/Pan)</label>
+                    <input name="idCardNumber" required className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#E04D2D]" />
+                  </div>
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="block text-sm font-bold text-gray-700">ID Card Image</label>
+                      <div className="flex gap-2 text-xs font-semibold">
+                        <button type="button" onClick={() => setIdInputType("url")} className={`px-2 py-1 rounded ${idInputType === "url" ? 'bg-black text-white' : 'bg-gray-200'}`}>URL</button>
+                        <button type="button" onClick={() => setIdInputType("file")} className={`px-2 py-1 rounded ${idInputType === "file" ? 'bg-black text-white' : 'bg-gray-200'}`}>Upload</button>
+                      </div>
+                    </div>
+                    {idInputType === "url" ? (
+                      <input name="idCardImage" required placeholder="https://..." className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#E04D2D]" />
+                    ) : (
+                      <input type="file" required accept="image/*,.pdf" onChange={(e) => setIdFile(e.target.files?.[0] || null)} className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#E04D2D] bg-white" />
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">Residential Address</label>
+                  <textarea name="address" required rows={3} className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#E04D2D]" />
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-sm font-bold text-gray-700">Resume Document (Optional)</label>
+                    <div className="flex gap-2 text-xs font-semibold">
+                      <button type="button" onClick={() => setResumeInputType("url")} className={`px-2 py-1 rounded ${resumeInputType === "url" ? 'bg-black text-white' : 'bg-gray-200'}`}>URL</button>
+                      <button type="button" onClick={() => setResumeInputType("file")} className={`px-2 py-1 rounded ${resumeInputType === "file" ? 'bg-black text-white' : 'bg-gray-200'}`}>Upload</button>
+                    </div>
+                  </div>
+                  {resumeInputType === "url" ? (
+                    <input name="resumeFile" placeholder="https://..." className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#E04D2D]" />
+                  ) : (
+                    <input type="file" accept="image/*,.pdf,.doc,.docx" onChange={(e) => setResumeUploadFile(e.target.files?.[0] || null)} className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#E04D2D] bg-white" />
+                  )}
+                </div>
+
+                <button className="w-full bg-[#E04D2D] hover:bg-[#C84022] text-white font-black py-4 rounded-xl shadow-lg transition-colors">
+                  Hire Partner
+                </button>
+              </form>
             </div>
           )}
         </div>
       </main>
+
+      {/* Accept & Set Price Modal */}
+      <AnimatePresence>
+        {showPriceModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-white p-8 rounded-[2rem] max-w-sm w-full shadow-2xl">
+              <h3 className="font-bold text-2xl text-gray-800 mb-4">Set Booking Amount</h3>
+              <p className="text-gray-500 mb-6 text-sm">Enter the required booking fee for this reservation.</p>
+              <form onSubmit={handleAcceptWithPrice}>
+                <div className="mb-6">
+                  <label className="block text-sm font-bold text-gray-700 mb-2">Amount (₹)</label>
+                  <input 
+                    type="number" 
+                    required 
+                    min="1"
+                    value={customPrice}
+                    onChange={(e) => setCustomPrice(e.target.value)}
+                    placeholder="e.g. 500"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#E04D2D] focus:ring-1 focus:ring-[#E04D2D] bg-gray-50"
+                  />
+                </div>
+                <div className="flex gap-4">
+                  <button type="button" onClick={() => setShowPriceModal(false)} className="flex-1 py-3 rounded-xl font-bold text-gray-500 hover:bg-gray-100 transition-colors">Cancel</button>
+                  <button type="submit" className="flex-1 py-3 rounded-xl font-bold text-white bg-green-500 hover:bg-green-600 transition-colors shadow-lg">Confirm</button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }

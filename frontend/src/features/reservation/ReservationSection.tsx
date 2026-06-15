@@ -180,7 +180,10 @@ export function ReservationSection() {
                   placeholder="Date" 
                   onFocus={(e) => e.target.type = 'date'}
                   onBlur={(e) => { if (!e.target.value) e.target.type = 'text'; }}
-                  className="w-full bg-transparent text-white placeholder-gray-400 focus:outline-none text-lg md:text-xl transition-colors appearance-none [&::-webkit-calendar-picker-indicator]:hidden" 
+                  min={new Date().toISOString().split('T')[0]}
+                  max={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                  className="w-full bg-transparent text-white placeholder-gray-400 focus:outline-none text-lg md:text-xl transition-colors cursor-pointer" 
+                  onClick={(e) => e.currentTarget.showPicker && e.currentTarget.showPicker()}
                 />
                 <Calendar className="w-5 h-5 text-gray-400 pointer-events-none group-focus-within:text-[#E04D2D] transition-colors" />
                 <div className="absolute bottom-0 left-0 h-[2px] bg-[#E04D2D] w-0 group-focus-within:w-full transition-all duration-300"></div>

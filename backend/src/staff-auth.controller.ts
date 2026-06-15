@@ -101,23 +101,73 @@ export class StaffAuthController {
   @UseGuards(StaffGuard)
   @Get('orders')
   async getOrders() {
-    // Return today's orders (or just all for simplicity, can filter by date later)
-    return await prisma.foodOrder.findMany({
+    const orders = await prisma.foodOrder.findMany({
       orderBy: { createdAt: 'desc' }
+    });
+    
+    // Attach delivery friend details if any
+    const detailedOrders = await Promise.all(orders.map(async (order) => {
+      let friend = null;
+      if (order.deliveryFriendId) {
+        friend = await prisma.deliveryFriend.findUnique({
+          where: { id: order.deliveryFriendId },
+          select: { id: true, name: true, uniqueId: true, profileImage: true, mobile: true }
+        });
+      }
+      
+      const customerRecord = await prisma.customer.findUnique({
+        where: { id: order.customerId },
+        select: { fullName: true, email: true }
+      });
+      const username = customerRecord?.fullName || customerRecord?.email?.split('@')[0] || `User #${order.customerId}`;
+      
+      return { ...order, deliveryFriend: friend, customer: { username } };
+    }));
+    
+    return detailedOrders;
+  }
+
+  @UseGuards(StaffGuard)
+  @Get('available-friends')
+  async getAvailableFriends() {
+    return await prisma.deliveryFriend.findMany({
+      where: { status: 'Available' },
+      orderBy: { availableSince: 'asc' },
+      select: { id: true, name: true, uniqueId: true, mobile: true, profileImage: true }
     });
   }
 
   @UseGuards(StaffGuard)
   @Put('orders/:id/status')
   async updateOrderStatus(@Req() req: any, @Body() body: any) {
-    const { orderId, status, message } = body;
+    const { orderId, status, message, deliveryFriendId } = body;
+    const data: any = { status };
+    if (status === 'Rejected') {
+      data.staffMessage = message;
+    }
+    if (deliveryFriendId) {
+      data.deliveryFriendId = parseInt(deliveryFriendId);
+    }
     const order = await prisma.foodOrder.update({
       where: { id: parseInt(orderId) },
-      data: {
-        status,
-        staffMessage: message
-      }
+      data
     });
     return order;
+  }
+
+  @UseGuards(StaffGuard)
+  @Put('orders/bulk-delete')
+  async bulkDeleteOrders(@Req() req: any, @Body() body: any) {
+    const { orderIds } = body;
+    if (!orderIds || !Array.isArray(orderIds)) return { message: "Invalid request" };
+
+    // Delete selected orders
+    await prisma.foodOrder.deleteMany({
+      where: {
+        id: { in: orderIds }
+      }
+    });
+
+    return { message: "Orders deleted successfully" };
   }
 }

@@ -11,19 +11,26 @@ export function AdminLogin() {
     setErrorMsg("");
     try {
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
-      const endpoint = role === "Admin" ? `${apiUrl}/auth/login` : `${apiUrl}/staff/login`;
+      let endpoint = "";
+      if (role === "Admin") endpoint = `${apiUrl}/auth/login`;
+      else if (role === "Staff") endpoint = `${apiUrl}/staff/login`;
+      else if (role === "DeliveryFriend") endpoint = `${apiUrl}/delivery-friend/login`;
       
+      const payload = role === "DeliveryFriend" ? { uniqueId: username, password } : { username, password };
+
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify(payload)
       });
       const data = await res.json();
       if (res.ok) {
-        window.location.href = role === "Admin" ? "/admin/dashboard" : "/staff/dashboard";
+        if (role === "Admin") window.location.replace("/admin/dashboard");
+        else if (role === "Staff") window.location.replace("/staff/dashboard");
+        else window.location.replace("/delivery-friend/dashboard");
       } else {
-        setErrorMsg(data.error || "Login failed");
+        setErrorMsg(data.error || data.message || "Login failed");
       }
     } catch (error) {
       setErrorMsg("Error connecting to server");
@@ -54,10 +61,13 @@ export function AdminLogin() {
             >
               <option value="Admin">Admin</option>
               <option value="Staff">Support Staff</option>
+              <option value="DeliveryFriend">Delivery Partner</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-600 mb-2">Username</label>
+            <label className="block text-sm font-semibold text-gray-600 mb-2">
+              {role === "DeliveryFriend" ? "Unique ID (DFSG...)" : "Username"}
+            </label>
             <input 
               type="text" 
               value={username}

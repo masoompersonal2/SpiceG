@@ -56,9 +56,31 @@ export class ReservationController {
   @Patch(':id/status')
   @UseGuards(AuthGuard)
   async updateStatus(@Param('id') id: string, @Body() body: { status: string }) {
+    let finalStatus = body.status;
+    
+    if (finalStatus === 'Approved') {
+      const settings = await prisma.restaurantSettings.findUnique({ where: { id: 1 } });
+      if (settings && settings.tableBookingFee > 0) {
+        finalStatus = 'Payment Pending';
+      }
+    }
+
     return await prisma.reservation.update({
       where: { id: parseInt(id) },
-      data: { status: body.status }
+      data: { status: finalStatus }
+    });
+  }
+
+  // Admin route to accept reservation and set custom price
+  @Patch(':id/accept-with-price')
+  @UseGuards(AuthGuard)
+  async acceptWithPrice(@Param('id') id: string, @Body() body: { amount: number }) {
+    return await prisma.reservation.update({
+      where: { id: parseInt(id) },
+      data: { 
+        status: 'Payment Pending',
+        amount: body.amount
+      }
     });
   }
 

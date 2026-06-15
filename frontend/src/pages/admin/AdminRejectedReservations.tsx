@@ -20,11 +20,17 @@ export function AdminRejectedReservations() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const fetchReservations = () => {
-    const token = localStorage.getItem("adminToken");
-    fetch("http://localhost:3000/api/reservations", {
-      headers: { "Authorization": `Bearer ${token}` }
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    fetch(`${apiUrl}/reservations`, {
+      credentials: "include"
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok && res.status === 401) {
+          window.location.replace("/admin/login");
+          throw new Error("Unauthorized");
+        }
+        return res.json();
+      })
       .then(data => {
         // Filter ONLY rejected
         setReservations(data.filter((r: Reservation) => r.status === "Rejected"));
@@ -33,10 +39,6 @@ export function AdminRejectedReservations() {
   };
 
   useEffect(() => {
-    if (!localStorage.getItem("adminToken")) {
-      window.location.replace("/admin/login");
-      return;
-    }
     fetchReservations();
   }, []);
 
@@ -62,7 +64,8 @@ export function AdminRejectedReservations() {
 
   const confirmDelete = async () => {
     const token = localStorage.getItem("adminToken");
-    const res = await fetch("http://localhost:3000/api/reservations/bulk-delete", {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const res = await fetch(`${apiUrl}/reservations/bulk-delete`, {
       method: "POST",
       headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ ids: selectedIds })

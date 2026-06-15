@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Eye, EyeOff, Mail, Sparkles, MapPin, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, Mail, Sparkles, ArrowLeft } from "lucide-react";
 
 interface PupilProps {
   size?: number;
@@ -134,7 +134,7 @@ export function AuthPage() {
   
   const [fullName, setFullName] = useState("");
   const [mobile, setMobile] = useState("");
-  const [location, setLocation] = useState("");
+  const [liveLocation, setLiveLocation] = useState("");
   const [profileImage] = useState("");
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
 
@@ -240,19 +240,35 @@ export function AuthPage() {
 
   const fetchLiveLocation = () => {
     if (!navigator.geolocation) {
-      setError("Geolocation is not supported by your browser");
+      console.warn("Geolocation is not supported by your browser");
       return;
     }
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocation(`${position.coords.latitude}, ${position.coords.longitude}`);
-        setError("");
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+          const data = await res.json();
+          if (data && data.display_name) {
+            setLiveLocation(data.display_name);
+          } else {
+            setLiveLocation(`${latitude}, ${longitude}`);
+          }
+        } catch (e) {
+          setLiveLocation(`${position.coords.latitude}, ${position.coords.longitude}`);
+        }
       },
       () => {
-        setError("Unable to retrieve your location");
+        console.warn("Unable to retrieve location");
       }
     );
   };
+
+  useEffect(() => {
+    if (view === 'setup') {
+      fetchLiveLocation();
+    }
+  }, [view]);
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -276,7 +292,9 @@ export function AuthPage() {
         if (pending) {
           window.location.replace("/dashboard?tab=Reservations");
         } else {
-          window.location.replace("/dashboard");
+          setTimeout(() => {
+            window.location.replace("/dashboard");
+          }, 1500);
         }
       }
     } catch (err: any) {
@@ -321,7 +339,7 @@ export function AuthPage() {
 
   const handleSetupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName || !mobile || !location) return;
+    if (!fullName || !mobile) return;
 
     setError("");
     setIsLoading(true);
@@ -346,7 +364,7 @@ export function AuthPage() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ fullName, mobile, location, profileImage: imageUrl }),
+        body: JSON.stringify({ fullName, mobile, liveLocation, profileImage: imageUrl }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Setup failed");
@@ -382,7 +400,7 @@ export function AuthPage() {
     }
   };
 
-  const isSetupComplete = fullName.trim() !== "" && mobile.trim() !== "" && location.trim() !== "";
+  const isSetupComplete = fullName.trim() !== "" && mobile.trim() !== "";
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2 bg-black text-white">
@@ -573,28 +591,6 @@ export function AuthPage() {
                     placeholder="+91 9876543210"
                     className="w-full bg-black border-2 border-[#1A1A1A] text-white px-5 py-4 rounded-xl focus:outline-none focus:border-[#B2E624] transition-colors"
                   />
-                </div>
-
-                <div className="space-y-2 text-left">
-                  <label htmlFor="location" className="text-sm font-medium">Location</label>
-                  <div className="flex gap-2">
-                    <input 
-                      type="text" 
-                      required
-                      value={location}
-                      onChange={e => setLocation(e.target.value)}
-                      placeholder="Gokak, belagavi, Karnataka. 591309."
-                      className="w-full bg-black border-2 border-[#1A1A1A] text-white px-5 py-4 rounded-xl focus:outline-none focus:border-[#B2E624] transition-colors"
-                    />
-                    <button
-                      type="button"
-                      onClick={fetchLiveLocation}
-                      className="h-12 px-4 rounded-md border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-white transition-colors"
-                      title="Fetch Live Location"
-                    >
-                      <MapPin className="size-5" />
-                    </button>
-                  </div>
                 </div>
 
                 <div className="space-y-2 text-left">

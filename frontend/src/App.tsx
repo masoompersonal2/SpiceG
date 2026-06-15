@@ -13,7 +13,9 @@ import { AuthPage } from "./pages/AuthPage";
 import { CustomerDashboard } from "./pages/customer/CustomerDashboard";
 import { AdminQueries } from "./pages/admin/AdminQueries";
 import { AdminGalleryImages } from "./pages/admin/AdminGalleryImages";
+import { AdminDeliveryFriendsList } from "./pages/admin/AdminDeliveryFriendsList";
 import { StaffDashboard } from "./pages/staff/StaffDashboard";
+import { DeliveryFriendDashboard } from "./pages/delivery/DeliveryFriendDashboard";
 import { ContentProvider } from './context/ContentContext';
 
 function App() {
@@ -55,6 +57,10 @@ function AppContent() {
     return <AdminGalleryImages />;
   }
   
+  if (path === "/admin/delivery-friends") {
+    return <AdminDeliveryFriendsList />;
+  }
+  
   if (path === "/menu") {
     return <MenuPage />;
   }
@@ -85,6 +91,10 @@ function AppContent() {
 
   if (path === "/staff/dashboard") {
     return <StaffDashboard />;
+  }
+
+  if (path === "/delivery-friend/dashboard") {
+    return <DeliveryFriendDashboard />;
   }
 
   return <Home />;
