@@ -357,6 +357,7 @@ function MenuTab({ cart, setCart, setShowCartPanel }: any) {
   };
 
   const filteredItems = items.filter((item: any) => {
+    if (item.priceText && item.priceText.toLowerCase().includes("catch")) return false;
     const matchesCat = selectedCategory === "All" || item.category === selectedCategory;
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCat && matchesSearch;
@@ -749,7 +750,7 @@ function SettingsTab({ user, onUpdate }: any) {
           <form onSubmit={handleProfileSubmit} className="space-y-6">
             <div className="flex items-center gap-6">
               <div className="w-24 h-24 rounded-full bg-gray-100 overflow-hidden relative border-4 border-white shadow-sm">
-                {profile.profileImage ? <img src={`${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${profile.profileImage}`} className="w-full h-full object-cover" /> : <User className="w-10 h-10 m-6 text-gray-400" />}
+                {profile.profileImage ? <img src={profile.profileImage.startsWith('http') ? profile.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${profile.profileImage}`} className="w-full h-full object-cover" /> : <User className="w-10 h-10 m-6 text-gray-400" />}
               </div>
               <div>
                 <label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full text-sm font-semibold cursor-pointer transition-colors flex items-center gap-2">
@@ -1344,7 +1345,7 @@ export function CustomerDashboard() {
             <LogOut className="w-4 h-4" /> Logout
           </button>
           {user.profileImage ? (
-            <img src={`${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${user.profileImage}`} alt="Profile" className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-white shadow-sm" />
+            <img src={user.profileImage.startsWith('http') ? user.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${user.profileImage}`} alt="Profile" className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-white shadow-sm" />
           ) : (
             <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-100 flex items-center justify-center border-2 border-white shadow-sm"><User className="w-4 h-4 md:w-5 md:h-5 text-gray-400" /></div>
           )}
