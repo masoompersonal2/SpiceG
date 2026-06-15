@@ -61,5 +61,20 @@ export class AppModule {
       });
       console.log('Seeded default spiceStaff account');
     }
+
+    // Seed admin user
+    const adminUser = process.env.ADMIN_USERNAME || 'AdminS';
+    const adminPass = process.env.ADMIN_PASSWORD || 'adminSPICE';
+    const existingAdmin = await prisma.admin.findUnique({ where: { username: adminUser } });
+    if (!existingAdmin) {
+      const hashedAdminPassword = await bcrypt.hash(adminPass, 10);
+      await prisma.admin.create({
+        data: {
+          username: adminUser,
+          password: hashedAdminPassword
+        }
+      });
+      console.log(`Seeded default Admin account: ${adminUser}`);
+    }
   }
 }
