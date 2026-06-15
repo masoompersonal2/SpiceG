@@ -41,14 +41,11 @@ export function AdminEventsManager({ onBack, showToast }: { onBack: () => void, 
     if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} tickets?`)) return;
         
     try {
-      const token = sessionStorage.getItem("adminSession");
       for (const id of selectedIds) {
         await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events/${id}`, {
           method: "DELETE",
           credentials: "include",
-          headers: { 
-            "Authorization": `Bearer ${token}` 
-          }
+          headers: { }
         });
       }
       showToast("Selected tickets deleted.");
@@ -61,7 +58,6 @@ export function AdminEventsManager({ onBack, showToast }: { onBack: () => void, 
 
   const handleToggleEnable = async () => {
     try {
-      const token = sessionStorage.getItem("adminSession");
       for (const id of selectedIds) {
         const ev = events.find(e => e.id === id);
         if (ev) {
@@ -69,8 +65,7 @@ export function AdminEventsManager({ onBack, showToast }: { onBack: () => void, 
             method: "PUT",
             credentials: "include",
             headers: {  
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
+              "Content-Type": "application/json"
             },
             body: JSON.stringify({ isEnabled: !ev.isEnabled })
           });
@@ -90,13 +85,11 @@ export function AdminEventsManager({ onBack, showToast }: { onBack: () => void, 
   };
 
   const saveEdit = async () => {
-        const token = sessionStorage.getItem("adminSession");
         const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events/${editingId}`, {
       method: "PUT",
       credentials: "include",
       headers: {  
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(editForm)
     });

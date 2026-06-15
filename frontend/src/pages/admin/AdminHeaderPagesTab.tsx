@@ -148,13 +148,11 @@ export function AdminHeaderPagesTab({ showToast, onViewGallery }: Props) {
       showToast("Please fill all ticket fields, including the image upload and location.");
       return;
     }
-    const token = sessionStorage.getItem("adminSession");
     const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events`, {
       method: "POST",
       credentials: "include",
       headers: {  
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(newTicket)
     });

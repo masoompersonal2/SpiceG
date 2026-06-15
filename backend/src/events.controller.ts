@@ -4,7 +4,7 @@ import { AuthGuard } from './auth.guard';
 
 const prisma = new PrismaClient();
 
-@Controller('events')
+@Controller('api/events')
 export class EventsController {
   
   // Public route to view events
