@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { AuthGuard } from './auth.guard';
 import * as bcrypt from 'bcryptjs';
 
-const prisma = new PrismaClient();
+import { prisma } from './prisma';
 
 @Controller('api/admin/delivery-friends')
 export class AdminDeliveryFriendController {

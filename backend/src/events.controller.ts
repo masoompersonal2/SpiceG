@@ -2,7 +2,7 @@ import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, ParseIntPip
 import { PrismaClient } from '@prisma/client';
 import { AuthGuard } from './auth.guard';
 
-const prisma = new PrismaClient();
+import { prisma } from './prisma';
 
 @Controller('api/events')
 export class EventsController {

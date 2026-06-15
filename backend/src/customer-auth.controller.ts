@@ -11,7 +11,7 @@ import * as bcrypt from 'bcryptjs';
 import { CustomerLoginDto, CustomerSignupDto, CustomerSetupDto, CustomerProfileUpdateDto, CustomerPasswordUpdateDto, CustomerDeliveryDetailsDto } from './dto/customer.dto';
 import { CustomerAuthGuard } from './customer.guard';
 
-const prisma = new PrismaClient();
+import { prisma } from './prisma';
 
 @Controller('api/customer/auth')
 export class CustomerAuthController {

@@ -5,7 +5,7 @@ import * as bcrypt from 'bcryptjs';
 import { Response } from 'express';
 import { LoginDto } from './dto/auth.dto';
 
-const prisma = new PrismaClient();
+import { prisma } from './prisma';
 
 @Controller('api/auth')
 export class AuthController {

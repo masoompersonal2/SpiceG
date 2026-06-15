@@ -4,7 +4,7 @@ import * as crypto from 'crypto';
 const Razorpay = require('razorpay');
 import { Request, Response } from 'express';
 
-const prisma = new PrismaClient();
+import { prisma } from './prisma';
 
 @Controller('api/payments/razorpay')
 export class PaymentController {

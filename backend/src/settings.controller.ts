@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { AuthGuard } from './auth.guard';
 import { StaffGuard } from './staff.guard';
 
-const prisma = new PrismaClient();
+import { prisma } from './prisma';
 
 @Controller('api/settings')
 export class SettingsController {

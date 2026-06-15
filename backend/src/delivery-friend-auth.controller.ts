@@ -8,7 +8,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { getCloudinaryStorage } from './cloudinary.config';
 import * as path from 'path';
 
-const prisma = new PrismaClient();
+import { prisma } from './prisma';
 
 @Controller('api/delivery-friend')
 export class DeliveryFriendAuthController {

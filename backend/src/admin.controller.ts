@@ -8,7 +8,7 @@ import { getCloudinaryStorage } from './cloudinary.config';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcryptjs';
 
-const prisma = new PrismaClient();
+import { prisma } from './prisma';
 
 @Controller('api/admin')
 @UseGuards(AuthGuard)

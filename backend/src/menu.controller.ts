@@ -6,7 +6,7 @@ import { extname } from 'path';
 import { getCloudinaryStorage } from './cloudinary.config';
 import { v4 as uuidv4 } from 'uuid';
 
-const prisma = new PrismaClient();
+import { prisma } from './prisma';
 
 @Controller('api/menu')
 export class MenuController {

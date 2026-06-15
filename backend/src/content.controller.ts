@@ -6,7 +6,7 @@ import * as path from 'path';
 
 import { getCloudinaryStorage } from './cloudinary.config';
 
-const prisma = new PrismaClient();
+import { prisma } from './prisma';
 
 @Controller('api/content')
 export class ContentController {

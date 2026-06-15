@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CustomerAuthGuard } from './customer.guard';
 import { Request } from 'express';
 
-const prisma = new PrismaClient();
+import { prisma } from './prisma';
 
 @Controller('api/reservations')
 export class ReservationController {

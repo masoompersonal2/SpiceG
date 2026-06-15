@@ -2,7 +2,7 @@ import { Controller, Post, Get, Put, Body, Req, UseGuards } from '@nestjs/common
 import { PrismaClient } from '@prisma/client';
 import { CustomerAuthGuard } from './customer.guard';
 
-const prisma = new PrismaClient();
+import { prisma } from './prisma';
 
 @Controller('api/orders')
 export class CustomerOrderController {
