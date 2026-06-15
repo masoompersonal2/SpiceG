@@ -5,8 +5,7 @@ import { useContent } from "../../context/ContentContext";
 export function OrderCtaSection() {
   const { siteData } = useContent();
 
-  return (
-    <section className="w-full px-4 md:px-6 pt-8 md:pt-16 pb-12 md:pb-32 flex flex-col items-center bg-black">
+    <section className="w-full px-4 md:px-6 pt-6 md:pt-16 pb-8 md:pb-32 flex flex-col items-center bg-black">
       <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
         
         <motion.h2 
@@ -22,8 +21,7 @@ export function OrderCtaSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
-          className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-8 whitespace-pre-line"
+          className="font-serif text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-8 whitespace-pre-line"
         >
           {siteData?.call?.callTitle || "Craving Something Delicious?"}
         </motion.h3>

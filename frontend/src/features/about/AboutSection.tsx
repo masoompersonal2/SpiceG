@@ -9,7 +9,7 @@ export function AboutSection() {
   if (loading || !siteData) return null;
 
   return (
-    <section id="about" className="w-full px-4 md:px-6 pt-12 md:pt-24 pb-4 md:pb-8 flex flex-col items-center scroll-mt-24">
+    <section id="about" className="w-full px-4 md:px-6 pt-8 md:pt-24 pb-4 md:pb-8 flex flex-col items-center scroll-mt-24">
       
       <div className="w-full max-w-[1600px] mx-auto flex flex-col">
         <motion.h2 
@@ -41,7 +41,7 @@ export function AboutSection() {
             </div>
 
             <div className="mt-2 sm:mt-10 md:mt-auto flex flex-col items-start w-full">
-              <h3 className="font-serif text-[1.25rem] leading-[1.05] sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-3 sm:mb-6 uppercase break-words w-full whitespace-pre-line">
+              <h3 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-3 sm:mb-6 uppercase break-words w-full whitespace-pre-line">
                 {siteData.about.aboutTitle.replace(/\\n/g, '\n')}
               </h3>
               <a href={siteData.about.aboutButtonLink} className="btn-12 !text-[10px] sm:!text-sm !px-3 sm:!px-12 !py-2 sm:!py-3 shadow-lg mt-1 sm:mt-4 whitespace-nowrap self-start">
@@ -76,7 +76,7 @@ export function AboutSection() {
             className="col-span-2 bg-[#141414] rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 md:p-12 lg:p-16 flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-16 items-start lg:items-center text-white"
           >
             <div className="flex-1">
-              <h3 className="font-serif text-4xl md:text-5xl lg:text-6xl italic tracking-tight mb-6 lg:mb-0">
+              <h3 className="font-serif text-2xl md:text-5xl lg:text-6xl italic tracking-tight mb-6 lg:mb-0">
                 Where Every Meal Is a Celebration
               </h3>
             </div>

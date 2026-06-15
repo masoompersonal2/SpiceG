@@ -10,7 +10,7 @@ export function HeroSection() {
   }
 
   return (
-    <section className="relative w-full px-3 md:px-6 pt-8 pb-12 md:pb-24 flex flex-col items-center">
+    <section className="relative w-full px-3 md:px-6 pt-4 md:pt-8 pb-8 md:pb-24 flex flex-col items-center">
       
       {/* Main Typography */}
       <div className="text-center w-full max-w-6xl mx-auto flex flex-col items-center relative z-10">
@@ -18,7 +18,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="font-serif text-6xl sm:text-7xl md:text-[8.5rem] leading-none tracking-tight text-[#3b2314] uppercase"
+          className="font-serif text-[3.5rem] sm:text-6xl md:text-[8.5rem] leading-none tracking-tight text-[#3b2314] uppercase"
         >
           {siteData.hero.heroTitle}
         </motion.h1>
@@ -29,7 +29,7 @@ export function HeroSection() {
           transition={{ delay: 0.5, duration: 1 }}
           className="mt-4 md:mt-6 px-4"
         >
-          <span className="font-serif text-3xl md:text-5xl italic text-[#3b2314] tracking-tight leading-tight block">
+          <span className="font-serif text-2xl md:text-5xl italic text-[#3b2314] tracking-tight leading-tight block">
             {siteData.hero.heroSubtitle.split(',').map((part: string, i: number) => (
               <span key={i}>
                 {part}{i === 0 ? ',' : ''} <br className="hidden md:block" />

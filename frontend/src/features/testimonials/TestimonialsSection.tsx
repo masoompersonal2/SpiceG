@@ -125,7 +125,7 @@ export const TestimonialsSection: React.FC = () => {
   if (loading || testimonialsList.length === 0) return null;
 
   return (
-    <section className="w-full bg-white py-12 md:py-24 flex flex-col items-center">
+    <section className="w-full px-4 md:px-6 pt-16 md:pt-32 pb-8 md:pb-24 flex flex-col items-center bg-[#F6EEED] relative z-10 -mt-16 md:-mt-24">
       <div className="w-full max-w-[1600px] mx-auto flex flex-col items-center">
         
         <div className="text-center mb-16 px-4">
@@ -141,8 +141,7 @@ export const TestimonialsSection: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-black"
+            className="font-serif text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-[#3b2314] uppercase mb-8 md:mb-16"
           >
             What Our Customers Say
           </motion.h3>

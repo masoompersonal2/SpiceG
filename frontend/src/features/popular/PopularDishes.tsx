@@ -15,7 +15,7 @@ function DishCard({ image, title, desc, tall }: DishProps) {
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className={`relative overflow-hidden rounded-[2rem] group cursor-pointer w-full shadow-2xl ${tall ? 'h-[300px] lg:h-[420px]' : 'h-[220px] lg:h-[300px]'}`}
+      className={`relative overflow-hidden rounded-2xl md:rounded-[2rem] group cursor-pointer w-full shadow-lg md:shadow-2xl ${tall ? 'h-[200px] sm:h-[240px] lg:h-[420px]' : 'h-[160px] sm:h-[180px] lg:h-[300px]'}`}
     >
       <img 
         src={image?.startsWith('http') ? image : (image?.startsWith('/') && !image?.startsWith('/uploads') ? image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${image || ''}?v=2`)}
@@ -48,7 +48,7 @@ export function PopularDishes() {
   if (loading || chefData.length === 0) return null;
 
   return (
-    <section className="w-full px-4 md:px-6 pt-12 md:pt-24 pb-6 md:pb-12 flex flex-col items-center bg-background">
+    <section className="w-full px-3 md:px-6 pt-8 md:pt-24 pb-6 md:pb-12 flex flex-col items-center bg-background">
       <div className="w-full max-w-[1600px] mx-auto flex flex-col">
         
         <div className="mb-12">
@@ -65,34 +65,19 @@ export function PopularDishes() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground uppercase ml-2 md:ml-4"
+            className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground uppercase ml-2 md:ml-4"
           >
             {siteData?.popular?.title || "POPULAR DISHES"}
           </motion.h3>
         </div>
 
-        {/* Mobile Layout (1-2-1 grid) */}
-        <div className="grid grid-cols-2 gap-4 w-full md:hidden">
-          {chefData[0] && (
-            <div className="col-span-2">
-              <DishCard image={chefData[0].image} title={chefData[0].title} desc={chefData[0].hoverText} tall />
+        {/* Mobile Layout (2x2 grid) */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-4 w-full md:hidden">
+          {chefData.slice(0, 4).map((item: any, i: number) => (
+            <div key={i} className="col-span-1">
+              <DishCard image={item.image} title={item.title} desc={item.hoverText} />
             </div>
-          )}
-          {chefData[1] && (
-            <div className="col-span-1">
-              <DishCard image={chefData[1].image} title={chefData[1].title} desc={chefData[1].hoverText} />
-            </div>
-          )}
-          {chefData[2] && (
-            <div className="col-span-1">
-              <DishCard image={chefData[2].image} title={chefData[2].title} desc={chefData[2].hoverText} />
-            </div>
-          )}
-          {chefData[3] && (
-            <div className="col-span-2">
-              <DishCard image={chefData[3].image} title={chefData[3].title} desc={chefData[3].hoverText} tall />
-            </div>
-          )}
+          ))}
         </div>
 
         {/* Desktop Layout (Masonry) */}

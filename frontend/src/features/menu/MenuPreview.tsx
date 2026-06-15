@@ -31,12 +31,12 @@ export function MenuPreview() {
     : [];
 
   return (
-    <section id="recipes" className="w-full px-4 md:px-6 pt-8 pb-12 md:pb-24 flex flex-col items-center scroll-mt-24">
-      <div className="w-full max-w-[1600px] mx-auto bg-[#E04D2D] rounded-[3rem] p-6 md:p-12 shadow-2xl">
+    <section id="recipes" className="w-full px-0 md:px-6 pt-6 md:pt-8 pb-8 md:pb-24 flex flex-col items-center scroll-mt-24">
+      <div className="w-full max-w-[1600px] mx-auto bg-[#E04D2D] rounded-none md:rounded-[3rem] px-4 py-8 md:p-12 shadow-none md:shadow-2xl">
         
         {/* Header Row */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-12 gap-4 md:gap-6">
-          <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white uppercase w-full md:w-auto text-center md:text-left">
+          <h2 className="font-serif text-3xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white uppercase w-full md:w-auto text-center md:text-left">
             RECIPES
           </h2>
           
