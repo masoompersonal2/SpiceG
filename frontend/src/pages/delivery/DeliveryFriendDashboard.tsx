@@ -29,23 +29,15 @@ export function DeliveryFriendDashboard() {
     fetchActiveOrders();
 
     // Navigation Trap
-    const handlePopState = (e: PopStateEvent) => {
-      e.preventDefault();
-      setAttemptingToLeave(true);
+    const handlePopState = () => {
       window.history.pushState(null, '', window.location.href);
-    };
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      e.preventDefault();
-      e.returnValue = '';
-      return '';
+      setAttemptingToLeave(true);
     };
     window.history.pushState(null, '', window.location.href);
     window.addEventListener('popstate', handlePopState);
-    window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
 
