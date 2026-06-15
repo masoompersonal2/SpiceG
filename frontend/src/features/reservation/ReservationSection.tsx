@@ -89,7 +89,7 @@ export function ReservationSection() {
   };
 
   return (
-    <section id="reservation" className="w-full px-4 md:px-6 py-8 md:py-24 flex flex-col items-center bg-[#F6EEED] relative">
+    <section id="reservation" className="w-full px-4 md:px-6 pt-8 md:pt-24 pb-6 md:pb-12 flex flex-col items-center bg-black relative">
       
       {/* Success Toast */}
       <AnimatePresence>
@@ -114,7 +114,7 @@ export function ReservationSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="font-serif text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-[#3b2314] mb-6"
+            className="font-serif text-3xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white uppercase mb-6"
           >
             {siteData?.online?.onlineTitle || "ONLINE RESERVATION"}
           </motion.h2>
