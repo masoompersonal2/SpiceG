@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Dashboard</h1>
+  <button onclick="logout()">Logout</button>
+  <a href="https://example.com">Leave Page</a>
+  <script>
+    sessionStorage.setItem("testSession", "active");
+
+    const checkSession = () => {
+      if (!sessionStorage.getItem("testSession")) {
+        document.body.innerHTML = "<h1>REDIRECTED TO LOGIN!</h1>";
+      }
+    };
+    checkSession();
+    window.addEventListener("pageshow", (e) => {
+      console.log("pageshow fired, persisted: " + e.persisted);
+      checkSession();
+    });
+
+    function logout() {
+      sessionStorage.removeItem("testSession");
+      window.location.href = "https://example.com";
+    }
+  </script>
+</body>
+</html>

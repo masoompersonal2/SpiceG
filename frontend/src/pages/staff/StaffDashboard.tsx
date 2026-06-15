@@ -153,14 +153,10 @@ export function StaffDashboard() {
   };
 
   const confirmLeave = async () => {
-    if (leaveAction === "logout") {
+    if (leaveAction === "logout" || leaveAction === "back") {
       sessionStorage.removeItem("staffSession");
       const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
       await fetch(`${apiUrl}/staff/logout`, { method: "POST", credentials: "include" });
-      window.location.replace("/");
-    } else if (leaveAction === "back") {
-      window.removeEventListener('popstate', () => {});
-      window.history.back(); // Or redirect to home
       window.location.replace("/");
     }
   };

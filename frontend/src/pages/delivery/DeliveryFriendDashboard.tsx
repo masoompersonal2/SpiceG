@@ -131,7 +131,7 @@ export function DeliveryFriendDashboard() {
       <Modal 
         isOpen={attemptingToLeave}
         title="Leave Dashboard?"
-        desc="Are you sure you want to go back to the home page?"
+        desc="Are you sure you want to log out and go back to the home page?"
         onConfirm={async () => {
           sessionStorage.removeItem("deliverySession");
           try {
@@ -140,7 +140,7 @@ export function DeliveryFriendDashboard() {
           window.location.replace("/");
         }}
         onCancel={() => setAttemptingToLeave(false)}
-        confirmText="Yes, Leave"
+        confirmText="Yes, Log Out"
         isDestructive={true}
       />
       

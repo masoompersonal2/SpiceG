@@ -1315,7 +1315,15 @@ export function CustomerDashboard() {
         </div>
       )}
 
-      <Modal isOpen={attemptingToLeave} title="Leave Dashboard?" desc="Are you sure you want to go back to the home page?" onConfirm={() => window.location.replace("/")} onCancel={() => setAttemptingToLeave(false)} confirmText="Yes, Leave" isDestructive={true} />
+      <Modal 
+        isOpen={attemptingToLeave} 
+        title="Leave Dashboard?" 
+        desc="Are you sure you want to log out and go back to the home page?" 
+        onConfirm={handleLogout} 
+        onCancel={() => setAttemptingToLeave(false)} 
+        confirmText="Yes, Log Out" 
+        isDestructive={true} 
+      />
       <Modal
         isOpen={!!pendingReservation}
         title="Confirm Table Booking"
