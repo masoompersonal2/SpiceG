@@ -103,10 +103,10 @@ export class AppModule {
       console.log('Seeding default ContentMenuCategories...');
       await prisma.contentMenuCategory.createMany({
         data: [
-          { name: "All", isEnabled: true },
-          { name: "Main Course (Non-Veg)", isEnabled: true },
-          { name: "Main Course (Veg)", isEnabled: true },
-          { name: "Starters", isEnabled: true }
+          { name: "All", isEnabled: true, image1: "/section-4/panner.jpg", image2: "/section-4/noodles.jpg", image3: "/section-4/prawns.jpg" },
+          { name: "Main Course (Non-Veg)", isEnabled: true, image1: "/section-4/panner.jpg", image2: "/section-4/noodles.jpg", image3: "/section-4/prawns.jpg" },
+          { name: "Main Course (Veg)", isEnabled: true, image1: "/section-4/panner.jpg", image2: "/section-4/noodles.jpg", image3: "/section-4/prawns.jpg" },
+          { name: "Starters", isEnabled: true, image1: "/section-4/panner.jpg", image2: "/section-4/noodles.jpg", image3: "/section-4/prawns.jpg" }
         ]
       });
     }
