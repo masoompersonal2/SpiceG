@@ -58,6 +58,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
               }
               const faviconUrl = seo.favicon.startsWith('http') ? seo.favicon : (seo.favicon.startsWith('/') && !seo.favicon.startsWith('/uploads') ? seo.favicon : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${seo.favicon}?v=2`);
               linkIcon.setAttribute('href', faviconUrl);
+              linkIcon.removeAttribute('type');
             }
           }
         }

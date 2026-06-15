@@ -55,7 +55,8 @@ export class ContentController {
 
   @Put('chef/:id')
   async updateChefSpecial(@Param('id') id: string, @Body() data: any) {
-    return prisma.chefSpecial.update({ where: { id: parseInt(id) }, data });
+    const { id: _, ...updateData } = data;
+    return prisma.chefSpecial.update({ where: { id: parseInt(id) }, data: updateData });
   }
 
   // ================= MENU CATEGORIES =================
@@ -66,7 +67,8 @@ export class ContentController {
 
   @Put('category/:id')
   async updateCategory(@Param('id') id: string, @Body() data: any) {
-    return prisma.contentMenuCategory.update({ where: { id: parseInt(id) }, data });
+    const { id: _, ...updateData } = data;
+    return prisma.contentMenuCategory.update({ where: { id: parseInt(id) }, data: updateData });
   }
 
   @Post('category')
@@ -87,7 +89,8 @@ export class ContentController {
 
   @Put('testimonial/:id')
   async updateTestimonial(@Param('id') id: string, @Body() data: any) {
-    return prisma.testimonial.update({ where: { id: parseInt(id) }, data });
+    const { id: _, ...updateData } = data;
+    return prisma.testimonial.update({ where: { id: parseInt(id) }, data: updateData });
   }
 
   @Post('testimonial')
