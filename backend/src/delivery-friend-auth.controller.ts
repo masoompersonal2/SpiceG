@@ -30,7 +30,7 @@ export class DeliveryFriendAuthController {
     res.cookie('deliveryFriendToken', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -39,7 +39,11 @@ export class DeliveryFriendAuthController {
 
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('deliveryFriendToken');
+    res.clearCookie('deliveryFriendToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    });
     return { message: "Logout successful" };
   }
 
