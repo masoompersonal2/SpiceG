@@ -57,7 +57,7 @@ export class AdminController {
 
     await prisma.admin.update({
       where: { id: req.user.id },
-      data: { profilePic: publicUrl }
+      data: { profileImage: publicUrl }
     });
 
     return { url: publicUrl };
@@ -65,17 +65,11 @@ export class AdminController {
 
   @Post('upload-file')
   @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, cb) => {
-        const uniqueName = uuidv4() + extname(file.originalname);
-        cb(null, uniqueName);
-      }
-    })
+    storage: getCloudinaryStorage()
   }))
-  async uploadGenericFile(@Req() req: any, @UploadedFile() file: Express.Multer.File) {
+  async uploadGenericFile(@Req() req: any, @UploadedFile() file: any) {
     if (!file) throw new BadRequestException('No file provided');
-    const fileUrl = `/uploads/${file.filename}`;
+    const fileUrl = file.path;
     return { fileUrl };
   }
 }

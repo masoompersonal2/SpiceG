@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Put, Body, Req, Res, UnauthorizedException, UseGuards, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Post, Get, Put, Body, Req, Res, UnauthorizedException, UseGuards, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';

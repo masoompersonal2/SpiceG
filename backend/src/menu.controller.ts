@@ -29,14 +29,18 @@ export class MenuController {
       imageUrl = file.path;
     }
 
-    const { name, category, priceText, description, isAvailable, isVegetarian } = body;
-    const isAvail = isAvailable === 'true' || isAvailable === true;
-    const isVeg = isVegetarian === 'true' || isVegetarian === true;
+    const { name, category, isVeg, priceText } = body;
+    if (!name || !category || !priceText) {
+      throw new BadRequestException('Missing required fields');
+    }
 
     return prisma.menuItem.create({
       data: {
-        name, category, priceText, description, image: imageUrl,
-        isAvailable: isAvail, isVegetarian: isVeg
+        name,
+        category,
+        isVeg: isVeg === 'true' || isVeg === true,
+        priceText,
+        image: imageUrl
       }
     });
   }
