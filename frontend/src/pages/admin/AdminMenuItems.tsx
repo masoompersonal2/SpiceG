@@ -80,7 +80,8 @@ export function AdminMenuItems({ onBack }: { onBack?: () => void }) {
         const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/menu/bulk-delete`, {
       method: "POST",
       headers: {  "Content-Type": "application/json" },
-      body: JSON.stringify({ ids: selectedIds })
+      body: JSON.stringify({ ids: selectedIds }),
+      credentials: "include"
     });
     
     if (res.ok) {
@@ -108,7 +109,8 @@ export function AdminMenuItems({ onBack }: { onBack?: () => void }) {
     const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/menu/bulk-update`, {
       method: "POST",
       headers: {  "Content-Type": "application/json" },
-      body: JSON.stringify({ items: updates })
+      body: JSON.stringify({ items: updates }),
+      credentials: "include"
     });
     
     if (res.ok) {
