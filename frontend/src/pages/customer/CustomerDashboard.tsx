@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Plus, Minus, Settings, Calendar, Menu as MenuIcon, ShoppingBag, MapPin, User, LogOut, Upload, Info, Check, ArrowLeft } from "lucide-react";
+import { Search, Plus, Minus, Settings, Calendar, Menu as MenuIcon, ShoppingBag, MapPin, User, LogOut, Upload, Info, Check, ArrowLeft, ArrowRight, X } from "lucide-react";
 import { Modal } from "../../components/ui/Modal";
 
 // ------------------------ Orders Tab ------------------------
@@ -337,7 +337,7 @@ function OrdersTab({ setCart, handleTabChange }: any) {
 }
 
 // ------------------------ Menu Tab ------------------------
-function MenuTab({ cart, setCart }: any) {
+function MenuTab({ cart, setCart, setShowCartPanel }: any) {
   const [items, setItems] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
@@ -412,6 +412,23 @@ function MenuTab({ cart, setCart }: any) {
           {filteredItems.length === 0 && <div className="col-span-full py-12 text-center text-gray-500">No dishes found.</div>}
         </div>
       </div>
+
+      {cart.length > 0 && (
+        <div 
+          onClick={() => setShowCartPanel(true)}
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] md:w-auto bg-black text-white px-6 py-4 rounded-full shadow-2xl z-[100] flex items-center justify-between gap-6 hover:scale-105 transition-transform cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold text-sm">
+              {cart.reduce((a: number, b: any) => a + b.quantity, 0)}
+            </div>
+            <span className="font-bold text-sm">Item{cart.length > 1 ? 's' : ''} Added</span>
+          </div>
+          <div className="flex items-center gap-2 font-bold text-[#B2E624] text-sm">
+            View Cart <ArrowRight className="w-4 h-4" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -693,24 +710,24 @@ function SettingsTab({ user, onUpdate }: any) {
   };
 
   const handleImageUpload = async (e: any) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const fd = new FormData(); fd.append("image", file);
+    if (!e.target.files || !e.target.files[0]) return;
+    const fd = new FormData();
+    fd.append("image", e.target.files[0]);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/upload`, { method: "POST", credentials: "include", body: fd });
       const data = await res.json();
-      if (res.ok) setProfile({ ...profile, profileImage: data.imageUrl });
+      if (res.ok) setProfile({ ...profile, profileImage: data.url });
     } catch {}
   };
 
   const handleHomeImageUpload = async (e: any) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const fd = new FormData(); fd.append("image", file);
+    if (!e.target.files || !e.target.files[0]) return;
+    const fd = new FormData();
+    fd.append("image", e.target.files[0]);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/upload`, { method: "POST", credentials: "include", body: fd });
       const data = await res.json();
-      if (res.ok) setDelivery({ ...delivery, homeImage: data.imageUrl });
+      if (res.ok) setDelivery({ ...delivery, homeImage: data.url });
     } catch {}
   };
 
@@ -1104,6 +1121,7 @@ export function CustomerDashboard() {
   const initialTab = queryParams.get("tab") || "Menu";
   const [currentTab, setCurrentTab] = useState(initialTab);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showCartPanel, setShowCartPanel] = useState(false);
 
   const handleTabChange = (tab: string) => {
     setCurrentTab(tab);
@@ -1386,27 +1404,41 @@ export function CustomerDashboard() {
 
       {/* Main Scrollable Content Layout */}
       <main className="flex-1 overflow-y-auto w-full p-4 md:p-8 relative">
-        <div className={`max-w-[1600px] mx-auto h-full grid ${currentTab === "Menu" ? "lg:grid-cols-[1fr_350px]" : "grid-cols-1"} gap-6 lg:gap-8`}>
+        <div className={`max-w-[1600px] mx-auto h-full grid grid-cols-1 gap-6 lg:gap-8`}>
           
           {/* Left Area - Active Tab Content */}
           <div className="h-full overflow-hidden">
-            {currentTab === "Menu" && <MenuTab cart={cart} setCart={setCart} />}
+            {currentTab === "Menu" && <MenuTab cart={cart} setCart={setCart} setShowCartPanel={setShowCartPanel} />}
             {currentTab === "Events" && <EventsTab />}
             {currentTab === "Reservations" && <ReservationsTab onPay={handlePayReservation} />}
             {currentTab === "Settings" && <SettingsTab user={user} onUpdate={fetchUserAndSettings} />}
             {currentTab === "Orders" && <OrdersTab setCart={setCart} handleTabChange={handleTabChange} />}
             {currentTab === "Checkout" && <CheckoutTab user={user} cart={cart} setCart={setCart} handleTabChange={handleTabChange} setReservationSuccessMsg={setReservationSuccessMsg} settings={settings} />}
           </div>
+        </div>
 
-          {/* Right Sidebar - My Cart (Only visible on Menu tab) */}
-          {currentTab === "Menu" && (
-            <div className="bg-white rounded-3xl p-6 shadow-[0_2px_20px_rgba(0,0,0,0.03)] flex flex-col h-full overflow-hidden">
-              <div className="flex justify-between items-center mb-6 shrink-0">
-                <h2 className="text-xl font-bold">My Cart {cart.length > 0 && <span className="text-[#B2E624] text-sm bg-black px-2 py-0.5 rounded-full ml-2">{cart.reduce((a: number, b: any) => a + b.quantity, 0)}</span>}</h2>
-                <button onClick={() => setCart([])} className="text-xs font-semibold text-gray-500 bg-gray-50 px-3 py-1.5 rounded-full hover:bg-gray-100 hover:text-red-500 transition-colors">Clear All</button>
-              </div>
+        {/* Floating Cart Panel Overlay */}
+        <AnimatePresence>
+          {currentTab === "Menu" && showCartPanel && (
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              exit={{ opacity: 0, y: 50 }}
+              className="fixed inset-0 z-[150] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) setShowCartPanel(false);
+              }}
+            >
+              <div className="bg-white rounded-3xl p-6 shadow-[0_2px_20px_rgba(0,0,0,0.03)] flex flex-col w-full max-w-md h-[80vh] overflow-hidden relative">
+                <button onClick={() => setShowCartPanel(false)} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200">
+                  <X className="w-4 h-4" />
+                </button>
+                <div className="flex justify-between items-center mb-6 shrink-0 pr-10">
+                  <h2 className="text-xl font-bold">My Cart {cart.length > 0 && <span className="text-[#B2E624] text-sm bg-black px-2 py-0.5 rounded-full ml-2">{cart.reduce((a: number, b: any) => a + b.quantity, 0)}</span>}</h2>
+                  <button onClick={() => setCart([])} className="text-xs font-semibold text-gray-500 bg-gray-50 px-3 py-1.5 rounded-full hover:bg-gray-100 hover:text-red-500 transition-colors">Clear All</button>
+                </div>
 
-              <div className="flex-1 overflow-y-auto pr-2 scrollbar-hide">
+                <div className="flex-1 overflow-y-auto pr-2 scrollbar-hide">
                 {cart.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center text-center px-4">
                     <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-4">
@@ -1457,14 +1489,14 @@ export function CustomerDashboard() {
                     ₹{cart.reduce((total: number, item: any) => total + (parseInt(item.priceText.replace(/[^\d]/g, '')) * item.quantity), 0).toLocaleString()}
                   </span>
                 </div>
-                <button onClick={() => handleTabChange("Checkout")} disabled={cart.length === 0} className={`w-full py-4 font-bold rounded-full transition-colors ${cart.length === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-black text-white hover:bg-gray-800'}`}>
+                <button onClick={() => { setShowCartPanel(false); handleTabChange("Checkout"); }} disabled={cart.length === 0} className={`w-full py-4 font-bold rounded-full transition-colors ${cart.length === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-black text-white hover:bg-gray-800'}`}>
                   Proceed
                 </button>
               </div>
             </div>
+          </motion.div>
           )}
-
-        </div>
+        </AnimatePresence>
       </main>
     </div>
   );

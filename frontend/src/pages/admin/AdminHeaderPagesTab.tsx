@@ -150,6 +150,7 @@ export function AdminHeaderPagesTab({ showToast, onViewGallery }: Props) {
     }
         const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events`, {
       method: "POST",
+      credentials: "include",
       headers: {  "Content-Type": "application/json" },
       body: JSON.stringify(newTicket)
     });
