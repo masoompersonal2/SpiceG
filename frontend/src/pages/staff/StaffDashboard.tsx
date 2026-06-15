@@ -51,7 +51,6 @@ export function StaffDashboard() {
     // Navigation Trap
     const handlePopState = () => {
       window.history.pushState(null, '', window.location.href);
-      setAttemptingToLeave(true);
       setShowLeaveModal(true);
       setLeaveAction("back");
     };
