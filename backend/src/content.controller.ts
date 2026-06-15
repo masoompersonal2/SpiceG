@@ -48,10 +48,20 @@ export class ContentController {
     return prisma.chefSpecial.findMany({ orderBy: { id: 'asc' } });
   }
 
+  @Post('chef')
+  async createChefSpecial(@Body() data: any) {
+    return prisma.chefSpecial.create({ data });
+  }
+
   @Put('chef/:id')
   async updateChefSpecial(@Param('id') id: string, @Body() data: any) {
     const { id: _, ...updateData } = data;
     return prisma.chefSpecial.update({ where: { id: parseInt(id) }, data: updateData });
+  }
+
+  @Delete('chef/:id')
+  async deleteChefSpecial(@Param('id') id: string) {
+    return prisma.chefSpecial.delete({ where: { id: parseInt(id) } });
   }
 
   // ================= MENU CATEGORIES =================

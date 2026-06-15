@@ -583,7 +583,18 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
               </button>
             </div>
 
-            <h4 className="text-xl font-bold text-[#2D211F] mb-4">Dish Cards (4 Max)</h4>
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="text-xl font-bold text-[#2D211F]">Dish Cards (4 Max)</h4>
+              <button 
+                onClick={() => {
+                  if (chefData.length >= 4) return showToast("Maximum 4 cards allowed");
+                  createArrayItem('chef', { title: "New Dish", hoverText: "Delicious dish", image: "" }, setChefData)
+                }} 
+                className="bg-[#E04D2D] text-white px-6 py-2 rounded-xl font-bold shadow-sm hover:bg-[#C84022]"
+              >
+                + Add Dish Card
+              </button>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {chefData.map((chef, idx) => (
                 <div key={chef.id} className="bg-gray-50 p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4 relative group">
@@ -624,9 +635,14 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
                     }} className="w-full px-4 py-2 rounded-xl border border-gray-200 bg-white" />
                   </div>
 
-                  <button onClick={() => saveArrayItem('chef', chef.id, chef)} className="bg-[#2D211F] text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm hover:bg-black w-full">
-                    Update Card
-                  </button>
+                  <div className="flex gap-2">
+                    <button onClick={() => saveArrayItem('chef', chef.id, chef)} className="bg-[#2D211F] text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm hover:bg-black w-full">
+                      Update Card
+                    </button>
+                    <button onClick={() => deleteArrayItem('chef', chef.id, setChefData)} className="bg-red-100 text-red-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-red-200 border border-red-200">
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
