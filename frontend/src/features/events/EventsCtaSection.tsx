@@ -4,6 +4,7 @@ import { useContent } from "../../context/ContentContext";
 export function EventsCtaSection() {
   const { siteData } = useContent();
 
+  return (
     <section className="w-full px-4 md:px-6 pb-8 md:pb-32 pt-4 md:pt-8 flex flex-col items-center bg-black">
       <div className="w-full max-w-[1400px] mx-auto">
         <motion.div 
@@ -17,6 +18,7 @@ export function EventsCtaSection() {
           <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left z-10">
             <h2 className="text-sm md:text-base font-semibold tracking-[0.3em] uppercase text-white/90 mb-6">
               {siteData?.event?.eventSubtitle || "EVENTS & CELEBRATIONS"}
+            </h2>
             <h3 className="font-serif text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6 whitespace-pre-line">
               {siteData?.event?.eventTitle || "Something Special Awaits"}
             </h3>

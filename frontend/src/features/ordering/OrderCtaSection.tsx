@@ -5,6 +5,7 @@ import { useContent } from "../../context/ContentContext";
 export function OrderCtaSection() {
   const { siteData } = useContent();
 
+  return (
     <section className="w-full px-4 md:px-6 pt-6 md:pt-16 pb-8 md:pb-32 flex flex-col items-center bg-black">
       <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
         
