@@ -63,11 +63,19 @@ export function StaffDashboard() {
   }, []);
 
   useEffect(() => {
-    if (!sessionStorage.getItem("staffSession")) {
-      window.location.replace("/admin/login");
-      return;
-    }
+    const checkSession = () => {
+      if (!sessionStorage.getItem("staffSession")) {
+        window.location.replace("/admin/login");
+      }
+    };
+    checkSession();
+    window.addEventListener("pageshow", checkSession);
+
     fetchProfile();
+
+    return () => {
+      window.removeEventListener("pageshow", checkSession);
+    };
   }, []);
 
   useEffect(() => {
@@ -146,6 +154,7 @@ export function StaffDashboard() {
 
   const confirmLeave = async () => {
     if (leaveAction === "logout") {
+      sessionStorage.removeItem("staffSession");
       const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
       await fetch(`${apiUrl}/staff/logout`, { method: "POST", credentials: "include" });
       window.location.replace("/");

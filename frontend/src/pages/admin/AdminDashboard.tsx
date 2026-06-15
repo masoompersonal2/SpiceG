@@ -111,10 +111,13 @@ export function AdminDashboard() {
   ];
 
   useEffect(() => {
-    if (!sessionStorage.getItem("adminSession")) {
-      window.location.replace("/admin/login");
-      return;
-    }
+    const checkSession = () => {
+      if (!sessionStorage.getItem("adminSession")) {
+        window.location.replace("/admin/login");
+      }
+    };
+    checkSession();
+    window.addEventListener("pageshow", checkSession);
 
     // Profile verification acts as the guard now
     fetchProfile();
@@ -125,6 +128,10 @@ export function AdminDashboard() {
     if (tabParam !== null) {
       setActiveTab(parseInt(tabParam, 10));
     }
+    
+    return () => {
+      window.removeEventListener("pageshow", checkSession);
+    };
   }, []);
 
   const fetchProfile = async () => {
@@ -152,6 +159,7 @@ export function AdminDashboard() {
 
   const handleLogout = async () => {
     const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
+    sessionStorage.removeItem("adminSession");
     await fetch(`${apiUrl}/auth/logout`, { method: "POST", credentials: "include" });
     window.location.replace("/");
   };

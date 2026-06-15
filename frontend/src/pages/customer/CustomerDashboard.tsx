@@ -1200,11 +1200,19 @@ export function CustomerDashboard() {
   };
 
   useEffect(() => {
-    if (!sessionStorage.getItem("customerSession")) {
-      window.location.replace("/auth");
-      return;
-    }
+    const checkSession = () => {
+      if (!sessionStorage.getItem("customerSession")) {
+        window.location.replace("/auth");
+      }
+    };
+    checkSession();
+    window.addEventListener("pageshow", checkSession);
+
     fetchUserAndSettings();
+
+    return () => {
+      window.removeEventListener("pageshow", checkSession);
+    };
   }, []);
 
   const handlePendingReservationConfirm = async () => {
@@ -1275,12 +1283,11 @@ export function CustomerDashboard() {
   };
 
   const handleLogout = async () => {
+    sessionStorage.removeItem("customerSession");
     try {
       await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/logout`, { method: "POST", credentials: "include" });
-      window.location.replace("/");
-    } catch {
-      window.location.replace("/");
-    }
+    } catch {}
+    window.location.replace("/");
   };
 
   if (!isAuthenticated) {

@@ -25,10 +25,13 @@ export function DeliveryFriendDashboard() {
   };
 
   useEffect(() => {
-    if (!sessionStorage.getItem("deliverySession")) {
-      window.location.replace("/admin/login");
-      return;
-    }
+    const checkSession = () => {
+      if (!sessionStorage.getItem("deliverySession")) {
+        window.location.replace("/admin/login");
+      }
+    };
+    checkSession();
+    window.addEventListener("pageshow", checkSession);
 
     fetchProfile();
     fetchActiveOrders();
@@ -42,6 +45,7 @@ export function DeliveryFriendDashboard() {
     window.addEventListener('popstate', handlePopState);
 
     return () => {
+      window.removeEventListener("pageshow", checkSession);
       window.removeEventListener('popstate', handlePopState);
     };
   }, []);
@@ -128,7 +132,13 @@ export function DeliveryFriendDashboard() {
         isOpen={attemptingToLeave}
         title="Leave Dashboard?"
         desc="Are you sure you want to go back to the home page?"
-        onConfirm={() => window.location.replace("/")}
+        onConfirm={async () => {
+          sessionStorage.removeItem("deliverySession");
+          try {
+            await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/auth/logout`, { method: "POST", credentials: "include" });
+          } catch {}
+          window.location.replace("/");
+        }}
         onCancel={() => setAttemptingToLeave(false)}
         confirmText="Yes, Leave"
         isDestructive={true}
