@@ -21,7 +21,7 @@ export function AdminHeaderPagesTab({ showToast }: { showToast: (msg: string) =>
   }, []);
 
   const fetchSiteData = async () => {
-    const res = await fetch("http://localhost:3000/api/content/site");
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/site`);
     if (res.ok) {
       const data = await res.json();
       if (!data.aboutH) data.aboutH = {};
@@ -34,7 +34,7 @@ export function AdminHeaderPagesTab({ showToast }: { showToast: (msg: string) =>
 
   const saveSection = async (section: string) => {
     const token = localStorage.getItem("adminToken");
-    const res = await fetch(`http://localhost:3000/api/content/site/${section}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/site/${section}`, {
       method: "PUT",
       headers: {
         "Authorization": `Bearer ${token}`,
@@ -72,7 +72,7 @@ export function AdminHeaderPagesTab({ showToast }: { showToast: (msg: string) =>
     showToast("Uploading...");
 
     try {
-      const res = await fetch("http://localhost:3000/api/content/upload", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/upload`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${token}` },
         body: formData
@@ -101,7 +101,7 @@ export function AdminHeaderPagesTab({ showToast }: { showToast: (msg: string) =>
     showToast("Uploading...");
 
     try {
-      const res = await fetch("http://localhost:3000/api/content/upload", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/upload`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${token}` },
         body: formData
@@ -129,7 +129,7 @@ export function AdminHeaderPagesTab({ showToast }: { showToast: (msg: string) =>
     const token = localStorage.getItem("adminToken");
     showToast("Uploading...");
     try {
-      const res = await fetch("http://localhost:3000/api/content/upload", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/upload`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${token}` },
         body: formData
@@ -148,7 +148,7 @@ export function AdminHeaderPagesTab({ showToast }: { showToast: (msg: string) =>
       return;
     }
     const token = localStorage.getItem("adminToken");
-    const res = await fetch("http://localhost:3000/api/events", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events`, {
       method: "POST",
       headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify(newTicket)
@@ -164,7 +164,7 @@ export function AdminHeaderPagesTab({ showToast }: { showToast: (msg: string) =>
   const resolveImageUrl = (url: string | undefined) => {
     if (!url) return "";
     if (url.startsWith("http")) return url;
-    return `http://localhost:3000${url}?v=2`;
+    return `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${url}?v=2`;
   };
 
   const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -175,7 +175,7 @@ export function AdminHeaderPagesTab({ showToast }: { showToast: (msg: string) =>
     const token = localStorage.getItem("adminToken");
     showToast("Uploading image...");
     try {
-      const res = await fetch("http://localhost:3000/api/content/upload", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/upload`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${token}` },
         body: formData
@@ -194,7 +194,7 @@ export function AdminHeaderPagesTab({ showToast }: { showToast: (msg: string) =>
       return;
     }
     const token = localStorage.getItem("adminToken");
-    const res = await fetch("http://localhost:3000/api/content/gallery-image", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/gallery-image`, {
       method: "POST",
       headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify(newGalleryImage)

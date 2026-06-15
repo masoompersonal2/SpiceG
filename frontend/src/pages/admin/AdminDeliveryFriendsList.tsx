@@ -10,14 +10,14 @@ export function AdminDeliveryFriendsList() {
   }, []);
 
   const fetchFriends = async () => {
-    const res = await fetch("http://localhost:3000/api/admin/delivery-friends", { credentials: "include" });
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/admin/delivery-friends`, { credentials: "include" });
     if (res.ok) setFriends(await res.json());
   };
 
   const handleUpdate = async (id: number, e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget as HTMLFormElement);
-    await fetch(`http://localhost:3000/api/admin/delivery-friends/${id}`, {
+    await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/admin/delivery-friends/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -34,7 +34,7 @@ export function AdminDeliveryFriendsList() {
 
   const handleDelete = async (id: number) => {
     if (window.confirm("Are you sure you want to fire this Delivery Partner permanently?")) {
-      await fetch(`http://localhost:3000/api/admin/delivery-friends/${id}`, {
+      await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/admin/delivery-friends/${id}`, {
         method: "DELETE",
         credentials: "include"
       });

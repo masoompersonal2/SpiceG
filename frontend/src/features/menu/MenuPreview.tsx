@@ -17,7 +17,7 @@ export function MenuPreview() {
   }, [categoryData]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/menu")
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/menu`)
       .then(res => res.json())
       .then(data => setAllMenuItems(data))
       .catch(err => console.error(err));
@@ -80,7 +80,7 @@ export function MenuPreview() {
                 <div key={item.id} className="bg-white rounded-2xl p-4 shadow-xl flex flex-col gap-3 group relative overflow-hidden h-fit">
                   <div className="w-full h-32 md:h-40 rounded-xl overflow-hidden relative">
                     <img 
-                      src={item.image?.startsWith('http') ? item.image : (item.image?.startsWith('/') && !item.image?.startsWith('/uploads') ? item.image : `http://localhost:3000${item.image}`)} 
+                      src={item.image?.startsWith('http') ? item.image : (item.image?.startsWith('/') && !item.image?.startsWith('/uploads') ? item.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${item.image}`)} 
                       alt={item.name} 
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
@@ -127,7 +127,7 @@ export function MenuPreview() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.4 }}
-                  src={activeCategory.image1?.startsWith('http') ? activeCategory.image1 : (activeCategory.image1?.startsWith('/') && !activeCategory.image1?.startsWith('/uploads') ? activeCategory.image1 : `http://localhost:3000${activeCategory.image1}`)} 
+                  src={activeCategory.image1?.startsWith('http') ? activeCategory.image1 : (activeCategory.image1?.startsWith('/') && !activeCategory.image1?.startsWith('/uploads') ? activeCategory.image1 : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${activeCategory.image1}`)} 
                   alt={`${activeCategory.name} 1`}
                   className="w-full h-full absolute inset-0 object-cover"
                 />
@@ -150,7 +150,7 @@ export function MenuPreview() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.4, delay: 0.1 }}
-                    src={activeCategory.image2?.startsWith('http') ? activeCategory.image2 : (activeCategory.image2?.startsWith('/') && !activeCategory.image2?.startsWith('/uploads') ? activeCategory.image2 : `http://localhost:3000${activeCategory.image2}`)} 
+                    src={activeCategory.image2?.startsWith('http') ? activeCategory.image2 : (activeCategory.image2?.startsWith('/') && !activeCategory.image2?.startsWith('/uploads') ? activeCategory.image2 : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${activeCategory.image2}`)} 
                     alt={`${activeCategory.name} 2`}
                     className="w-full h-full absolute inset-0 object-cover"
                   />
@@ -169,7 +169,7 @@ export function MenuPreview() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.4, delay: 0.2 }}
-                    src={activeCategory.image3?.startsWith('http') ? activeCategory.image3 : (activeCategory.image3?.startsWith('/') && !activeCategory.image3?.startsWith('/uploads') ? activeCategory.image3 : `http://localhost:3000${activeCategory.image3}`)} 
+                    src={activeCategory.image3?.startsWith('http') ? activeCategory.image3 : (activeCategory.image3?.startsWith('/') && !activeCategory.image3?.startsWith('/uploads') ? activeCategory.image3 : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${activeCategory.image3}`)} 
                     alt={`${activeCategory.name} 3`}
                     className="w-full h-full absolute inset-0 object-cover transition-transform duration-700 group-hover:scale-110"
                   />

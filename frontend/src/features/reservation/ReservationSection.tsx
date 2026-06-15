@@ -47,7 +47,7 @@ export function ReservationSection() {
 
   // Fetch time settings on load
   useState(() => {
-    fetch("http://localhost:3000/api/settings")
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/settings`)
       .then(res => res.json())
       .then(data => {
         if (data && data.openTime) setSettings(data);
@@ -221,13 +221,13 @@ export function ReservationSection() {
           >
             {siteData?.online?.mediaType === 'image' ? (
               <img 
-                src={siteData.online.mediaUrl?.startsWith('http') ? siteData.online.mediaUrl : (siteData.online.mediaUrl?.startsWith('/') && !siteData.online.mediaUrl?.startsWith('/uploads') ? siteData.online.mediaUrl : `http://localhost:3000${siteData.online.mediaUrl}`)} 
+                src={siteData.online.mediaUrl?.startsWith('http') ? siteData.online.mediaUrl : (siteData.online.mediaUrl?.startsWith('/') && !siteData.online.mediaUrl?.startsWith('/uploads') ? siteData.online.mediaUrl : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${siteData.online.mediaUrl}`)} 
                 alt="Reservation" 
                 className="w-full h-full object-cover absolute inset-0 transition-transform duration-700 group-hover:scale-105"
               />
             ) : (
               <video 
-                src={siteData?.online?.mediaUrl?.startsWith('/') && !siteData?.online?.mediaUrl?.startsWith('/uploads') ? siteData.online.mediaUrl : `http://localhost:3000${siteData?.online?.mediaUrl || '/reserve/reserve.mp4'}`} 
+                src={siteData?.online?.mediaUrl?.startsWith('/') && !siteData?.online?.mediaUrl?.startsWith('/uploads') ? siteData.online.mediaUrl : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${siteData?.online?.mediaUrl || '/reserve/reserve.mp4'}`} 
                 autoPlay 
                 loop 
                 muted 

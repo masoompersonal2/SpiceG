@@ -21,7 +21,7 @@ export function MenuPage() {
   ];
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/menu")
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/menu`)
       .then(res => res.json())
       .then(data => setItems(data))
       .catch(err => console.error(err));
@@ -104,7 +104,7 @@ export function MenuPage() {
         {filteredItems.map(item => (
           <div key={item.id} className="relative bg-[#2D1B10] border border-[#4A2F1D] rounded-[1rem] md:rounded-2xl overflow-hidden hover:border-[#F36B39] transition-colors group shadow-lg flex flex-col h-full md:h-[380px]">
             <div className="h-28 sm:h-32 md:h-48 w-full overflow-hidden bg-black shrink-0 relative">
-              <img src={item.image.startsWith('http') ? item.image : (item.image.startsWith('/') && !item.image.startsWith('/uploads') ? item.image : `http://localhost:3000${item.image}?v=2`)} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <img src={item.image.startsWith('http') ? item.image : (item.image.startsWith('/') && !item.image.startsWith('/uploads') ? item.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${item.image}?v=2`)} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="p-2 sm:p-4 md:p-6 font-sans relative z-10 flex flex-col flex-1 justify-between gap-1.5 md:gap-2">
               <div className="flex items-start gap-2 md:gap-3">

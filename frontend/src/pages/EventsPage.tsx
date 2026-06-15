@@ -8,11 +8,11 @@ export function EventsPage() {
   const [activeTab, setActiveTab] = useState("All Events");
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/content/site")
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/site`)
       .then(res => res.json())
       .then(data => setSiteData(data));
     
-    fetch("http://localhost:3000/api/events")
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events`)
       .then(res => res.json())
       .then(data => setEvents(data.filter((e: any) => e.isEnabled)));
   }, []);
@@ -20,7 +20,7 @@ export function EventsPage() {
   const resolveImageUrl = (url: string | undefined) => {
     if (!url) return "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=2070";
     if (url.startsWith("http")) return url;
-    return `http://localhost:3000${url}?v=2`;
+    return `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${url}?v=2`;
   };
 
   const getMonthAndDay = (dateString: string) => {

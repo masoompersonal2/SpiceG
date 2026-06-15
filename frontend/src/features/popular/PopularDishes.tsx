@@ -18,7 +18,7 @@ function DishCard({ image, title, desc, tall }: DishProps) {
       className={`relative overflow-hidden rounded-[2rem] group cursor-pointer w-full shadow-2xl ${tall ? 'h-[300px] lg:h-[420px]' : 'h-[220px] lg:h-[300px]'}`}
     >
       <img 
-        src={image?.startsWith('http') ? image : (image?.startsWith('/') && !image?.startsWith('/uploads') ? image : `http://localhost:3000${image || ''}?v=2`)}
+        src={image?.startsWith('http') ? image : (image?.startsWith('/') && !image?.startsWith('/uploads') ? image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${image || ''}?v=2`)}
         alt={title} 
         className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
       />

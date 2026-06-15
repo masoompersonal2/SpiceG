@@ -120,7 +120,7 @@ export function AdminDashboard() {
 
   const fetchProfile = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+      const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
       const res = await fetch(`${apiUrl}/admin/profile`, {
         credentials: "include"
       });
@@ -128,7 +128,7 @@ export function AdminDashboard() {
         const data = await res.json();
         setProfile({
           username: data.username,
-          profileImage: data.profileImage ? (data.profileImage.startsWith('http') ? data.profileImage : `http://localhost:3000${data.profileImage}?v=2`) : "https://i.pravatar.cc/150?img=47"
+          profileImage: data.profileImage ? (data.profileImage.startsWith('http') ? data.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${data.profileImage}?v=2`) : "https://i.pravatar.cc/150?img=47"
         });
         setUpdateUsername(data.username);
         setIsAuthenticated(true);
@@ -142,14 +142,14 @@ export function AdminDashboard() {
   };
 
   const handleLogout = async () => {
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     await fetch(`${apiUrl}/auth/logout`, { method: "POST", credentials: "include" });
     window.location.replace("/");
   };
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     
     // Upload image first if selected
     if (selectedFile) {
@@ -192,7 +192,7 @@ export function AdminDashboard() {
       return;
     }
 
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     const formData = new FormData();
     formData.append("name", menuName);
     formData.append("category", menuCategory);
@@ -219,7 +219,7 @@ export function AdminDashboard() {
   };
 
   const fetchReservations = async () => {
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     const res = await fetch(`${apiUrl}/reservations`, {
       credentials: "include"
     });
@@ -230,7 +230,7 @@ export function AdminDashboard() {
   };
 
   const fetchSettings = async () => {
-    const res = await fetch("http://localhost:3000/api/settings");
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/settings`);
     if (res.ok) {
       const data = await res.json();
       if (data && data.openTime) setSettings(data);
@@ -238,7 +238,7 @@ export function AdminDashboard() {
   };
 
   const fetchQueries = async () => {
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     const res = await fetch(`${apiUrl}/contact`, {
       credentials: "include"
     });
@@ -249,7 +249,7 @@ export function AdminDashboard() {
   };
 
   const saveSettings = async () => {
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     const res = await fetch(`${apiUrl}/settings`, {
       method: "PUT",
       credentials: "include",
@@ -276,7 +276,7 @@ export function AdminDashboard() {
   }, [activeTab]);
 
   const fetchStaffRequests = async () => {
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     const res = await fetch(`${apiUrl}/admin/credential-requests`, { credentials: "include" });
     if (res.ok) {
       const data = await res.json();
@@ -289,7 +289,7 @@ export function AdminDashboard() {
   };
 
   const handleStaffRequest = async (id: number, action: 'approve' | 'reject') => {
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     const res = await fetch(`${apiUrl}/admin/credential-requests/${id}/${action}`, {
       method: "PUT",
       credentials: "include"
@@ -302,7 +302,7 @@ export function AdminDashboard() {
   };
 
   const handleDeliveryRequest = async (id: number, action: 'approve' | 'reject') => {
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     const res = await fetch(`${apiUrl}/admin/delivery-friends/requests/${id}/${action}`, {
       method: "PUT",
       credentials: "include"
@@ -315,7 +315,7 @@ export function AdminDashboard() {
   };
 
   const updateReservationStatus = async (id: number, status: string) => {
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     await fetch(`${apiUrl}/reservations/${id}/status`, {
       method: "PATCH",
       credentials: "include",
@@ -329,7 +329,7 @@ export function AdminDashboard() {
     e.preventDefault();
     if (!selectedResId || !customPrice) return;
     
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     const res = await fetch(`${apiUrl}/reservations/${selectedResId}/accept-with-price`, {
       method: "PATCH",
       credentials: "include",
@@ -988,7 +988,7 @@ export function AdminDashboard() {
                 let finalIdCard = formData.get("idCardImage") as string;
                 let finalResume = formData.get("resumeFile") as string;
 
-                const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+                const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
 
                 // Upload ID Card if file
                 if (idInputType === "file" && idFile) {

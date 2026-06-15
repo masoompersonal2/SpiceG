@@ -13,7 +13,7 @@ function OrdersTab({ setCart, handleTabChange }: any) {
   const [showBulkDeleteModal, setShowBulkDeleteModal] = useState(false);
 
   const fetchOrders = () => {
-    fetch("http://localhost:3000/api/orders", { credentials: "include" })
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/orders`, { credentials: "include" })
       .then(r => r.json()).then(setOrders).catch(() => {});
   };
 
@@ -23,7 +23,7 @@ function OrdersTab({ setCart, handleTabChange }: any) {
 
   const handleCancelOrder = async (orderId: number) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/orders/${orderId}/cancel`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/orders/${orderId}/cancel`, {
         method: "PUT",
         credentials: "include"
       });
@@ -38,7 +38,7 @@ function OrdersTab({ setCart, handleTabChange }: any) {
   const handleBulkDelete = async () => {
     if (selectedOrderIds.length === 0) return;
     try {
-      const res = await fetch("http://localhost:3000/api/orders/bulk-delete", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/orders/bulk-delete`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -161,7 +161,7 @@ function OrdersTab({ setCart, handleTabChange }: any) {
         <div className="mb-4 bg-gray-50 border border-gray-200 rounded-xl p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[#B2E624] bg-white">
-              <img src={order.deliveryFriend.profileImage ? (order.deliveryFriend.profileImage.startsWith('http') ? order.deliveryFriend.profileImage : `http://localhost:3000${order.deliveryFriend.profileImage}`) : "https://i.pravatar.cc/150?img=11"} className="w-full h-full object-cover" alt="Delivery Partner" />
+              <img src={order.deliveryFriend.profileImage ? (order.deliveryFriend.profileImage.startsWith('http') ? order.deliveryFriend.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${order.deliveryFriend.profileImage}`) : "https://i.pravatar.cc/150?img=11"} className="w-full h-full object-cover" alt="Delivery Partner" />
             </div>
             <div>
               <h4 className="font-bold text-gray-800 text-sm">Delivery Partner Assigned</h4>
@@ -344,7 +344,7 @@ function MenuTab({ cart, setCart }: any) {
   const CATEGORIES = ["All", "Main Course (Non-Veg)", "Soups", "Starters", "Chinese", "Main Course (Veg)", "Beverages & Salads", "Breads", "Biryani & Rice", "Desserts"];
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/menu").then(r => r.json()).then(setItems);
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/menu`).then(r => r.json()).then(setItems);
   }, []);
 
   const filteredItems = items.filter((item: any) => {
@@ -378,7 +378,7 @@ function MenuTab({ cart, setCart }: any) {
           {filteredItems.map((item: any) => (
             <div key={item.id} className="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all group flex flex-col">
               <div className="h-48 w-full bg-gray-100 relative overflow-hidden">
-                <img src={item.image.startsWith('http') ? item.image : (item.image.startsWith('/') && !item.image.startsWith('/uploads') ? item.image : `http://localhost:3000${item.image}`)} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <img src={item.image.startsWith('http') ? item.image : (item.image.startsWith('/') && !item.image.startsWith('/uploads') ? item.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${item.image}`)} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
               <div className="p-5 flex flex-col flex-1">
                 <div className="flex items-start gap-2 mb-2">
@@ -422,15 +422,15 @@ function EventsTab() {
   const [bookingEvent, setBookingEvent] = useState<any>(null);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/events").then(r => r.json()).then(d => setEvents(d.filter((e:any) => e.isEnabled)));
-    fetch("http://localhost:3000/api/customer/auth/events", { credentials: "include" }).then(r => r.json()).then(setMyEvents).catch(() => {});
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events`).then(r => r.json()).then(d => setEvents(d.filter((e:any) => e.isEnabled)));
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/events`, { credentials: "include" }).then(r => r.json()).then(setMyEvents).catch(() => {});
   }, []);
 
   const handleBook = async () => {
     if (!bookingEvent) return;
     try {
       // 1. Create booking (Pending Payment)
-      const res = await fetch("http://localhost:3000/api/customer/auth/events/book", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/events/book`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -453,7 +453,7 @@ function EventsTab() {
         if (!resScript) { alert("Razorpay SDK failed to load."); return; }
 
         // 3. Create Order
-        const rzpRes = await fetch("http://localhost:3000/api/payments/razorpay/create-order", {
+        const rzpRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/payments/razorpay/create-order`, {
           method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include",
           body: JSON.stringify({ type: 'ticket_booking', id: bookingId })
         });
@@ -465,7 +465,7 @@ function EventsTab() {
           amount: rzpOrder.amount, currency: rzpOrder.currency, name: "Spice Garden",
           description: "Event Ticket Booking", order_id: rzpOrder.id,
           handler: async function (response: any) {
-            const verifyRes = await fetch("http://localhost:3000/api/payments/razorpay/verify", {
+            const verifyRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/payments/razorpay/verify`, {
               method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include",
               body: JSON.stringify({
                 type: 'ticket_booking', id: bookingId, razorpay_order_id: response.razorpay_order_id,
@@ -473,7 +473,7 @@ function EventsTab() {
               })
             });
             if (verifyRes.ok) {
-              fetch("http://localhost:3000/api/customer/auth/events", { credentials: "include" }).then(r => r.json()).then(setMyEvents);
+              fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/events`, { credentials: "include" }).then(r => r.json()).then(setMyEvents);
               alert("Payment successful! Ticket confirmed.");
             } else {
               alert("Payment verification failed.");
@@ -483,7 +483,7 @@ function EventsTab() {
         const paymentObject = new (window as any).Razorpay(options);
         paymentObject.open();
       } else {
-        fetch("http://localhost:3000/api/customer/auth/events", { credentials: "include" }).then(r => r.json()).then(setMyEvents);
+        fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/events`, { credentials: "include" }).then(r => r.json()).then(setMyEvents);
         alert("Event booked successfully!");
       }
     } finally {
@@ -522,7 +522,7 @@ function EventsTab() {
             return (
               <div key={`${ev.id}-${idx}`} className="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all group flex flex-col">
                 <div className="h-48 w-full relative overflow-hidden bg-gray-100">
-                  <img src={ev.image.startsWith('http') ? ev.image : `http://localhost:3000${ev.image}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={ev.title} />
+                  <img src={ev.image.startsWith('http') ? ev.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${ev.image}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={ev.title} />
                   <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md rounded-xl p-2 flex flex-col items-center justify-center min-w-[50px] shadow-sm">
                     <span className="text-gray-500 text-[10px] font-bold uppercase">{new Date(ev.date).toLocaleString('default', {month:'short'})}</span>
                     <span className="text-black text-lg font-black leading-none">{new Date(ev.date).getDate()}</span>
@@ -569,7 +569,7 @@ function ReservationsTab({ onPay }: { onPay: (id: number) => void }) {
   const [reservations, setReservations] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/reservations/my", { credentials: "include" })
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/reservations/my`, { credentials: "include" })
       .then(r => r.json()).then(setReservations).catch(() => {});
   }, []);
 
@@ -637,7 +637,7 @@ function SettingsTab({ user, onUpdate }: any) {
   const handleProfileSubmit = async (e: any) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:3000/api/customer/auth/profile", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/profile`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -656,7 +656,7 @@ function SettingsTab({ user, onUpdate }: any) {
   const handleDeliverySubmit = async (e: any) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:3000/api/customer/auth/delivery-details", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/delivery-details`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -676,7 +676,7 @@ function SettingsTab({ user, onUpdate }: any) {
     e.preventDefault();
     if (pass.newPassword !== pass.confirmPassword) return setMsg({ text: "Passwords don't match", type: "error" });
     try {
-      const res = await fetch("http://localhost:3000/api/customer/auth/password", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/password`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -698,7 +698,7 @@ function SettingsTab({ user, onUpdate }: any) {
     if (!file) return;
     const fd = new FormData(); fd.append("image", file);
     try {
-      const res = await fetch("http://localhost:3000/api/customer/auth/upload", { method: "POST", credentials: "include", body: fd });
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/upload`, { method: "POST", credentials: "include", body: fd });
       const data = await res.json();
       if (res.ok) setProfile({ ...profile, profileImage: data.imageUrl });
     } catch {}
@@ -709,7 +709,7 @@ function SettingsTab({ user, onUpdate }: any) {
     if (!file) return;
     const fd = new FormData(); fd.append("image", file);
     try {
-      const res = await fetch("http://localhost:3000/api/customer/auth/upload", { method: "POST", credentials: "include", body: fd });
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/upload`, { method: "POST", credentials: "include", body: fd });
       const data = await res.json();
       if (res.ok) setDelivery({ ...delivery, homeImage: data.imageUrl });
     } catch {}
@@ -733,7 +733,7 @@ function SettingsTab({ user, onUpdate }: any) {
           <form onSubmit={handleProfileSubmit} className="space-y-6">
             <div className="flex items-center gap-6">
               <div className="w-24 h-24 rounded-full bg-gray-100 overflow-hidden relative border-4 border-white shadow-sm">
-                {profile.profileImage ? <img src={`http://localhost:3000${profile.profileImage}`} className="w-full h-full object-cover" /> : <User className="w-10 h-10 m-6 text-gray-400" />}
+                {profile.profileImage ? <img src={`${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${profile.profileImage}`} className="w-full h-full object-cover" /> : <User className="w-10 h-10 m-6 text-gray-400" />}
               </div>
               <div>
                 <label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full text-sm font-semibold cursor-pointer transition-colors flex items-center gap-2">
@@ -762,7 +762,7 @@ function SettingsTab({ user, onUpdate }: any) {
           <form onSubmit={handleDeliverySubmit} className="space-y-6">
             <div className="flex items-center gap-6">
               <div className="w-32 h-24 rounded-xl bg-gray-100 overflow-hidden relative border-4 border-white shadow-sm flex items-center justify-center text-gray-400">
-                {delivery.homeImage ? <img src={`http://localhost:3000${delivery.homeImage}`} className="w-full h-full object-cover" /> : <span className="text-xs font-semibold">Home Image</span>}
+                {delivery.homeImage ? <img src={`${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${delivery.homeImage}`} className="w-full h-full object-cover" /> : <span className="text-xs font-semibold">Home Image</span>}
               </div>
               <div>
                 <label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full text-sm font-semibold cursor-pointer transition-colors flex items-center gap-2">
@@ -870,7 +870,7 @@ function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSucce
   const handlePlaceOrder = async () => {
     try {
       // 1. Create Order in Backend (Pending Payment)
-      const res = await fetch("http://localhost:3000/api/orders", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -899,7 +899,7 @@ function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSucce
       }
 
       // 3. Create Razorpay Order
-      const razorpayOrderRes = await fetch("http://localhost:3000/api/payments/razorpay/create-order", {
+      const razorpayOrderRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/payments/razorpay/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -922,7 +922,7 @@ function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSucce
         order_id: razorpayOrder.id,
         handler: async function (response: any) {
           // 5. Verify Payment
-          const verifyRes = await fetch("http://localhost:3000/api/payments/razorpay/verify", {
+          const verifyRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/payments/razorpay/verify`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -1002,7 +1002,7 @@ function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSucce
               {cart.map((item: any, idx: number) => (
                 <div key={idx} className="flex justify-between items-center text-sm bg-white p-3 rounded-xl border border-gray-100">
                   <div className="flex items-center gap-3">
-                    <img src={item.image.startsWith('http') ? item.image : `http://localhost:3000${item.image}`} className="w-10 h-10 rounded-lg object-cover" />
+                    <img src={item.image.startsWith('http') ? item.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${item.image}`} className="w-10 h-10 rounded-lg object-cover" />
                     <div>
                       <span className="font-bold">{item.name}</span>
                       <div className="text-gray-500">Qty: {item.quantity}</div>
@@ -1160,8 +1160,8 @@ export function CustomerDashboard() {
   const fetchUserAndSettings = async () => {
     try {
       const [resUser, resSettings] = await Promise.all([
-        fetch("http://localhost:3000/api/customer/auth/me", { credentials: "include" }),
-        fetch("http://localhost:3000/api/settings")
+        fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/me`, { credentials: "include" }),
+        fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/settings`)
       ]);
       if (!resUser.ok) throw new Error();
       setUser(await resUser.json());
@@ -1187,7 +1187,7 @@ export function CustomerDashboard() {
   const handlePendingReservationConfirm = async () => {
     if (!pendingReservation) return;
     try {
-      const res = await fetch("http://localhost:3000/api/reservations", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/reservations`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -1216,7 +1216,7 @@ export function CustomerDashboard() {
       const resScript = await loadRazorpayScript();
       if (!resScript) { alert("Razorpay SDK failed to load."); return; }
 
-      const rzpRes = await fetch("http://localhost:3000/api/payments/razorpay/create-order", {
+      const rzpRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/payments/razorpay/create-order`, {
         method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include",
         body: JSON.stringify({ type: 'table_reservation', id: reservationId })
       });
@@ -1227,7 +1227,7 @@ export function CustomerDashboard() {
         amount: rzpOrder.amount, currency: rzpOrder.currency, name: "Spice Garden",
         description: "Table Booking Fee", order_id: rzpOrder.id,
         handler: async function (response: any) {
-          const verifyRes = await fetch("http://localhost:3000/api/payments/razorpay/verify", {
+          const verifyRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/payments/razorpay/verify`, {
             method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include",
             body: JSON.stringify({
               type: 'table_reservation', id: reservationId, razorpay_order_id: response.razorpay_order_id,
@@ -1253,7 +1253,7 @@ export function CustomerDashboard() {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:3000/api/customer/auth/logout", { method: "POST", credentials: "include" });
+      await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/logout`, { method: "POST", credentials: "include" });
       window.location.replace("/");
     } catch {
       window.location.replace("/");
@@ -1322,7 +1322,7 @@ export function CustomerDashboard() {
             <LogOut className="w-4 h-4" /> Logout
           </button>
           {user.profileImage ? (
-            <img src={`http://localhost:3000${user.profileImage}`} alt="Profile" className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm" />
+            <img src={`${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${user.profileImage}`} alt="Profile" className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm" />
           ) : (
             <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center border-2 border-white shadow-sm"><User className="w-5 h-5 text-gray-400" /></div>
           )}
@@ -1364,7 +1364,7 @@ export function CustomerDashboard() {
                   <div className="flex flex-col gap-4">
                     {cart.map((item: any) => (
                       <div key={item.id} className="flex gap-4 border-b border-gray-100 pb-4 last:border-0 last:pb-0">
-                        <img src={item.image.startsWith('http') ? item.image : `http://localhost:3000${item.image}`} className="w-16 h-16 rounded-xl object-cover" />
+                        <img src={item.image.startsWith('http') ? item.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${item.image}`} className="w-16 h-16 rounded-xl object-cover" />
                         <div className="flex-1">
                           <h4 className="font-bold text-sm leading-tight mb-1">{item.name}</h4>
                           <div className="text-xs text-gray-500 mb-2">₹{item.priceText.replace(/[^\d]/g, '')}</div>

@@ -49,7 +49,7 @@ export function DeliveryFriendDashboard() {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/delivery-friend/profile", { credentials: "include" });
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/delivery-friend/profile`, { credentials: "include" });
       if (res.ok) {
         setProfile(await res.json());
         setIsAuthenticated(true);
@@ -63,7 +63,7 @@ export function DeliveryFriendDashboard() {
 
   const fetchActiveOrders = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/delivery-friend/active-orders", { credentials: "include" });
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/delivery-friend/active-orders`, { credentials: "include" });
       if (res.ok) setActiveOrders(await res.json());
     } catch (e) {
       console.error(e);
@@ -72,7 +72,7 @@ export function DeliveryFriendDashboard() {
 
   const fetchPastDeliveries = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/delivery-friend/past-deliveries", { credentials: "include" });
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/delivery-friend/past-deliveries`, { credentials: "include" });
       if (res.ok) setPastDeliveries(await res.json());
     } catch (e) {
       console.error(e);
@@ -84,7 +84,7 @@ export function DeliveryFriendDashboard() {
   };
 
   const handleStatusChange = async (status: string) => {
-    const res = await fetch("http://localhost:3000/api/delivery-friend/status", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/delivery-friend/status`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -98,7 +98,7 @@ export function DeliveryFriendDashboard() {
   };
 
   const handleMarkDelivered = async (orderId: number) => {
-    const res = await fetch(`http://localhost:3000/api/delivery-friend/orders/${orderId}/delivered`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/delivery-friend/orders/${orderId}/delivered`, {
       method: "PUT",
       credentials: "include"
     });
@@ -163,7 +163,7 @@ export function DeliveryFriendDashboard() {
 
         <div className="mt-auto border-t border-gray-100 pt-6">
           <div className="flex items-center gap-3 mb-6">
-            <img src={profile.profileImage ? (profile.profileImage.startsWith('http') ? profile.profileImage : `http://localhost:3000${profile.profileImage}`) : "https://i.pravatar.cc/150"} className="w-12 h-12 rounded-full border-2 border-gray-100 object-cover" />
+            <img src={profile.profileImage ? (profile.profileImage.startsWith('http') ? profile.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${profile.profileImage}`) : "https://i.pravatar.cc/150"} className="w-12 h-12 rounded-full border-2 border-gray-100 object-cover" />
             <div className="flex-1 min-w-0">
               <p className="font-bold text-gray-900 truncate">{profile.name}</p>
               <p className="text-xs font-semibold text-gray-500">{profile.uniqueId}</p>
@@ -219,7 +219,7 @@ export function DeliveryFriendDashboard() {
                       <div className="flex flex-col md:flex-row gap-6">
                         <div className="flex-[2] bg-gray-50 rounded-xl p-4 flex gap-4 items-start">
                           {order.homeImage && (
-                            <img src={`http://localhost:3000${order.homeImage}`} alt="Home" className="w-24 h-24 rounded-lg object-cover border border-gray-200 shrink-0" />
+                            <img src={`${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${order.homeImage}`} alt="Home" className="w-24 h-24 rounded-lg object-cover border border-gray-200 shrink-0" />
                           )}
                           <div className="flex-1">
                             <h4 className="font-bold mb-3 flex items-center gap-2"><MapPin className="w-4 h-4" /> Delivery Details</h4>
@@ -331,14 +331,14 @@ export function DeliveryFriendDashboard() {
                     if (selectedFile) {
                       const fileData = new FormData();
                       fileData.append("image", selectedFile);
-                      await fetch("http://localhost:3000/api/delivery-friend/profile-image", {
+                      await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/delivery-friend/profile-image`, {
                         method: "POST",
                         credentials: "include",
                         body: fileData
                       });
                     }
 
-                    const res = await fetch("http://localhost:3000/api/delivery-friend/profile", {
+                    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/delivery-friend/profile`, {
                       method: "PUT",
                       headers: { "Content-Type": "application/json" },
                       credentials: "include",
@@ -354,7 +354,7 @@ export function DeliveryFriendDashboard() {
                     <div className="flex flex-col md:flex-row items-center md:items-start gap-4 mb-4">
                       <div className="relative shrink-0">
                         <img 
-                          src={selectedFile ? URL.createObjectURL(selectedFile) : (profile.profileImage ? (profile.profileImage.startsWith('http') ? profile.profileImage : `http://localhost:3000${profile.profileImage}`) : "https://i.pravatar.cc/150")} 
+                          src={selectedFile ? URL.createObjectURL(selectedFile) : (profile.profileImage ? (profile.profileImage.startsWith('http') ? profile.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${profile.profileImage}`) : "https://i.pravatar.cc/150")} 
                           alt="Profile Preview" 
                           className="w-20 h-20 rounded-full object-cover border-2 border-gray-200" 
                         />
@@ -397,7 +397,7 @@ export function DeliveryFriendDashboard() {
                   <form className="space-y-4" onSubmit={async (e) => {
                     e.preventDefault();
                     const formData = new FormData(e.currentTarget);
-                    const res = await fetch("http://localhost:3000/api/delivery-friend/update-request", {
+                    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/delivery-friend/update-request`, {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
                       credentials: "include",

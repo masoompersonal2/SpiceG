@@ -276,7 +276,7 @@ export function AuthPage() {
     setIsLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/api/customer/auth/login", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -320,7 +320,7 @@ export function AuthPage() {
     setIsLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/api/customer/auth/signup", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -350,7 +350,7 @@ export function AuthPage() {
       if (profileImageFile) {
         const formData = new FormData();
         formData.append("image", profileImageFile);
-        const uploadRes = await fetch("http://localhost:3000/api/customer/auth/upload", {
+        const uploadRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/upload`, {
           method: "POST",
           credentials: "include",
           body: formData,
@@ -360,7 +360,7 @@ export function AuthPage() {
         imageUrl = uploadData.imageUrl;
       }
 
-      const res = await fetch("http://localhost:3000/api/customer/auth/setup", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/setup`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -385,7 +385,7 @@ export function AuthPage() {
   const handleCancelSetup = async () => {
     setIsLoading(true);
     try {
-      await fetch("http://localhost:3000/api/customer/auth/cancel-setup", {
+      await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/cancel-setup`, {
         method: "POST",
         credentials: "include",
       });

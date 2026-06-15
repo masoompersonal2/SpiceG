@@ -28,7 +28,7 @@ export function VideoCard({ videoUrl = "/hero-video.mp4" }: VideoCardProps) {
         playsInline 
         className="w-full h-[55vh] md:h-[80vh] block object-cover"
       >
-        <source src={videoUrl?.startsWith('http') ? videoUrl : (videoUrl?.startsWith('/') && !videoUrl?.startsWith('/uploads') ? videoUrl : `http://localhost:3000${videoUrl || ''}`)} type="video/mp4" />
+        <source src={videoUrl?.startsWith('http') ? videoUrl : (videoUrl?.startsWith('/') && !videoUrl?.startsWith('/uploads') ? videoUrl : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${videoUrl || ''}`)} type="video/mp4" />
       </video>
       {/* Liquid Glass Border Overlay */}
       <div className="absolute inset-0 pointer-events-none rounded-[2rem] shadow-[inset_0_0_20px_rgba(255,255,255,0.192),inset_0_0_5px_rgba(255,255,255,0.274)] z-50 transition-all duration-500 group-hover:bg-white/5"></div>

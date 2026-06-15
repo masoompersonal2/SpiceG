@@ -77,7 +77,7 @@ export function StaffDashboard() {
 
   const fetchSettings = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+      const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
       const res = await fetch(`${apiUrl}/settings`);
       if (res.ok) {
         const data = await res.json();
@@ -95,7 +95,7 @@ export function StaffDashboard() {
     e.preventDefault();
     setSettingsMessage("");
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+      const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
       const res = await fetch(`${apiUrl}/settings/staff`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -115,7 +115,7 @@ export function StaffDashboard() {
 
   const fetchProfile = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+      const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
       const res = await fetch(`${apiUrl}/staff/profile`, {
         credentials: "include"
       });
@@ -123,7 +123,7 @@ export function StaffDashboard() {
         const data = await res.json();
         setProfile({
           username: data.username,
-          profileImage: data.profileImage ? (data.profileImage.startsWith('http') ? data.profileImage : `http://localhost:3000${data.profileImage}?v=2`) : "https://i.pravatar.cc/150?img=47"
+          profileImage: data.profileImage ? (data.profileImage.startsWith('http') ? data.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${data.profileImage}?v=2`) : "https://i.pravatar.cc/150?img=47"
         });
         setUpdateUsername(data.username);
         setIsAuthenticated(true);
@@ -142,7 +142,7 @@ export function StaffDashboard() {
 
   const confirmLeave = async () => {
     if (leaveAction === "logout") {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+      const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
       await fetch(`${apiUrl}/staff/logout`, { method: "POST", credentials: "include" });
       window.location.replace("/");
     } else if (leaveAction === "back") {
@@ -154,7 +154,7 @@ export function StaffDashboard() {
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     
     // Upload image first if selected
     if (selectedFile) {
@@ -193,7 +193,7 @@ export function StaffDashboard() {
   };
 
   const fetchOrders = async () => {
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     const res = await fetch(`${apiUrl}/staff/orders`, { credentials: "include" });
     if (res.ok) {
       const data = await res.json();
@@ -202,7 +202,7 @@ export function StaffDashboard() {
   };
 
   const fetchAvailableFriends = async () => {
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     const res = await fetch(`${apiUrl}/staff/available-friends`, { credentials: "include" });
     if (res.ok) {
       const data = await res.json();
@@ -211,7 +211,7 @@ export function StaffDashboard() {
   };
 
   const handleUpdateOrderStatus = async (orderId: number, status: string, message?: string, friendId?: string) => {
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     await fetch(`${apiUrl}/staff/orders/${orderId}/status`, {
       method: "PUT",
       credentials: "include",
@@ -230,7 +230,7 @@ export function StaffDashboard() {
   const handleBulkDelete = async () => {
     if (selectedOrderIds.length === 0) return;
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+      const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
       const res = await fetch(`${apiUrl}/staff/orders/bulk-delete`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -442,7 +442,7 @@ export function StaffDashboard() {
                         <h5 className="font-semibold text-gray-700 mb-3">Order Receiving Details:</h5>
                         <div className="flex gap-4">
                           {order.homeImage && (
-                            <img src={`http://localhost:3000${order.homeImage}`} alt="Home" className="w-24 h-24 rounded-lg object-cover border border-gray-200" />
+                            <img src={`${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${order.homeImage}`} alt="Home" className="w-24 h-24 rounded-lg object-cover border border-gray-200" />
                           )}
                           <div className="text-sm space-y-1">
                             <p><span className="font-medium text-gray-500">Receiver:</span> {order.receiverName || 'Not provided'}</p>
@@ -686,7 +686,7 @@ export function StaffDashboard() {
                             <h5 className="font-semibold text-gray-700 mb-3">Order Receiving Details:</h5>
                             <div className="flex gap-4">
                               {order.homeImage && (
-                                <img src={`http://localhost:3000${order.homeImage}`} alt="Home" className="w-24 h-24 rounded-lg object-cover border border-gray-200" />
+                                <img src={`${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${order.homeImage}`} alt="Home" className="w-24 h-24 rounded-lg object-cover border border-gray-200" />
                               )}
                               <div className="text-sm space-y-1">
                                 <p><span className="font-medium text-gray-500">Receiver:</span> {order.receiverName || 'Not provided'}</p>

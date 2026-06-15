@@ -22,7 +22,7 @@ export function AdminQueries() {
 
   const fetchQueries = () => {
     const token = localStorage.getItem("adminToken");
-    fetch("http://localhost:3000/api/contact", {
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/contact`, {
       headers: { "Authorization": `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -64,7 +64,7 @@ export function AdminQueries() {
 
   const confirmDelete = async () => {
     const token = localStorage.getItem("adminToken");
-    const res = await fetch("http://localhost:3000/api/contact/bulk-delete", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/contact/bulk-delete`, {
       method: "POST",
       headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ ids: selectedIds })

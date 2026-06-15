@@ -29,7 +29,7 @@ export function AdminMenuItems() {
   ];
 
   const fetchItems = () => {
-    fetch("http://localhost:3000/api/menu")
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/menu`)
       .then(res => res.json())
       .then(data => setItems(data))
       .catch(err => console.error(err));
@@ -81,7 +81,7 @@ export function AdminMenuItems() {
 
   const confirmDelete = async () => {
     const token = localStorage.getItem("adminToken");
-    const res = await fetch("http://localhost:3000/api/menu/bulk-delete", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/menu/bulk-delete`, {
       method: "POST",
       headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ ids: selectedIds })
@@ -110,7 +110,7 @@ export function AdminMenuItems() {
       return;
     }
 
-    const res = await fetch("http://localhost:3000/api/menu/bulk-update", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/menu/bulk-update`, {
       method: "POST",
       headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ items: updates })
@@ -274,7 +274,7 @@ export function AdminMenuItems() {
             </div>
 
             <div className="h-28 sm:h-32 md:h-48 w-full overflow-hidden bg-black shrink-0 relative">
-              <img src={item.image.startsWith('http') ? item.image : (item.image.startsWith('/') && !item.image.startsWith('/uploads') ? item.image : `http://localhost:3000${item.image}?v=2`)} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <img src={item.image.startsWith('http') ? item.image : (item.image.startsWith('/') && !item.image.startsWith('/uploads') ? item.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${item.image}?v=2`)} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#2D1B10] to-transparent pointer-events-none"></div>
             </div>
             <div className="p-2 sm:p-4 md:p-6 font-sans relative z-10 flex flex-col flex-1 justify-between gap-1.5 md:gap-2">

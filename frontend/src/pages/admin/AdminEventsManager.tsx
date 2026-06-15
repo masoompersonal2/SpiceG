@@ -14,7 +14,7 @@ export function AdminEventsManager({ onBack, showToast }: { onBack: () => void, 
   }, []);
 
   const fetchEvents = async () => {
-    const res = await fetch("http://localhost:3000/api/events");
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events`);
     if (res.ok) {
       const data = await res.json();
       setEvents(data);
@@ -43,7 +43,7 @@ export function AdminEventsManager({ onBack, showToast }: { onBack: () => void, 
     
     try {
       for (const id of selectedIds) {
-        await fetch(`http://localhost:3000/api/events/${id}`, {
+        await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events/${id}`, {
           method: "DELETE",
           headers: { "Authorization": `Bearer ${token}` }
         });
@@ -62,7 +62,7 @@ export function AdminEventsManager({ onBack, showToast }: { onBack: () => void, 
       for (const id of selectedIds) {
         const ev = events.find(e => e.id === id);
         if (ev) {
-          await fetch(`http://localhost:3000/api/events/${id}`, {
+          await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events/${id}`, {
             method: "PUT",
             headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
             body: JSON.stringify({ isEnabled: !ev.isEnabled })
@@ -84,7 +84,7 @@ export function AdminEventsManager({ onBack, showToast }: { onBack: () => void, 
 
   const saveEdit = async () => {
     const token = localStorage.getItem("adminToken");
-    const res = await fetch(`http://localhost:3000/api/events/${editingId}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events/${editingId}`, {
       method: "PUT",
       headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify(editForm)
@@ -219,7 +219,7 @@ export function AdminEventsManager({ onBack, showToast }: { onBack: () => void, 
                   <>
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-3">
-                        <img src={ev.image?.startsWith('http') ? ev.image : `http://localhost:3000${ev.image}?v=2`} className="w-12 h-12 rounded-lg object-cover bg-gray-200" />
+                        <img src={ev.image?.startsWith('http') ? ev.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${ev.image}?v=2`} className="w-12 h-12 rounded-lg object-cover bg-gray-200" />
                         <div>
                           <p className="font-bold text-gray-800 line-clamp-1">{ev.title}</p>
                           <p className="text-xs text-gray-500 line-clamp-1">{ev.subtitle || 'No subtitle'}</p>

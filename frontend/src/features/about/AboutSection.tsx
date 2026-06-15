@@ -59,7 +59,7 @@ export function AboutSection() {
             className="col-span-1 relative rounded-[1.5rem] md:rounded-[2rem] overflow-hidden min-h-[150px] sm:min-h-[220px] md:min-h-[240px] lg:min-h-[260px] bg-zinc-900 group"
           >
             <img 
-              src={siteData.about.aboutImage?.startsWith('http') ? siteData.about.aboutImage : (siteData.about.aboutImage?.startsWith('/') && !siteData.about.aboutImage?.startsWith('/uploads') ? siteData.about.aboutImage : `http://localhost:3000${siteData.about.aboutImage}`)} 
+              src={siteData.about.aboutImage?.startsWith('http') ? siteData.about.aboutImage : (siteData.about.aboutImage?.startsWith('/') && !siteData.about.aboutImage?.startsWith('/uploads') ? siteData.about.aboutImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${siteData.about.aboutImage}`)} 
               alt="Restaurant Cuisine" 
               className="w-full h-full object-cover"
             />

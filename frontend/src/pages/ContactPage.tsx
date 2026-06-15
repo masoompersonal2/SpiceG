@@ -15,7 +15,7 @@ export function ContactPage() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/content/site")
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/site`)
       .then(res => res.json())
       .then(data => {
         setSiteData(data);
@@ -26,7 +26,7 @@ export function ContactPage() {
     e.preventDefault();
     setStatus("submitting");
     try {
-      const res = await fetch("http://localhost:3000/api/contact", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
@@ -46,7 +46,7 @@ export function ContactPage() {
   const resolveImageUrl = (url: string | undefined) => {
     if (!url) return "";
     if (url.startsWith("http")) return url;
-    return `http://localhost:3000${url}?v=2`;
+    return `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${url}?v=2`;
   };
 
   const isVideo = (url: string) => url.match(/\.(mp4|webm|ogg)/i);

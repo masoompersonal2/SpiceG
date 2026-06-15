@@ -52,7 +52,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
         }}
       />
       <img
-        src={testimonial.image?.startsWith('http') ? testimonial.image : (testimonial.image?.startsWith('/') && !testimonial.image?.startsWith('/uploads') ? testimonial.image : `http://localhost:3000${testimonial.image}`)}
+        src={testimonial.image?.startsWith('http') ? testimonial.image : (testimonial.image?.startsWith('/') && !testimonial.image?.startsWith('/uploads') ? testimonial.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${testimonial.image}`)}
         alt={`${testimonial.name}`}
         className="mb-4 h-14 w-14 rounded-full bg-gray-100 object-cover object-top border-2 border-white shadow-md"
       />

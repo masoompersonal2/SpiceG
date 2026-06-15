@@ -129,7 +129,7 @@ export const HeroParallax = ({
 };
 
 const resolveImageUrl = (url: string) => {
-  return url.startsWith('http') ? url : (url.startsWith('/') && !url.startsWith('/uploads') ? url : `http://localhost:3000${url}`);
+  return url.startsWith('http') ? url : (url.startsWith('/') && !url.startsWith('/uploads') ? url : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${url}`);
 };
 
 const GalleryRow = ({ images, onImageClick, translate, reverse = false }: { images: any[], onImageClick: (id: number) => void, translate: any, reverse?: boolean }) => {
@@ -231,7 +231,7 @@ export function GalleryPage() {
 
   useEffect(() => {
     // Fetch site content for header text
-    fetch("http://localhost:3000/api/content/site")
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/site`)
       .then(res => res.json())
       .then(data => {
         if (data && data.galleryH) {
@@ -240,7 +240,7 @@ export function GalleryPage() {
       });
       
     // Fetch gallery images
-    fetch("http://localhost:3000/api/content/gallery-image")
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/gallery-image`)
       .then(res => res.json())
       .then(data => {
         setImages(data);

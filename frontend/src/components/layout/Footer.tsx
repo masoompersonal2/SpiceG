@@ -16,13 +16,13 @@ export function Footer() {
       {/* Video or Image Background (Full Screen) */}
       {siteData?.footer?.footerBackgroundType === 'image' ? (
         <img 
-          src={siteData.footer.footerBackgroundMedia?.startsWith('http') ? siteData.footer.footerBackgroundMedia : (siteData.footer.footerBackgroundMedia?.startsWith('/') && !siteData.footer.footerBackgroundMedia?.startsWith('/uploads') ? siteData.footer.footerBackgroundMedia : `http://localhost:3000${siteData.footer.footerBackgroundMedia}`)} 
+          src={siteData.footer.footerBackgroundMedia?.startsWith('http') ? siteData.footer.footerBackgroundMedia : (siteData.footer.footerBackgroundMedia?.startsWith('/') && !siteData.footer.footerBackgroundMedia?.startsWith('/uploads') ? siteData.footer.footerBackgroundMedia : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${siteData.footer.footerBackgroundMedia}`)} 
           alt="Background" 
           className="absolute inset-0 w-full h-full object-cover opacity-90"
         />
       ) : (
         <video 
-          src={siteData?.footer?.footerBackgroundMedia?.startsWith('/') && !siteData?.footer?.footerBackgroundMedia?.startsWith('/uploads') ? siteData.footer.footerBackgroundMedia : `http://localhost:3000${siteData?.footer?.footerBackgroundMedia || '/video.mp4'}`} 
+          src={siteData?.footer?.footerBackgroundMedia?.startsWith('/') && !siteData?.footer?.footerBackgroundMedia?.startsWith('/uploads') ? siteData.footer.footerBackgroundMedia : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${siteData?.footer?.footerBackgroundMedia || '/video.mp4'}`} 
           autoPlay loop muted playsInline 
           className="absolute inset-0 w-full h-full object-cover opacity-90"
         />

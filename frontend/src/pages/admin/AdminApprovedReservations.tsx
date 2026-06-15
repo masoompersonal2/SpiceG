@@ -20,7 +20,7 @@ export function AdminApprovedReservations() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const fetchReservations = () => {
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     fetch(`${apiUrl}/reservations`, {
       credentials: "include"
     })
@@ -64,7 +64,7 @@ export function AdminApprovedReservations() {
 
   const confirmDelete = async () => {
     const token = localStorage.getItem("adminToken");
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     const res = await fetch(`${apiUrl}/reservations/bulk-delete`, {
       method: "POST",
       headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },

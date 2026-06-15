@@ -19,7 +19,7 @@ export function AdminGalleryImages() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const fetchImages = () => {
-    fetch("http://localhost:3000/api/content/gallery-image")
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/gallery-image`)
       .then(res => res.json())
       .then(data => setImages(data))
       .catch(err => console.error(err));
@@ -58,7 +58,7 @@ export function AdminGalleryImages() {
 
   const confirmDelete = async () => {
     const token = localStorage.getItem("adminToken");
-    const res = await fetch("http://localhost:3000/api/content/gallery-image/bulk-delete", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/gallery-image/bulk-delete`, {
       method: "POST",
       headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ ids: selectedIds })
@@ -78,7 +78,7 @@ export function AdminGalleryImages() {
   const resolveImageUrl = (url: string | undefined) => {
     if (!url) return "";
     if (url.startsWith("http")) return url;
-    return `http://localhost:3000${url}?v=2`;
+    return `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${url}?v=2`;
   };
 
   return (

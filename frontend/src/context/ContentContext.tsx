@@ -27,10 +27,10 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     async function fetchData() {
       try {
         const [siteRes, chefRes, catRes, testRes] = await Promise.all([
-          fetch("http://localhost:3000/api/content/site"),
-          fetch("http://localhost:3000/api/content/chef"),
-          fetch("http://localhost:3000/api/content/category"),
-          fetch("http://localhost:3000/api/content/testimonial")
+          fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/site`),
+          fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/chef`),
+          fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/category`),
+          fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/testimonial`)
         ]);
 
         if (siteRes.ok) {
@@ -56,7 +56,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
                 linkIcon.setAttribute('rel', 'icon');
                 document.head.appendChild(linkIcon);
               }
-              const faviconUrl = seo.favicon.startsWith('http') ? seo.favicon : (seo.favicon.startsWith('/') && !seo.favicon.startsWith('/uploads') ? seo.favicon : `http://localhost:3000${seo.favicon}?v=2`);
+              const faviconUrl = seo.favicon.startsWith('http') ? seo.favicon : (seo.favicon.startsWith('/') && !seo.favicon.startsWith('/uploads') ? seo.favicon : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${seo.favicon}?v=2`);
               linkIcon.setAttribute('href', faviconUrl);
             }
           }

@@ -30,16 +30,16 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
     if (!url) return '';
     if (url.startsWith('http')) return url;
     if (url.startsWith('/') && !url.startsWith('/uploads')) return url;
-    return `http://localhost:3000${url}?v=2`;
+    return `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${url}?v=2`;
   };
 
   const fetchContent = async () => {
     try {
       const [siteRes, chefRes, catRes, testRes] = await Promise.all([
-        fetch("http://localhost:3000/api/content/site"),
-        fetch("http://localhost:3000/api/content/chef"),
-        fetch("http://localhost:3000/api/content/category"),
-        fetch("http://localhost:3000/api/content/testimonial")
+        fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/site`),
+        fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/chef`),
+        fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/category`),
+        fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/testimonial`)
       ]);
 
       if (siteRes.ok) {
@@ -72,7 +72,7 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
     if (!siteData || !siteData[section]) return;
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch(`http://localhost:3000/api/content/site/${section}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/site/${section}`, {
         method: "PUT",
         headers: { 
           "Authorization": `Bearer ${token}`,
@@ -95,7 +95,7 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const res = await fetch("http://localhost:3000/api/content/upload", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/upload`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${token}` },
         body: formData
@@ -124,7 +124,7 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
   const saveArrayItem = async (endpoint: string, id: number, data: any) => {
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch(`http://localhost:3000/api/content/${endpoint}/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/${endpoint}/${id}`, {
         method: "PUT",
         headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(data)
@@ -140,7 +140,7 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
   const createArrayItem = async (endpoint: string, data: any, setter: any) => {
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch(`http://localhost:3000/api/content/${endpoint}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/${endpoint}`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(data)
@@ -158,7 +158,7 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
   const deleteArrayItem = async (endpoint: string, id: number, setter: any) => {
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch(`http://localhost:3000/api/content/${endpoint}/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/${endpoint}/${id}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
