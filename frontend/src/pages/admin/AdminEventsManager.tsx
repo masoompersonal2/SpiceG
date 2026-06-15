@@ -39,13 +39,12 @@ export function AdminEventsManager({ onBack, showToast }: { onBack: () => void, 
 
   const handleDeleteSelected = async () => {
     if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} tickets?`)) return;
-    const token = localStorage.getItem("adminToken");
-    
+        
     try {
       for (const id of selectedIds) {
         await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events/${id}`, {
           method: "DELETE",
-          headers: { "Authorization": `Bearer ${token}` }
+          headers: { }
         });
       }
       showToast("Selected tickets deleted.");
@@ -57,14 +56,13 @@ export function AdminEventsManager({ onBack, showToast }: { onBack: () => void, 
   };
 
   const handleToggleEnable = async () => {
-    const token = localStorage.getItem("adminToken");
-    try {
+        try {
       for (const id of selectedIds) {
         const ev = events.find(e => e.id === id);
         if (ev) {
           await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events/${id}`, {
             method: "PUT",
-            headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+            headers: {  "Content-Type": "application/json" },
             body: JSON.stringify({ isEnabled: !ev.isEnabled })
           });
         }
@@ -83,10 +81,9 @@ export function AdminEventsManager({ onBack, showToast }: { onBack: () => void, 
   };
 
   const saveEdit = async () => {
-    const token = localStorage.getItem("adminToken");
-    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events/${editingId}`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events/${editingId}`, {
       method: "PUT",
-      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+      headers: {  "Content-Type": "application/json" },
       body: JSON.stringify(editForm)
     });
     if (res.ok) {

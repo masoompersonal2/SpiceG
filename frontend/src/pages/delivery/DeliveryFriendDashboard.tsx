@@ -25,6 +25,11 @@ export function DeliveryFriendDashboard() {
   };
 
   useEffect(() => {
+    if (!sessionStorage.getItem("deliverySession")) {
+      window.location.replace("/admin/login");
+      return;
+    }
+
     fetchProfile();
     fetchActiveOrders();
 

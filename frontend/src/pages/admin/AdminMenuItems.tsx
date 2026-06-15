@@ -36,10 +36,7 @@ export function AdminMenuItems({ onBack }: { onBack?: () => void }) {
   };
 
   useEffect(() => {
-    if (!localStorage.getItem("adminToken")) {
-      window.location.replace("/admin/login");
-      return;
-    }
+    
     fetchItems();
   }, []);
 
@@ -80,10 +77,9 @@ export function AdminMenuItems({ onBack }: { onBack?: () => void }) {
   };
 
   const confirmDelete = async () => {
-    const token = localStorage.getItem("adminToken");
-    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/menu/bulk-delete`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/menu/bulk-delete`, {
       method: "POST",
-      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+      headers: {  "Content-Type": "application/json" },
       body: JSON.stringify({ ids: selectedIds })
     });
     
@@ -97,8 +93,7 @@ export function AdminMenuItems({ onBack }: { onBack?: () => void }) {
   };
 
   const confirmSave = async () => {
-    const token = localStorage.getItem("adminToken");
-    
+        
     const updates = Object.keys(editedItems).map(idStr => ({
       id: parseInt(idStr),
       name: editedItems[parseInt(idStr)].name,
@@ -112,7 +107,7 @@ export function AdminMenuItems({ onBack }: { onBack?: () => void }) {
 
     const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/menu/bulk-update`, {
       method: "POST",
-      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+      headers: {  "Content-Type": "application/json" },
       body: JSON.stringify({ items: updates })
     });
     

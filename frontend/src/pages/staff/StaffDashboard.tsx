@@ -63,6 +63,10 @@ export function StaffDashboard() {
   }, []);
 
   useEffect(() => {
+    if (!sessionStorage.getItem("staffSession")) {
+      window.location.replace("/admin/login");
+      return;
+    }
     fetchProfile();
   }, []);
 

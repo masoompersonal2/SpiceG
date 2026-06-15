@@ -1181,6 +1181,10 @@ export function CustomerDashboard() {
   };
 
   useEffect(() => {
+    if (!sessionStorage.getItem("customerSession")) {
+      window.location.replace("/auth");
+      return;
+    }
     fetchUserAndSettings();
   }, []);
 

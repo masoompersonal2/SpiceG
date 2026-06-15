@@ -111,6 +111,11 @@ export function AdminDashboard() {
   ];
 
   useEffect(() => {
+    if (!sessionStorage.getItem("adminSession")) {
+      window.location.replace("/admin/login");
+      return;
+    }
+
     // Profile verification acts as the guard now
     fetchProfile();
     
@@ -120,8 +125,6 @@ export function AdminDashboard() {
     if (tabParam !== null) {
       setActiveTab(parseInt(tabParam, 10));
     }
-    
-    fetchProfile();
   }, []);
 
   const fetchProfile = async () => {

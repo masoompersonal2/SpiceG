@@ -26,9 +26,18 @@ export function AdminLogin() {
       });
       const data = await res.json();
       if (res.ok) {
-        if (role === "Admin") window.location.replace("/admin/dashboard");
-        else if (role === "Staff") window.location.replace("/staff/dashboard");
-        else window.location.replace("/delivery-friend/dashboard");
+        if (role === "Admin") {
+          sessionStorage.setItem("adminSession", "active");
+          window.location.replace("/admin/dashboard");
+        }
+        else if (role === "Staff") {
+          sessionStorage.setItem("staffSession", "active");
+          window.location.replace("/staff/dashboard");
+        }
+        else {
+          sessionStorage.setItem("deliverySession", "active");
+          window.location.replace("/delivery-friend/dashboard");
+        }
       } else {
         setErrorMsg(data.error || data.message || "Login failed");
       }

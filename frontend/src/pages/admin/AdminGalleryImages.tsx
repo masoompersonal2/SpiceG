@@ -26,10 +26,7 @@ export function AdminGalleryImages({ onBack }: { onBack?: () => void }) {
   };
 
   useEffect(() => {
-    if (!localStorage.getItem("adminToken")) {
-      window.location.replace("/admin/login");
-      return;
-    }
+    
     fetchImages();
   }, []);
 
@@ -57,10 +54,9 @@ export function AdminGalleryImages({ onBack }: { onBack?: () => void }) {
   };
 
   const confirmDelete = async () => {
-    const token = localStorage.getItem("adminToken");
-    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/gallery-image/bulk-delete`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/gallery-image/bulk-delete`, {
       method: "POST",
-      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+      headers: {  "Content-Type": "application/json" },
       body: JSON.stringify({ ids: selectedIds })
     });
     

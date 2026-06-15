@@ -38,11 +38,10 @@ export function AdminHeaderPagesTab({ showToast, onViewGallery }: Props) {
   };
 
   const saveSection = async (section: string) => {
-    const token = localStorage.getItem("adminToken");
-    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/site/${section}`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/site/${section}`, {
       method: "PUT",
       headers: {
-        "Authorization": `Bearer ${token}`,
+        
         "Content-Type": "application/json"
       },
       body: JSON.stringify(siteData[section])
@@ -73,13 +72,12 @@ export function AdminHeaderPagesTab({ showToast, onViewGallery }: Props) {
     const formData = new FormData();
     formData.append("file", file);
 
-    const token = localStorage.getItem("adminToken");
-    showToast("Uploading...");
+        showToast("Uploading...");
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/upload`, {
         method: "POST",
-        headers: { "Authorization": `Bearer ${token}` },
+        headers: { },
         body: formData
       });
 
@@ -102,13 +100,12 @@ export function AdminHeaderPagesTab({ showToast, onViewGallery }: Props) {
     const formData = new FormData();
     formData.append("file", file);
 
-    const token = localStorage.getItem("adminToken");
-    showToast("Uploading...");
+        showToast("Uploading...");
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/upload`, {
         method: "POST",
-        headers: { "Authorization": `Bearer ${token}` },
+        headers: { },
         body: formData
       });
 
@@ -131,12 +128,11 @@ export function AdminHeaderPagesTab({ showToast, onViewGallery }: Props) {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append("file", file);
-    const token = localStorage.getItem("adminToken");
-    showToast("Uploading...");
+        showToast("Uploading...");
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/upload`, {
         method: "POST",
-        headers: { "Authorization": `Bearer ${token}` },
+        headers: { },
         body: formData
       });
       if (res.ok) {
@@ -152,10 +148,9 @@ export function AdminHeaderPagesTab({ showToast, onViewGallery }: Props) {
       showToast("Please fill all ticket fields, including the image upload and location.");
       return;
     }
-    const token = localStorage.getItem("adminToken");
-    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/events`, {
       method: "POST",
-      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+      headers: {  "Content-Type": "application/json" },
       body: JSON.stringify(newTicket)
     });
     if (res.ok) {
@@ -177,12 +172,11 @@ export function AdminHeaderPagesTab({ showToast, onViewGallery }: Props) {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append("file", file);
-    const token = localStorage.getItem("adminToken");
-    showToast("Uploading image...");
+        showToast("Uploading image...");
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/upload`, {
         method: "POST",
-        headers: { "Authorization": `Bearer ${token}` },
+        headers: { },
         body: formData
       });
       if (res.ok) {
@@ -198,10 +192,9 @@ export function AdminHeaderPagesTab({ showToast, onViewGallery }: Props) {
       showToast("Please select an image.");
       return;
     }
-    const token = localStorage.getItem("adminToken");
-    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/gallery-image`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/gallery-image`, {
       method: "POST",
-      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+      headers: {  "Content-Type": "application/json" },
       body: JSON.stringify(newGalleryImage)
     });
     if (res.ok) {

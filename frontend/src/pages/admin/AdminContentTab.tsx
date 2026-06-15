@@ -71,11 +71,10 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
   const saveSection = async (section: string) => {
     if (!siteData || !siteData[section]) return;
     try {
-      const token = localStorage.getItem("adminToken");
-      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/site/${section}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/site/${section}`, {
         method: "PUT",
         headers: { 
-          "Authorization": `Bearer ${token}`,
+          
           "Content-Type": "application/json"
         },
         body: JSON.stringify(siteData[section])
@@ -91,13 +90,12 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
   };
 
   const uploadFile = async (file: File): Promise<string | null> => {
-    const token = localStorage.getItem("adminToken");
-    const formData = new FormData();
+        const formData = new FormData();
     formData.append("file", file);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/upload`, {
         method: "POST",
-        headers: { "Authorization": `Bearer ${token}` },
+        headers: { },
         body: formData
       });
       if (res.ok) {
@@ -123,10 +121,9 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
   // Helper for arrays
   const saveArrayItem = async (endpoint: string, id: number, data: any) => {
     try {
-      const token = localStorage.getItem("adminToken");
-      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/${endpoint}/${id}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/${endpoint}/${id}`, {
         method: "PUT",
-        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+        headers: {  "Content-Type": "application/json" },
         body: JSON.stringify(data)
       });
       if (res.ok) {
@@ -139,10 +136,9 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
 
   const createArrayItem = async (endpoint: string, data: any, setter: any) => {
     try {
-      const token = localStorage.getItem("adminToken");
-      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/${endpoint}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/${endpoint}`, {
         method: "POST",
-        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+        headers: {  "Content-Type": "application/json" },
         body: JSON.stringify(data)
       });
       if (res.ok) {
@@ -157,10 +153,9 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
 
   const deleteArrayItem = async (endpoint: string, id: number, setter: any) => {
     try {
-      const token = localStorage.getItem("adminToken");
-      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/${endpoint}/${id}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/content/${endpoint}/${id}`, {
         method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: { }
       });
       if (res.ok) {
         setter((prev: any[]) => prev.filter(i => i.id !== id));

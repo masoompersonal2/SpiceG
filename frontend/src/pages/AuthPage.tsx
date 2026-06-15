@@ -292,9 +292,8 @@ export function AuthPage() {
         if (pending) {
           window.location.replace("/dashboard?tab=Reservations");
         } else {
-          setTimeout(() => {
-            window.location.replace("/dashboard");
-          }, 1500);
+          sessionStorage.setItem("customerSession", "active");
+          window.location.replace("/dashboard");
         }
       }
     } catch (err: any) {
@@ -373,6 +372,7 @@ export function AuthPage() {
       if (pending) {
         window.location.replace("/dashboard?tab=Reservations");
       } else {
+        sessionStorage.setItem("customerSession", "active");
         window.location.replace("/dashboard");
       }
     } catch (err: any) {

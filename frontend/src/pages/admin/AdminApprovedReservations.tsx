@@ -63,11 +63,10 @@ export function AdminApprovedReservations() {
   };
 
   const confirmDelete = async () => {
-    const token = localStorage.getItem("adminToken");
-    const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
+        const apiUrl = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}`;
     const res = await fetch(`${apiUrl}/reservations/bulk-delete`, {
       method: "POST",
-      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+      headers: {  "Content-Type": "application/json" },
       body: JSON.stringify({ ids: selectedIds })
     });
     
