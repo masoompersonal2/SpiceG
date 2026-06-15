@@ -79,7 +79,8 @@ export class PaymentController {
         currency: razorpayOrder.currency,
       };
     } catch (error: any) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      const errMsg = error.error?.description || error.message || "Payment gateway error";
+      throw new HttpException(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

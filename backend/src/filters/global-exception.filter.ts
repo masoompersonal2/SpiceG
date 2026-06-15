@@ -25,11 +25,16 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       );
     }
 
+    let formattedMessage = message;
+    if (message && typeof message !== 'string') {
+      formattedMessage = (message as any).message || message;
+    }
+
     response.status(status).json({
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      message: typeof message === 'string' ? message : (message as any).message || message,
+      message: formattedMessage || 'Internal server error',
     });
   }
 }
