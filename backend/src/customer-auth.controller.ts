@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Post, Put, Req, Res, UnauthorizedExcepti
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { extname } from 'path';
-import { getMulterS3Config } from './s3.config';
+import { getCloudinaryStorage } from './cloudinary.config';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaClient } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
@@ -142,12 +142,12 @@ export class CustomerAuthController {
   @UseGuards(CustomerAuthGuard)
   @Post('upload')
   @UseInterceptors(FileInterceptor('image', {
-    storage: getMulterS3Config()
+    storage: getCloudinaryStorage()
   }))
   async uploadProfilePicture(@Req() req: any, @UploadedFile() file: any) {
     if (!file) throw new BadRequestException('No file uploaded');
     
-    const publicUrl = `${process.env.R2_PUBLIC_URL}/${file.key}`;
+    const publicUrl = file.path;
     await prisma.customer.update({
       where: { id: req.user.id },
       data: { profileImage: publicUrl }

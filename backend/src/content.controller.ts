@@ -4,7 +4,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 
 import * as path from 'path';
 
-import { getMulterS3Config } from './s3.config';
+import { getCloudinaryStorage } from './cloudinary.config';
 
 const prisma = new PrismaClient();
 
@@ -34,11 +34,11 @@ export class ContentController {
   // ================= UPLOADS =================
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', {
-    storage: getMulterS3Config()
+    storage: getCloudinaryStorage()
   }))
   uploadFile(@UploadedFile() file: any) {
     if (!file) return { error: "No file uploaded" };
-    const publicUrl = `${process.env.R2_PUBLIC_URL}/${file.key}`;
+    const publicUrl = file.path;
     return { url: publicUrl };
   }
 

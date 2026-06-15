@@ -6,7 +6,7 @@ import { Response } from 'express';
 import * as bcrypt from 'bcryptjs';
 import { DeliveryFriendAuthGuard } from './delivery-friend.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { getMulterS3Config } from './s3.config';
+import { getCloudinaryStorage } from './cloudinary.config';
 import * as path from 'path';
 
 const prisma = new PrismaClient();
@@ -156,12 +156,12 @@ export class DeliveryFriendAuthController {
   @Post('profile-image')
   @UseGuards(DeliveryFriendAuthGuard)
   @UseInterceptors(FileInterceptor('image', {
-    storage: getMulterS3Config()
+    storage: getCloudinaryStorage()
   }))
   async uploadProfilePicture(@Req() req: any, @UploadedFile() file: any) {
     if (!file) throw new BadRequestException('No file uploaded');
     
-    const publicUrl = `${process.env.R2_PUBLIC_URL}/${file.key}`;
+    const publicUrl = file.path;
     await prisma.deliveryFriend.update({
       where: { id: req.user.sub },
       data: { profileImage: publicUrl }

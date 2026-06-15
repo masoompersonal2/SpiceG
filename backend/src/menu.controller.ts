@@ -3,7 +3,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from './auth.guard';
 import { PrismaClient } from '@prisma/client';
 import { extname } from 'path';
-import { getMulterS3Config } from './s3.config';
+import { getCloudinaryStorage } from './cloudinary.config';
 import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
@@ -21,12 +21,12 @@ export class MenuController {
   @Post()
   @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('image', {
-    storage: getMulterS3Config()
+    storage: getCloudinaryStorage()
   }))
   async createMenuItem(@Body() body: any, @UploadedFile() file: any) {
     let imageUrl = '';
     if (file) {
-      imageUrl = `${process.env.R2_PUBLIC_URL}/${file.key}`;
+      imageUrl = file.path;
     }
 
     const { name, category, priceText, description, isAvailable, isVegetarian } = body;

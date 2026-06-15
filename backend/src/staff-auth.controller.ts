@@ -6,7 +6,7 @@ import { Request, Response } from 'express';
 import { StaffGuard } from './staff.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';
-import { getMulterS3Config } from './s3.config';
+import { getCloudinaryStorage } from './cloudinary.config';
 
 const prisma = new PrismaClient();
 
@@ -65,12 +65,12 @@ export class StaffAuthController {
   @Put('profile-image')
   @UseGuards(StaffGuard)
   @UseInterceptors(FileInterceptor('image', {
-    storage: getMulterS3Config()
+    storage: getCloudinaryStorage()
   }))
   async uploadProfilePicture(@Req() req: any, @UploadedFile() file: any) {
     if (!file) throw new BadRequestException('No file uploaded');
     
-    const publicUrl = `${process.env.R2_PUBLIC_URL}/${file.key}`;
+    const publicUrl = file.path;
     await prisma.staff.update({
       where: { id: req.user.sub },
       data: { profileImage: publicUrl }

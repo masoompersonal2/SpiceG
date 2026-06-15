@@ -4,7 +4,7 @@ import { AuthGuard } from './auth.guard';
 import { PrismaClient } from '@prisma/client';
 
 import { extname } from 'path';
-import { getMulterS3Config } from './s3.config';
+import { getCloudinaryStorage } from './cloudinary.config';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcryptjs';
 
@@ -48,12 +48,12 @@ export class AdminController {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('image', {
-    storage: getMulterS3Config()
+    storage: getCloudinaryStorage()
   }))
   async uploadProfileImage(@Req() req: any, @UploadedFile() file: any) {
     if (!file) throw new BadRequestException('No file provided');
 
-    const publicUrl = `${process.env.R2_PUBLIC_URL}/${file.key}`;
+    const publicUrl = file.path;
 
     await prisma.admin.update({
       where: { id: req.user.id },
