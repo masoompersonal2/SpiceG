@@ -78,5 +78,37 @@ export class AppModule {
       });
       console.log(`Seeded default Admin account: ${adminUser}`);
     }
+
+    // Seed SiteContent if not exists
+    const existingContent = await prisma.siteContent.findUnique({ where: { id: 1 } });
+    if (!existingContent) {
+      console.log('Seeding default SiteContent...');
+      await prisma.siteContent.create({
+        data: {
+          seo: { title: "Spice Garden", metaDescription: "Spice Garden Gokak", favicon: "/favicon.ico" },
+          hero: { heroTitle: "SPICE GARDEN", heroSubtitle: "Authentic Flavours", heroLocation: "GOKAK", heroStatsHappyDiners: "15000+", heroStatsMenuItems: "60+" },
+          about: { aboutTitle: "FOOD LOVER'S PARADISE" },
+          online: { onlineTitle: "ONLINE RESERVATION" },
+          call: { callTitle: "Craving Something Delicious?" },
+          event: { eventTitle: "Something Special Awaits" },
+          promise: { promiseTitle: "OUR PROMISE" },
+          footer: { footerDescription: "Gokak's premier family dining restaurant." }
+        }
+      });
+    }
+
+    // Seed Menu Categories if empty
+    const categoryCount = await prisma.contentMenuCategory.count();
+    if (categoryCount === 0) {
+      console.log('Seeding default ContentMenuCategories...');
+      await prisma.contentMenuCategory.createMany({
+        data: [
+          { name: "All", isEnabled: true },
+          { name: "Main Course (Non-Veg)", isEnabled: true },
+          { name: "Main Course (Veg)", isEnabled: true },
+          { name: "Starters", isEnabled: true }
+        ]
+      });
+    }
   }
 }
