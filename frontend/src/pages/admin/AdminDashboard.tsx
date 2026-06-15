@@ -72,6 +72,7 @@ export function AdminDashboard() {
   const [reservations, setReservations] = useState<any[]>([]);
   const [resSearchQuery, setResSearchQuery] = useState("");
   const [resFilter, setResFilter] = useState("Recent");
+  const [resStatusTab, setResStatusTab] = useState<'Pending' | 'Approved' | 'Rejected'>('Pending');
 
   // Settings State
   const [settings, setSettings] = useState({ openTime: "18:00", closeTime: "23:00" });
@@ -352,6 +353,11 @@ export function AdminDashboard() {
   const filteredReservations = reservations
     .filter(res => res.name.toLowerCase().includes(resSearchQuery.toLowerCase()) || res.phone.includes(resSearchQuery))
     .filter(res => {
+      if (resStatusTab === 'Approved') return res.status === 'Approved';
+      if (resStatusTab === 'Rejected') return res.status === 'Rejected';
+      
+      // If Pending tab, check resFilter
+      if (res.status === 'Approved' || res.status === 'Rejected') return false; // Hide from pending
       if (resFilter === "Recent") return true; // Show all sorted by creation
       if (resFilter === "Pending") return res.status === "Pending" || res.status === "New";
       return true;
@@ -762,19 +768,31 @@ export function AdminDashboard() {
                   />
                 </div>
                 
-                <div className="flex items-center gap-3 w-full md:w-auto">
-                  <button onClick={() => window.location.href = "/admin/reservations/approved"} className="flex-1 md:flex-none px-6 py-2 rounded-xl font-bold border border-green-200 text-green-700 bg-green-50 hover:bg-green-100 transition-colors">Approved</button>
-                  <button onClick={() => window.location.href = "/admin/reservations/rejected"} className="flex-1 md:flex-none px-6 py-2 rounded-xl font-bold border border-red-200 text-red-700 bg-red-50 hover:bg-red-100 transition-colors">Rejected</button>
-                </div>
+                {resStatusTab === 'Pending' ? (
+                  <>
+                    <div className="flex items-center gap-3 w-full md:w-auto">
+                      <button onClick={() => setResStatusTab('Approved')} className="flex-1 md:flex-none px-6 py-2 rounded-xl font-bold border border-green-200 text-green-700 bg-green-50 hover:bg-green-100 transition-colors">Approved</button>
+                      <button onClick={() => setResStatusTab('Rejected')} className="flex-1 md:flex-none px-6 py-2 rounded-xl font-bold border border-red-200 text-red-700 bg-red-50 hover:bg-red-100 transition-colors">Rejected</button>
+                    </div>
 
-                <select 
-                  value={resFilter}
-                  onChange={(e) => setResFilter(e.target.value)}
-                  className="w-full md:w-48 bg-white border border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:border-[#E04D2D] cursor-pointer"
-                >
-                  <option value="Recent">All Pending</option>
-                  <option value="Pending">New (Pending)</option>
-                </select>
+                    <select 
+                      value={resFilter}
+                      onChange={(e) => setResFilter(e.target.value)}
+                      className="w-full md:w-48 bg-white border border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:border-[#E04D2D] cursor-pointer"
+                    >
+                      <option value="Recent">All Pending</option>
+                      <option value="Pending">New (Pending)</option>
+                    </select>
+                  </>
+                ) : (
+                  <div className="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto ml-auto">
+                     <h4 className={`font-bold mr-0 md:mr-4 ${resStatusTab === 'Approved' ? 'text-green-700' : 'text-red-700'}`}>{resStatusTab}</h4>
+                     <button onClick={() => setResStatusTab('Pending')} className="px-6 py-2 rounded-xl font-bold border border-gray-200 text-gray-700 bg-white hover:bg-gray-100 transition-colors flex items-center gap-2">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                       Back
+                     </button>
+                  </div>
+                )}
               </div>
 
               {/* Grid */}
