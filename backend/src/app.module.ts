@@ -15,8 +15,7 @@ import { CustomerOrderController } from './customer-order.controller';
 import { DeliveryFriendAuthController } from './delivery-friend-auth.controller';
 import { AdminDeliveryFriendController } from './admin-delivery-friend.controller';
 import { PaymentController } from './payment.controller';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
+
 import { JwtModule } from '@nestjs/jwt';
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
@@ -29,10 +28,6 @@ const prisma = new PrismaClient();
       ttl: 60000,
       limit: 100, // 100 requests per minute
     }]),
-    ServeStaticModule.forRoot({
-      rootPath: join(process.cwd(), 'uploads'),
-      serveRoot: '/uploads',
-    }),
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET || 'spicegarden_dev_secret_key',

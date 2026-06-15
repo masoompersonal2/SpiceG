@@ -2,8 +2,9 @@ import { Controller, Get, Put, Post, Body, UseGuards, Req, UploadedFile, UseInte
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from './auth.guard';
 import { PrismaClient } from '@prisma/client';
-import { diskStorage } from 'multer';
+
 import { extname } from 'path';
+import { getMulterS3Config } from './s3.config';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcryptjs';
 
@@ -47,24 +48,19 @@ export class AdminController {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('image', {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, cb) => {
-        const uniqueName = uuidv4() + extname(file.originalname);
-        cb(null, uniqueName);
-      }
-    })
+    storage: getMulterS3Config()
   }))
-  async uploadProfileImage(@Req() req: any, @UploadedFile() file: Express.Multer.File) {
+  async uploadProfileImage(@Req() req: any, @UploadedFile() file: any) {
     if (!file) throw new BadRequestException('No file provided');
 
-    const imageUrl = `/uploads/${file.filename}`;
+    const publicUrl = `${process.env.R2_PUBLIC_URL}/${file.key}`;
+
     await prisma.admin.update({
       where: { id: req.user.id },
-      data: { profileImage: imageUrl }
+      data: { profilePic: publicUrl }
     });
 
-    return { imageUrl };
+    return { url: publicUrl };
   }
 
   @Post('upload-file')

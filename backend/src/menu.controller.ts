@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, UseGuards, UploadedFile, UseInterceptors, 
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from './auth.guard';
 import { PrismaClient } from '@prisma/client';
-import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { getMulterS3Config } from './s3.config';
 import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
@@ -21,35 +21,24 @@ export class MenuController {
   @Post()
   @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('image', {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, cb) => {
-        const uniqueName = uuidv4() + extname(file.originalname);
-        cb(null, uniqueName);
-      }
-    })
+    storage: getMulterS3Config()
   }))
-  async createMenuItem(@Body() body: any, @UploadedFile() file: Express.Multer.File) {
-    if (!file) throw new BadRequestException('Image is required');
-    
-    const { name, category, isVeg, priceText } = body;
-    if (!name || !category || !priceText) {
-      throw new BadRequestException('Missing required fields');
+  async createMenuItem(@Body() body: any, @UploadedFile() file: any) {
+    let imageUrl = '';
+    if (file) {
+      imageUrl = `${process.env.R2_PUBLIC_URL}/${file.key}`;
     }
 
-    const imageUrl = `/uploads/${file.filename}`;
-    
-    const item = await prisma.menuItem.create({
+    const { name, category, priceText, description, isAvailable, isVegetarian } = body;
+    const isAvail = isAvailable === 'true' || isAvailable === true;
+    const isVeg = isVegetarian === 'true' || isVegetarian === true;
+
+    return prisma.menuItem.create({
       data: {
-        name,
-        category,
-        isVeg: isVeg === 'true' || isVeg === true,
-        priceText,
-        image: imageUrl
+        name, category, priceText, description, image: imageUrl,
+        isAvailable: isAvail, isVegetarian: isVeg
       }
     });
-
-    return item;
   }
 
   @Post('bulk-delete')

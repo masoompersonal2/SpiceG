@@ -1,12 +1,12 @@
 import { Controller, Post, Get, Put, Body, Req, Res, UseGuards, UnauthorizedException, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Post, Get, Put, Body, Req, Res, UseGuards, UnauthorizedException, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import * as bcrypt from 'bcryptjs';
 import { DeliveryFriendAuthGuard } from './delivery-friend.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { v4 as uuidv4 } from 'uuid';
+import { getMulterS3Config } from './s3.config';
 import * as path from 'path';
 
 const prisma = new PrismaClient();
@@ -153,24 +153,20 @@ export class DeliveryFriendAuthController {
     return detailedOrders;
   }
 
-  @UseGuards(DeliveryFriendAuthGuard)
   @Post('profile-image')
+  @UseGuards(DeliveryFriendAuthGuard)
   @UseInterceptors(FileInterceptor('image', {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        cb(null, `${uuidv4()}${ext}`);
-      }
-    })
+    storage: getMulterS3Config()
   }))
-  async uploadProfileImage(@Req() req: any, @UploadedFile() file: Express.Multer.File) {
-    if (!file) return { message: "No file uploaded" };
-    const imageUrl = `/uploads/${file.filename}`;
+  async uploadProfilePicture(@Req() req: any, @UploadedFile() file: any) {
+    if (!file) throw new BadRequestException('No file uploaded');
+    
+    const publicUrl = `${process.env.R2_PUBLIC_URL}/${file.key}`;
     await prisma.deliveryFriend.update({
       where: { id: req.user.sub },
-      data: { profileImage: imageUrl }
+      data: { profileImage: publicUrl }
     });
-    return { imageUrl };
+
+    return { url: publicUrl };
   }
 }

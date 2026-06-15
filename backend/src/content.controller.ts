@@ -1,8 +1,10 @@
 import { Controller, Get, Put, Post, Delete, Body, Param, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+
 import * as path from 'path';
+
+import { getMulterS3Config } from './s3.config';
 
 const prisma = new PrismaClient();
 
@@ -32,19 +34,12 @@ export class ContentController {
   // ================= UPLOADS =================
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname);
-        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-      }
-    })
+    storage: getMulterS3Config()
   }))
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
+  uploadFile(@UploadedFile() file: any) {
     if (!file) return { error: "No file uploaded" };
-    // Return relative URL that will be served
-    return { url: `/uploads/${file.filename}` };
+    const publicUrl = `${process.env.R2_PUBLIC_URL}/${file.key}`;
+    return { url: publicUrl };
   }
 
   // ================= CHEF SPECIALS =================

@@ -5,8 +5,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 import { StaffGuard } from './staff.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { getMulterS3Config } from './s3.config';
 
 const prisma = new PrismaClient();
 
@@ -62,27 +62,21 @@ export class StaffAuthController {
     return staff;
   }
 
-  @UseGuards(StaffGuard)
   @Put('profile-image')
+  @UseGuards(StaffGuard)
   @UseInterceptors(FileInterceptor('image', {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, cb) => {
-        const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('');
-        return cb(null, `${randomName}${extname(file.originalname)}`);
-      }
-    })
+    storage: getMulterS3Config()
   }))
-  async updateProfileImage(@Req() req: any, @UploadedFile() file: Express.Multer.File) {
-    if (!file) throw new Error("File missing");
+  async uploadProfilePicture(@Req() req: any, @UploadedFile() file: any) {
+    if (!file) throw new BadRequestException('No file uploaded');
     
-    const imageUrl = `/uploads/${file.filename}`;
+    const publicUrl = `${process.env.R2_PUBLIC_URL}/${file.key}`;
     await prisma.staff.update({
       where: { id: req.user.sub },
-      data: { profileImage: imageUrl }
+      data: { profileImage: publicUrl }
     });
 
-    return { imageUrl };
+    return { url: publicUrl };
   }
 
   @UseGuards(StaffGuard)

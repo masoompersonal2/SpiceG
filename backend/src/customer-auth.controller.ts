@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, Get, Post, Put, Req, Res, UnauthorizedException, UseGuards, HttpException, HttpStatus, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+
 import { extname } from 'path';
+import { getMulterS3Config } from './s3.config';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaClient } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
@@ -141,19 +142,18 @@ export class CustomerAuthController {
   @UseGuards(CustomerAuthGuard)
   @Post('upload')
   @UseInterceptors(FileInterceptor('image', {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, cb) => {
-        const uniqueName = uuidv4() + extname(file.originalname);
-        cb(null, uniqueName);
-      }
-    })
+    storage: getMulterS3Config()
   }))
-  async uploadProfileImage(@UploadedFile() file: Express.Multer.File) {
-    if (!file) throw new BadRequestException('No file provided');
+  async uploadProfilePicture(@Req() req: any, @UploadedFile() file: any) {
+    if (!file) throw new BadRequestException('No file uploaded');
+    
+    const publicUrl = `${process.env.R2_PUBLIC_URL}/${file.key}`;
+    await prisma.customer.update({
+      where: { id: req.user.id },
+      data: { profileImage: publicUrl }
+    });
 
-    const imageUrl = `/uploads/${file.filename}`;
-    return { imageUrl };
+    return { url: publicUrl };
   }
 
   @UseGuards(CustomerAuthGuard)
