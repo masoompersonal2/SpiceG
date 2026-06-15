@@ -127,8 +127,8 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center text-xs text-white/50 pt-4 gap-4">
           <span>© 2026 Spice Garden. All rights reserved.</span>
           <div className="flex gap-6 text-[#E04D2D] font-medium">
-            {siteData?.footer?.footerSocials
-              ?.filter((s: any) => s.isEnabled)
+            {(siteData?.footer?.footerSocials || [])
+              .filter((s: any) => s.isEnabled)
               .map((social: any) => (
                 <a key={social.platform} href={social.url} target="_blank" rel="noopener noreferrer" className="group hover:text-white transition-colors flex items-center gap-2" aria-label={social.platform}>
                   {social.platform === "instagram" && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>}

@@ -532,7 +532,7 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
               
               <div className="space-y-4">
                 <h4 className="font-bold text-gray-800 border-b pb-2">Social Links</h4>
-                {siteData.footer.footerSocials.map((social: any, idx: number) => (
+                {(siteData.footer.footerSocials || []).map((social: any, idx: number) => (
                   <div key={idx} className="flex flex-col gap-2 bg-gray-50 p-3 rounded-xl border border-gray-200">
                     <div className="flex items-center justify-between">
                       <span className="font-bold capitalize text-gray-700">{social.platform}</span>

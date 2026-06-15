@@ -92,7 +92,11 @@ export class AppModule {
           call: { callTitle: "Craving Something Delicious?" },
           event: { eventTitle: "Something Special Awaits" },
           promise: { promiseTitle: "OUR PROMISE" },
-          footer: { footerDescription: "Gokak's premier family dining restaurant." }
+          footer: { 
+            footerDescription: "Gokak's premier family dining restaurant.",
+            footerLinks: [],
+            footerSocials: []
+          }
         }
       });
     }
