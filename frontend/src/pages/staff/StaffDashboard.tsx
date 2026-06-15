@@ -175,6 +175,11 @@ export function StaffDashboard() {
         credentials: "include",
         body: formData
       });
+      await fetchProfile();
+      if (updateUsername === profile.username && !updatePassword) {
+         alert("Profile image updated successfully!");
+         return;
+      }
     }
 
     // Submit Credential Change Request if username or password provided
@@ -370,8 +375,33 @@ export function StaffDashboard() {
         </div>
       </aside>
 
+      {/* Mobile Bottom Navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 z-50 px-2 pb-safe shadow-[0_-4px_24px_rgba(0,0,0,0.04)]">
+        <button 
+          onClick={() => handleTabChange(1)}
+          className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${activeTab === 1 ? 'text-[#B2E624]' : 'text-gray-400'}`}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span className="text-[10px] font-medium">Orders</span>
+        </button>
+        <button 
+          onClick={() => handleTabChange(3)}
+          className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${activeTab === 3 ? 'text-[#B2E624]' : 'text-gray-400'}`}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <span className="text-[10px] font-medium">Fees</span>
+        </button>
+        <button 
+          onClick={() => handleTabChange(2)}
+          className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${activeTab === 2 ? 'text-[#B2E624]' : 'text-gray-400'}`}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+          <span className="text-[10px] font-medium">Settings</span>
+        </button>
+      </nav>
+
       {/* Main Content */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden">
+      <main className="flex-1 flex flex-col h-screen overflow-hidden pb-16 md:pb-0">
         
         {/* Topbar */}
         <header className="shrink-0 px-4 py-4 md:px-10 md:py-6 flex items-center justify-between gap-4">

@@ -157,6 +157,23 @@ export class CustomerAuthController {
   }
 
   @UseGuards(CustomerAuthGuard)
+  @Post('upload-home')
+  @UseInterceptors(FileInterceptor('image', {
+    storage: getCloudinaryStorage()
+  }))
+  async uploadHomeImage(@Req() req: any, @UploadedFile() file: any) {
+    if (!file) throw new BadRequestException('No file uploaded');
+    
+    const publicUrl = file.path;
+    await prisma.customer.update({
+      where: { id: req.user.id },
+      data: { homeImage: publicUrl }
+    });
+
+    return { url: publicUrl };
+  }
+
+  @UseGuards(CustomerAuthGuard)
   @Put('profile')
   async updateProfile(@Req() req: Request, @Body() dto: CustomerProfileUpdateDto) {
     const user = req['user'] as { id: number };

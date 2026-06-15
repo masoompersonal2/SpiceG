@@ -726,9 +726,12 @@ function SettingsTab({ user, onUpdate }: any) {
     const fd = new FormData();
     fd.append("image", e.target.files[0]);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/upload`, { method: "POST", credentials: "include", body: fd });
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/upload-home`, { method: "POST", credentials: "include", body: fd });
       const data = await res.json();
-      if (res.ok) setDelivery({ ...delivery, homeImage: data.url });
+      if (res.ok) {
+        setDelivery({ ...delivery, homeImage: data.url });
+        alert("Home image uploaded successfully!");
+      }
     } catch {}
   };
 
