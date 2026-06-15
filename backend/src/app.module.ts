@@ -50,16 +50,18 @@ const prisma = new PrismaClient();
 export class AppModule {
   async onModuleInit() {
     // Seed staff user
-    const existingStaff = await prisma.staff.findUnique({ where: { username: 'spiceStaff' } });
+    const staffUser = process.env.STAFF_USERNAME || 'spiceStaff';
+    const staffPass = process.env.STAFF_PASSWORD || 'staffSPICE';
+    const existingStaff = await prisma.staff.findUnique({ where: { username: staffUser } });
     if (!existingStaff) {
-      const hashedPassword = await bcrypt.hash('staffSPICE', 10);
+      const hashedPassword = await bcrypt.hash(staffPass, 10);
       await prisma.staff.create({
         data: {
-          username: 'spiceStaff',
+          username: staffUser,
           password: hashedPassword
         }
       });
-      console.log('Seeded default spiceStaff account');
+      console.log(`Seeded default Staff account: ${staffUser}`);
     }
 
     // Seed admin user
