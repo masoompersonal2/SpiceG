@@ -14,6 +14,7 @@ import { StaffAuthController } from './staff-auth.controller';
 import { CustomerOrderController } from './customer-order.controller';
 import { DeliveryFriendAuthController } from './delivery-friend-auth.controller';
 import { AdminDeliveryFriendController } from './admin-delivery-friend.controller';
+import { DebugController } from './debug.controller';
 import { PaymentController } from './payment.controller';
 
 import { JwtModule } from '@nestjs/jwt';
@@ -34,7 +35,7 @@ import { prisma } from './prisma';
       signOptions: { expiresIn: '1d' },
     }),
   ],
-  controllers: [AuthController, AdminController, MenuController, ReservationController, SettingsController, ContentController, ContactController, EventsController, CustomerAuthController, StaffAuthController, CustomerOrderController, DeliveryFriendAuthController, AdminDeliveryFriendController, PaymentController],
+  controllers: [AuthController, AdminController, MenuController, ReservationController, SettingsController, ContentController, ContactController, EventsController, CustomerAuthController, StaffAuthController, CustomerOrderController, DeliveryFriendAuthController, AdminDeliveryFriendController, DebugController, PaymentController],
   providers: [
     {
       provide: APP_GUARD,

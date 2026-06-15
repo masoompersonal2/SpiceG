@@ -7,6 +7,18 @@ import * as cookieParser from 'cookie-parser';
 import * as fs from 'fs';
 import * as path from 'path';
 
+export const crashLogs: string[] = [];
+
+process.on('uncaughtException', (err) => {
+  crashLogs.push(`UncaughtException: ${err.message}\n${err.stack}`);
+  console.error("UncaughtException caught to prevent crash:", err);
+});
+
+process.on('unhandledRejection', (reason: any) => {
+  crashLogs.push(`UnhandledRejection: ${reason?.message || reason}`);
+  console.error("UnhandledRejection caught to prevent crash:", reason);
+});
+
 async function bootstrap() {
   const uploadDir = path.join(__dirname, '..', 'uploads');
   if (!fs.existsSync(uploadDir)) {
