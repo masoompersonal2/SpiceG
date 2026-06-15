@@ -81,10 +81,10 @@ export function Navbar() {
 
         {/* Right Action */}
         <div className="flex-1 flex justify-end items-center">
-          {/* Desktop Reserve Button */}
-          <a href="/auth" className={`hidden md:flex items-center space-x-2 text-sm font-semibold hover:opacity-70 transition-opacity ${scrolled ? 'text-white' : ''}`}>
-            <span>Order Online</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          {/* Order Online Button (Desktop & Mobile) */}
+          <a href="/auth" className={`flex items-center space-x-1 md:space-x-2 text-xs md:text-sm font-semibold hover:opacity-70 transition-opacity mr-3 md:mr-0 ${scrolled ? 'text-white' : 'text-gray-800'}`}>
+            <span className="bg-[#E04D2D] text-white px-3 py-1.5 md:px-0 md:py-0 md:bg-transparent md:text-inherit rounded-full">Order Online</span>
+            <svg className="hidden md:block" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </a>
           
           {/* Mobile Menu Button */}
