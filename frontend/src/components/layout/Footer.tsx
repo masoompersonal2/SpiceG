@@ -10,6 +10,13 @@ const LinkArrow = () => (
 
 export function Footer() {
   const { siteData } = useContent();
+
+  const resolveMediaUrl = (url: string | undefined) => {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    if (url.startsWith('/') && !url.startsWith('/uploads')) return url;
+    return `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${url}`;
+  };
   return (
     <footer className="relative md:fixed bottom-0 left-0 w-full min-h-screen md:h-screen z-10 md:-z-10 bg-[#0a0a0a] flex flex-col justify-end overflow-hidden">
       
@@ -22,7 +29,7 @@ export function Footer() {
         />
       ) : (
         <video 
-          src={siteData?.footer?.footerBackgroundMedia?.startsWith('/') && !siteData?.footer?.footerBackgroundMedia?.startsWith('/uploads') ? siteData.footer.footerBackgroundMedia : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${siteData?.footer?.footerBackgroundMedia || '/video.mp4'}`} 
+          src={resolveMediaUrl(siteData?.footer?.footerBackgroundMedia) || '/video.mp4'}
           autoPlay loop muted playsInline 
           className="absolute inset-0 w-full h-full object-cover opacity-90"
         />

@@ -9,7 +9,7 @@ interface GalleryImage {
   createdAt: string;
 }
 
-export function AdminGalleryImages() {
+export function AdminGalleryImages({ onBack }: { onBack?: () => void }) {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [rowFilter, setRowFilter] = useState("All");
@@ -117,7 +117,7 @@ export function AdminGalleryImages() {
 
       {/* Back Button */}
       <button 
-        onClick={() => window.location.href = "/admin/dashboard?tab=5"}
+        onClick={() => onBack ? onBack() : window.location.href = "/admin/dashboard?tab=5"}
         className="fixed top-4 left-4 md:top-6 md:left-6 text-gray-500 hover:text-gray-800 flex items-center gap-2 transition-colors text-sm font-bold group z-50 bg-white/80 px-4 py-2 rounded-full backdrop-blur-sm border border-gray-200 shadow-sm"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>

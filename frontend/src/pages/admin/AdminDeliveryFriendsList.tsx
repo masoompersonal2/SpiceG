@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export function AdminDeliveryFriendsList() {
+export function AdminDeliveryFriendsList({ onBack }: { onBack?: () => void }) {
   const [friends, setFriends] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -48,7 +48,7 @@ export function AdminDeliveryFriendsList() {
     <div className="min-h-screen bg-[#F6EEED] flex flex-col">
       <header className="sticky top-0 z-50 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-4">
-          <button onClick={() => window.location.href = "/admin/dashboard"} className="w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">
+          <button onClick={() => onBack ? onBack() : window.location.href = "/admin/dashboard"} className="w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
           </button>
           <h1 className="text-xl font-bold text-gray-900">Delivery Partners Directory</h1>

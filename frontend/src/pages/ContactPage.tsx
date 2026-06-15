@@ -49,7 +49,7 @@ export function ContactPage() {
     return `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${url}?v=2`;
   };
 
-  const isVideo = (url: string) => url.match(/\.(mp4|webm|ogg)/i);
+  const isVideo = (url: string) => url.match(/\.(mp4|webm|ogg)/i) || url.includes('/video/upload/');
 
   const footer = siteData?.footer || {};
   const insta = siteData?.contact?.instagram || [];

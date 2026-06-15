@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AdminContentTab } from "./AdminContentTab";
 import { AdminHeaderPagesTab } from "./AdminHeaderPagesTab";
+import { AdminMenuItems } from "./AdminMenuItems";
+import { AdminQueries } from "./AdminQueries";
+import { AdminDeliveryFriendsList } from "./AdminDeliveryFriendsList";
+import { AdminGalleryImages } from "./AdminGalleryImages";
 import { Modal } from "../../components/ui/Modal";
 
 const TimeSelector = ({ value, onChange }: { value: string, onChange: (v: string) => void }) => {
@@ -38,6 +42,7 @@ const TimeSelector = ({ value, onChange }: { value: string, onChange: (v: string
 export function AdminDashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const [adminView, setAdminView] = useState<'main' | 'menu-list' | 'queries-list' | 'delivery-list' | 'gallery-list'>('main');
   const [attemptingToLeave, setAttemptingToLeave] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   
@@ -381,6 +386,19 @@ export function AdminDashboard() {
     );
   }
 
+  if (adminView === 'menu-list') {
+    return <AdminMenuItems onBack={() => setAdminView('main')} />;
+  }
+  if (adminView === 'queries-list') {
+    return <AdminQueries onBack={() => setAdminView('main')} />;
+  }
+  if (adminView === 'delivery-list') {
+    return <AdminDeliveryFriendsList onBack={() => setAdminView('main')} />;
+  }
+  if (adminView === 'gallery-list') {
+    return <AdminGalleryImages onBack={() => setAdminView('main')} />;
+  }
+
   return (
     <div className="min-h-screen bg-[#F6EEED] font-sans flex relative overflow-hidden">
       <Modal isOpen={attemptingToLeave} title="Leave Dashboard?" desc="Are you sure you want to go back to the home page?" onConfirm={() => window.location.replace("/")} onCancel={() => setAttemptingToLeave(false)} confirmText="Yes, Leave" isDestructive={true} />
@@ -668,7 +686,7 @@ export function AdminDashboard() {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0 mb-6 md:mb-8">
                   <h3 className="text-xl md:text-2xl font-bold text-[#2D211F]">Add New Menu Item</h3>
                   <button 
-                    onClick={() => window.location.href = "/admin/menu/items"} 
+                    onClick={() => setAdminView('menu-list')} 
                     className="bg-[#2D211F] text-[#F36B39] px-6 py-2 rounded-xl font-bold shadow-lg hover:scale-105 transition-transform w-full md:w-auto text-center"
                   >
                     View Items
@@ -845,9 +863,9 @@ export function AdminDashboard() {
           {activeTab === 4 && (
             /* Contact Queries View */
             <div className="w-full min-h-[60vh] bg-white rounded-3xl md:rounded-[2rem] shadow-sm p-4 md:p-8 max-w-5xl mx-auto flex flex-col gap-6 md:gap-8">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0">
+              <div className="flex justify-between items-center">
                 <h3 className="text-xl md:text-2xl font-bold text-[#2D211F]">Customer Queries & Requests</h3>
-                <button onClick={() => window.location.href = '/admin/queries'} className="bg-[#2D211F] text-[#F36B39] px-6 py-2 rounded-xl font-bold shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2 w-full md:w-auto">
+                <button onClick={() => setAdminView('queries-list')} className="bg-[#2D211F] text-[#F36B39] px-6 py-2 rounded-xl font-bold shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2 w-full md:w-auto">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                   View All
                 </button>
@@ -905,10 +923,13 @@ export function AdminDashboard() {
 
           {activeTab === 5 && (
             /* Header Pages Management View */
-            <AdminHeaderPagesTab showToast={(msg) => {
-              setToastMessage(msg);
-              setTimeout(() => setToastMessage(""), 3000);
-            }} />
+            <AdminHeaderPagesTab 
+              showToast={(msg) => {
+                setToastMessage(msg);
+                setTimeout(() => setToastMessage(""), 3000);
+              }} 
+              onViewGallery={() => setAdminView('gallery-list')}
+            />
           )}
 
           {activeTab === 6 && (
@@ -990,9 +1011,9 @@ export function AdminDashboard() {
           {activeTab === 7 && (
             <div className="w-full min-h-[60vh] bg-white rounded-3xl md:rounded-[2rem] shadow-sm p-4 md:p-8 max-w-4xl mx-auto flex flex-col gap-6 md:gap-8 overflow-y-auto">
               <div className="flex justify-between items-center">
-                <h3 className="text-xl md:text-2xl font-bold text-[#2D211F]">Hire Delivery Partner</h3>
+                <h3 className="text-xl md:text-2xl font-bold text-[#2D211F]">Add Delivery Partner</h3>
                 <button 
-                  onClick={() => window.location.href = '/admin/delivery-friends'}
+                  onClick={() => setAdminView('delivery-list')}
                   className="bg-[#2D211F] text-[#F36B39] px-6 py-2 rounded-xl font-bold shadow-lg transition-transform hover:scale-105"
                 >
                   View All Partners
