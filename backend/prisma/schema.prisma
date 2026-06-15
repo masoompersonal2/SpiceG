@@ -64,6 +64,7 @@ model SiteContent {
   event   Json
   promise Json
   footer  Json
+  popular Json @default("{}")
   aboutH  Json @default("{}")
   contact Json @default("{}")
   eventsH Json @default("{}")

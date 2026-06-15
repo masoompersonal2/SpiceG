@@ -564,8 +564,26 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
         {/* CHEFL SECTION */}
         {activeTag === "ChefL" && (
           <div className="space-y-8 max-w-5xl mx-auto">
-            <h3 className="text-2xl font-bold text-[#2D211F] mb-6">Chef's Special (4 Cards Max)</h3>
+            <h3 className="text-2xl font-bold text-[#2D211F] mb-6">Chef's Special Section</h3>
             
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4 mb-8">
+              <h4 className="font-bold text-gray-800 text-lg">Section Headers</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Subheading (e.g., CHEF'S SPECIAL)</label>
+                  <input type="text" value={siteData?.popular?.subtitle || ""} onChange={(e) => handleTextChange('popular', 'subtitle', e.target.value)} className="w-full px-4 py-2 rounded-xl border border-gray-200 bg-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Main Heading (e.g., POPULAR DISHES)</label>
+                  <input type="text" value={siteData?.popular?.title || ""} onChange={(e) => handleTextChange('popular', 'title', e.target.value)} className="w-full px-4 py-2 rounded-xl border border-gray-200 bg-white" />
+                </div>
+              </div>
+              <button onClick={() => saveSection('popular')} className="bg-[#E04D2D] text-white px-6 py-2 rounded-xl font-bold shadow-sm hover:bg-[#C84022] mt-4">
+                Save Headers
+              </button>
+            </div>
+
+            <h4 className="text-xl font-bold text-[#2D211F] mb-4">Dish Cards (4 Max)</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {chefData.map((chef, idx) => (
                 <div key={chef.id} className="bg-gray-50 p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4 relative group">

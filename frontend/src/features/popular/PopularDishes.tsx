@@ -43,7 +43,7 @@ function DishCard({ image, title, desc, tall }: DishProps) {
 }
 
 export function PopularDishes() {
-  const { chefData, loading } = useContent();
+  const { siteData, chefData, loading } = useContent();
 
   if (loading || chefData.length === 0) return null;
 
@@ -58,7 +58,7 @@ export function PopularDishes() {
             viewport={{ once: true }}
             className="text-sm md:text-base font-semibold tracking-[0.3em] uppercase text-gray-500 mb-4 ml-2 md:ml-4"
           >
-            CHEF'S SPECIAL
+            {siteData?.popular?.subtitle || "CHEF'S SPECIAL"}
           </motion.h2>
           <motion.h3 
             initial={{ opacity: 0, y: 20 }}
@@ -67,7 +67,7 @@ export function PopularDishes() {
             transition={{ delay: 0.1 }}
             className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground uppercase ml-2 md:ml-4"
           >
-            POPULAR DISHES
+            {siteData?.popular?.title || "POPULAR DISHES"}
           </motion.h3>
         </div>
 
