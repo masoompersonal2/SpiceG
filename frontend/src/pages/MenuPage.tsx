@@ -39,7 +39,7 @@ export function MenuPage() {
       {/* Back Button */}
       <button 
         onClick={() => window.location.href = "/"}
-        className="absolute md:fixed top-4 left-4 md:top-6 md:left-6 text-[#F36B39] hover:text-white flex items-center gap-2 transition-colors font-sans text-sm font-bold group z-[100] bg-[#2D1B10]/80 px-4 py-2 rounded-full backdrop-blur-sm border border-[#4A2F1D]"
+        className="absolute md:fixed top-4 left-4 md:top-6 md:left-6 text-[#F36B39] hover:text-white flex items-center gap-2 transition-colors font-sans text-sm font-bold group z-[110] bg-[#2D1B10]/80 px-4 py-2 rounded-full backdrop-blur-sm border border-[#4A2F1D]"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
         Back
@@ -57,7 +57,7 @@ export function MenuPage() {
       </div>
 
       {/* Sticky Header Container for Filters & Tabs */}
-      <div className="sticky top-0 z-40 bg-[#3B2314] pt-16 md:pt-6 pb-4 md:pb-6 border-b border-[#4A2F1D] mb-8 shadow-[0_10px_30px_-10px_rgba(45,27,16,0.8)] -mx-4 md:-mx-8 px-4 md:px-8">
+      <div className="sticky top-0 z-[100] bg-[#3B2314]/95 backdrop-blur-xl pt-16 md:pt-6 pb-4 md:pb-6 border-b border-[#4A2F1D] mb-8 shadow-2xl -mx-4 md:-mx-8 px-4 md:px-8">
         
         {/* Top filters - Full Width & Side-by-side on mobile */}
         <div className="w-full flex flex-row gap-2 md:gap-4 justify-between items-center mb-4 md:mb-6">
@@ -120,7 +120,7 @@ export function MenuPage() {
             </div>
             
             {/* Liquid Glass Border Overlay */}
-            <div className="absolute inset-0 pointer-events-none rounded-[1rem] md:rounded-2xl shadow-[inset_0_0_10px_rgba(255,255,255,0.08),inset_0_0_3px_rgba(255,255,255,0.15)] md:shadow-[inset_0_0_20px_rgba(255,255,255,0.08),inset_0_0_5px_rgba(255,255,255,0.15)] z-50 transition-all duration-500 group-hover:bg-white/5"></div>
+            <div className="absolute inset-0 pointer-events-none rounded-[1rem] md:rounded-2xl shadow-[inset_0_0_10px_rgba(255,255,255,0.08),inset_0_0_3px_rgba(255,255,255,0.15)] md:shadow-[inset_0_0_20px_rgba(255,255,255,0.08),inset_0_0_5px_rgba(255,255,255,0.15)] z-10 transition-all duration-500 group-hover:bg-white/5"></div>
           </div>
         ))}
         {filteredItems.length === 0 && (
