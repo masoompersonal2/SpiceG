@@ -178,7 +178,7 @@ export function DeliveryFriendDashboard() {
 
         <div className="mt-auto border-t border-gray-100 pt-6">
           <div className="flex items-center gap-3 mb-6">
-            <img src={profile.profileImage ? (profile.profileImage.startsWith('http') ? profile.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${profile.profileImage}`) : "https://i.pravatar.cc/150"} className="w-12 h-12 rounded-full border-2 border-gray-100 object-cover" />
+            <img src={profile.profileImage ? (profile.profileImage.startsWith('http') ? profile.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${profile.profileImage?.startsWith('/') ? '' : '/'}${profile.profileImage}`) : "https://i.pravatar.cc/150"} className="w-12 h-12 rounded-full border-2 border-gray-100 object-cover" />
             <div className="flex-1 min-w-0">
               <p className="font-bold text-gray-900 truncate">{profile.name}</p>
               <p className="text-xs font-semibold text-gray-500">{profile.uniqueId}</p>
@@ -234,7 +234,7 @@ export function DeliveryFriendDashboard() {
                       <div className="flex flex-col md:flex-row gap-6">
                         <div className="flex-[2] bg-gray-50 rounded-xl p-4 flex gap-4 items-start">
                           {order.homeImage && (
-                            <img src={`${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${order.homeImage}`} alt="Home" className="w-24 h-24 rounded-lg object-cover border border-gray-200 shrink-0" />
+                            <img src={`${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${order.homeImage?.startsWith('/') ? '' : '/'}${order.homeImage}`} alt="Home" className="w-24 h-24 rounded-lg object-cover border border-gray-200 shrink-0" />
                           )}
                           <div className="flex-1">
                             <h4 className="font-bold mb-3 flex items-center gap-2"><MapPin className="w-4 h-4" /> Delivery Details</h4>
@@ -369,7 +369,7 @@ export function DeliveryFriendDashboard() {
                     <div className="flex flex-col md:flex-row items-center md:items-start gap-4 mb-4">
                       <div className="relative shrink-0">
                         <img 
-                          src={selectedFile ? URL.createObjectURL(selectedFile) : (profile.profileImage ? (profile.profileImage.startsWith('http') ? profile.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${profile.profileImage}`) : "https://i.pravatar.cc/150")} 
+                          src={selectedFile ? URL.createObjectURL(selectedFile) : (profile.profileImage ? (profile.profileImage.startsWith('http') ? profile.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${profile.profileImage?.startsWith('/') ? '' : '/'}${profile.profileImage}`) : "https://i.pravatar.cc/150")} 
                           alt="Profile Preview" 
                           className="w-20 h-20 rounded-full object-cover border-2 border-gray-200" 
                         />

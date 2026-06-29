@@ -135,7 +135,7 @@ export function StaffDashboard() {
         const data = await res.json();
         setProfile({
           username: data.username,
-          profileImage: data.profileImage ? (data.profileImage.startsWith('http') ? data.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${data.profileImage}?v=2`) : "https://i.pravatar.cc/150?img=47"
+          profileImage: data.profileImage ? (data.profileImage.startsWith('http') ? data.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${data.profileImage?.startsWith('/') ? '' : '/'}${data.profileImage}?v=2`) : "https://i.pravatar.cc/150?img=47"
         });
         setUpdateUsername(data.username);
         setIsAuthenticated(true);

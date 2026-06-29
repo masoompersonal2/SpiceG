@@ -162,7 +162,7 @@ function OrdersTab({ setCart, handleTabChange }: any) {
         <div className="mb-4 bg-gray-50 border border-gray-200 rounded-xl p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[#B2E624] bg-white">
-              <img src={order.deliveryFriend.profileImage ? (order.deliveryFriend.profileImage.startsWith('http') ? order.deliveryFriend.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${order.deliveryFriend.profileImage}`) : "https://i.pravatar.cc/150?img=11"} className="w-full h-full object-cover" alt="Delivery Partner" />
+              <img src={order.deliveryFriend.profileImage ? (order.deliveryFriend.profileImage.startsWith('http') ? order.deliveryFriend.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${order.deliveryFriend.profileImage?.startsWith('/') ? '' : '/'}${order.deliveryFriend.profileImage}`) : "https://i.pravatar.cc/150?img=11"} className="w-full h-full object-cover" alt="Delivery Partner" />
             </div>
             <div>
               <h4 className="font-bold text-gray-800 text-sm">Delivery Partner Assigned</h4>
@@ -570,7 +570,7 @@ function EventsTab() {
             return (
               <div key={`${ev.id}-${idx}`} className="group flex flex-col cursor-pointer hover:opacity-90 transition-opacity">
                 <div className="h-32 md:h-48 w-full relative rounded-xl overflow-hidden bg-gray-100">
-                  <img src={ev.image.startsWith('http') ? ev.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${ev.image}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={ev.title} />
+                  <img src={ev.image.startsWith('http') ? ev.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${ev.image?.startsWith('/') ? '' : '/'}${ev.image}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={ev.title} />
                   <div className="absolute top-2 md:top-3 left-2 md:left-3 bg-white/90 backdrop-blur-md rounded-lg md:rounded-xl p-1.5 md:p-2 flex flex-col items-center justify-center min-w-[40px] md:min-w-[50px] shadow-sm">
                     <span className="text-gray-500 text-[8px] md:text-[10px] font-bold uppercase">{new Date(ev.date).toLocaleString('default', {month:'short'})}</span>
                     <span className="text-black text-sm md:text-lg font-black leading-none">{new Date(ev.date).getDate()}</span>
@@ -782,7 +782,7 @@ function SettingsTab({ user, onUpdate }: any) {
           <form onSubmit={handleProfileSubmit} className="space-y-6">
             <div className="flex items-center gap-6">
               <div className="w-24 h-24 rounded-full bg-gray-100 overflow-hidden relative border-4 border-white shadow-sm">
-                {profile.profileImage ? <img src={profile.profileImage.startsWith('http') ? profile.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${profile.profileImage}`} className="w-full h-full object-cover" /> : <User className="w-10 h-10 m-6 text-gray-400" />}
+                {profile.profileImage ? <img src={profile.profileImage.startsWith('http') ? profile.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${profile.profileImage?.startsWith('/') ? '' : '/'}${profile.profileImage}`} className="w-full h-full object-cover" /> : <User className="w-10 h-10 m-6 text-gray-400" />}
               </div>
               <div>
                 <label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full text-sm font-semibold cursor-pointer transition-colors flex items-center gap-2">
@@ -811,7 +811,7 @@ function SettingsTab({ user, onUpdate }: any) {
           <form onSubmit={handleDeliverySubmit} className="space-y-6">
             <div className="flex items-center gap-6">
               <div className="w-32 h-24 rounded-xl bg-gray-100 overflow-hidden relative border-4 border-white shadow-sm flex items-center justify-center text-gray-400">
-                {delivery.homeImage ? <img src={delivery.homeImage.startsWith('http') ? delivery.homeImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${delivery.homeImage}`} className="w-full h-full object-cover" /> : <span className="text-xs font-semibold">Home Image</span>}
+                {delivery.homeImage ? <img src={delivery.homeImage.startsWith('http') ? delivery.homeImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${delivery.homeImage?.startsWith('/') ? '' : '/'}${delivery.homeImage}`} className="w-full h-full object-cover" /> : <span className="text-xs font-semibold">Home Image</span>}
               </div>
               <div>
                 <label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full text-sm font-semibold cursor-pointer transition-colors flex items-center gap-2">
@@ -1080,7 +1080,7 @@ function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSucce
               {cart.map((item: any, idx: number) => (
                 <div key={idx} className="flex justify-between items-center text-sm p-3 border-b border-gray-100">
                   <div className="flex items-center gap-3">
-                    <img src={item.image.startsWith('http') ? item.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${item.image}`} className="w-10 h-10 rounded-lg object-cover" />
+                    <img src={item.image.startsWith('http') ? item.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${item.image?.startsWith('/') ? '' : '/'}${item.image}`} className="w-10 h-10 rounded-lg object-cover" />
                     <div>
                       <span className="font-bold">{item.name}</span>
                       <div className="text-gray-500">Qty: {item.quantity}</div>
@@ -1412,7 +1412,7 @@ export function CustomerDashboard() {
             <LogOut className="w-4 h-4" /> Logout
           </button>
           {user.profileImage ? (
-            <img src={user.profileImage.startsWith('http') ? user.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${user.profileImage}`} alt="Profile" className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-white shadow-sm" />
+            <img src={user.profileImage.startsWith('http') ? user.profileImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${user.profileImage?.startsWith('/') ? '' : '/'}${user.profileImage}`} alt="Profile" className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-white shadow-sm" />
           ) : (
             <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-100 flex items-center justify-center border-2 border-white shadow-sm"><User className="w-4 h-4 md:w-5 md:h-5 text-gray-400" /></div>
           )}
@@ -1519,7 +1519,7 @@ export function CustomerDashboard() {
                   <div className="flex flex-col gap-4">
                     {cart.map((item: any) => (
                       <div key={item.id} className="flex gap-4 border-b border-gray-100 pb-4 last:border-0 last:pb-0">
-                        <img src={item.image.startsWith('http') ? item.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${item.image}`} className="w-16 h-16 rounded-xl object-cover" />
+                        <img src={item.image.startsWith('http') ? item.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${item.image?.startsWith('/') ? '' : '/'}${item.image}`} className="w-16 h-16 rounded-xl object-cover" />
                         <div className="flex-1">
                           <h4 className="font-bold text-sm leading-tight mb-1">{item.name}</h4>
                           <div className="text-xs text-gray-500 mb-2">₹{item.priceText.replace(/[^\d]/g, '')}</div>
