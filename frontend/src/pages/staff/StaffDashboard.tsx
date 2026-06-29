@@ -478,7 +478,7 @@ export function StaffDashboard() {
                       <div className="mb-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
                         <div className="flex gap-3 items-start">
                           {order.homeImage && (
-                            <img src={order.homeImage.startsWith('http') ? order.homeImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${order.homeImage}`} alt="Home" className="w-16 h-16 rounded-lg object-cover border border-gray-200 shrink-0" />
+                            <img src={order.homeImage.startsWith('http') ? order.homeImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${order.homeImage.startsWith('/') ? '' : '/'}${order.homeImage}`} alt="Home" className="w-16 h-16 rounded-lg object-cover border border-gray-200 shrink-0" />
                           )}
                           <div className="text-xs space-y-0.5">
                             <p><span className="font-medium text-gray-500">Receiver:</span> {order.receiverName || 'Not provided'}</p>
@@ -722,7 +722,7 @@ export function StaffDashboard() {
                             <h5 className="font-semibold text-gray-700 mb-3">Order Receiving Details:</h5>
                             <div className="flex gap-4">
                               {order.homeImage && (
-                                <img src={`${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${order.homeImage}`} alt="Home" className="w-24 h-24 rounded-lg object-cover border border-gray-200" />
+                                <img src={order.homeImage.startsWith('http') ? order.homeImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${order.homeImage.startsWith('/') ? '' : '/'}${order.homeImage}`} alt="Home" className="w-24 h-24 rounded-lg object-cover border border-gray-200 shrink-0" />
                               )}
                               <div className="text-sm space-y-1">
                                 <p><span className="font-medium text-gray-500">Receiver:</span> {order.receiverName || 'Not provided'}</p>

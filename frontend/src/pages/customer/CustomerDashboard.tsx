@@ -396,7 +396,7 @@ function MenuTab({ cart, setCart, setShowCartPanel }: any) {
         ) : (
           <button
             onClick={(e) => { e.stopPropagation(); handleAddToCart(item); }}
-            className="absolute bottom-2 right-2 bg-black text-white w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-[#E04D2D]"
+            className="absolute bottom-2 right-2 bg-black text-white w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:bg-[#E04D2D]"
           >
             <Plus className="w-3 h-3 md:w-4 md:h-4" />
           </button>
@@ -412,21 +412,31 @@ function MenuTab({ cart, setCart, setShowCartPanel }: any) {
 
   return (
     <div className="h-full flex flex-col bg-gray-50 rounded-3xl p-4 lg:p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+      <div className="flex flex-row items-center gap-2 mb-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input type="text" placeholder="Search menu..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-white border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
+          <input type="text" placeholder="Search menu..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-3 py-2 bg-white border-none rounded-xl text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
         </div>
         <select 
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className="bg-white border-none rounded-xl text-sm px-4 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-[#B2E624] w-full sm:w-auto"
+          className="md:hidden bg-white border-none rounded-xl text-[10px] sm:text-xs px-2 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-[#B2E624] w-24 shrink-0"
         >
           <option value="All">All Items</option>
           {categories.slice(1).map((c: any) => (
             <option key={c.id} value={c.name}>{c.name}</option>
           ))}
         </select>
+      </div>
+
+      {/* Desktop tags - hidden on mobile, single line */}
+      <div className="hidden md:flex flex-nowrap items-center justify-between gap-1 mb-4 w-full overflow-hidden">
+        <button onClick={() => setSelectedCategory("All")} className={`px-2 py-1 rounded-full text-[9px] font-bold transition-all shrink-0 ${selectedCategory === "All" ? 'bg-black text-white shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-100'}`}>All Items</button>
+        {categories.slice(1).map((c: any) => (
+          <button key={c.id} onClick={() => setSelectedCategory(c.name)} className={`px-2 py-1 rounded-full text-[9px] font-bold transition-all shrink-0 whitespace-nowrap overflow-hidden text-ellipsis ${selectedCategory === c.name ? 'bg-black text-white shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-100'}`}>
+            {c.name}
+          </button>
+        ))}
       </div>
 
       <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide">
