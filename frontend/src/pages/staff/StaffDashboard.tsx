@@ -432,43 +432,41 @@ export function StaffDashboard() {
         {/* Dashboard Content */}
         <div className="px-4 md:px-10 pb-10 flex-1 w-full max-w-full overflow-y-auto pt-2 flex flex-col">
           {activeTab === 0 && (
-            <div className="w-full flex-1 flex items-center justify-center text-gray-400 bg-white rounded-3xl shadow-sm min-h-[50vh]">
-              Dashboard blank as requested. Please select "Orders" from the sidebar.
+            <div className="w-full flex-1 flex items-center justify-center text-gray-400 min-h-[50vh]">
+              Select "Orders" from the sidebar to get started.
             </div>
           )}
 
           {activeTab === 1 && !isViewingAll && (
-            <div className="w-full min-h-[60vh] bg-white rounded-3xl md:rounded-[2rem] shadow-sm p-4 md:p-8 flex flex-col gap-6">
-              <div className="flex justify-between items-center">
-                <h3 className="text-xl md:text-2xl font-bold text-gray-800">Pending Orders</h3>
+            <div className="w-full min-h-[60vh] flex flex-col gap-4">
+              <div className="flex justify-end items-center">
                 <button 
                   onClick={() => setIsViewingAll(true)}
-                  className="bg-black text-white px-6 py-2 rounded-xl font-bold hover:bg-gray-800 transition-colors"
+                  className="bg-black text-white px-5 py-2 rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors"
                 >
                   View All
                 </button>
               </div>
-              <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 gap-4">
                 {orders.filter(o => o.status === 'Pending' || o.status === 'Approved' || o.status === 'Ready for Pickup' || o.status === 'Out for Delivery').map(order => (
-                  <div key={order.id} className={`border rounded-2xl p-6 shadow-sm relative ${order.status === 'Delivered' ? 'border-green-200 bg-green-50' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="flex justify-between items-start mb-4">
+                  <div key={order.id} className={`border rounded-2xl p-4 relative ${order.status === 'Delivered' ? 'border-green-200 bg-green-50/50' : 'bg-white border-gray-200'}`}>
+                    <div className="flex justify-between items-start mb-3">
                       <div>
-                        <h4 className="font-bold text-gray-800 text-lg">Order by {order.customer?.username || `Customer #${order.customerId}`}</h4>
-                        <span className="text-sm font-medium bg-[#B2E624]/20 text-green-700 px-3 py-1 rounded-full">{order.status}</span>
+                        <h4 className="font-bold text-gray-800 text-sm">{order.customer?.username || `Customer #${order.customerId}`}</h4>
+                        <span className="text-xs font-medium bg-[#B2E624]/20 text-green-700 px-2 py-0.5 rounded-full">{order.status}</span>
                       </div>
                       <div className="text-right">
-                        <div className="text-sm text-gray-500">{new Date(order.createdAt).toLocaleString()}</div>
-                        <div className="text-lg font-bold mt-1">₹{order.totalAmount} ({order.paymentMethod})</div>
+                        <div className="text-xs text-gray-400">{new Date(order.createdAt).toLocaleString()}</div>
+                        <div className="text-sm font-bold mt-0.5">₹{order.totalAmount} <span className="text-gray-400 font-normal">({order.paymentMethod})</span></div>
                       </div>
                     </div>
                     
-                    <div className="mb-4">
-                      <h5 className="font-semibold text-gray-700 mb-2">Items:</h5>
-                      <ul className="space-y-2">
+                    <div className="mb-3">
+                      <ul className="space-y-1">
                         {order.items.map((item: any, idx: number) => (
-                          <li key={idx} className="flex items-center gap-2 text-sm bg-white p-2 rounded-lg border border-gray-100">
-                            <span className={`w-3 h-3 rounded-full ${item.isVeg === "true" || item.isVeg === true ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                            <span className="font-medium flex-1">{item.name}</span>
+                          <li key={idx} className="flex items-center gap-2 text-xs bg-gray-50 px-2 py-1.5 rounded-lg border border-gray-100">
+                            <span className={`w-2 h-2 rounded-full shrink-0 ${item.isVeg === "true" || item.isVeg === true ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                            <span className="font-medium flex-1 truncate">{item.name}</span>
                             <span className="text-gray-500">x{item.quantity}</span>
                             <span className="font-semibold text-gray-700">₹{parseInt(item.priceText.replace(/[^\d]/g, '')) * item.quantity}</span>
                           </li>
@@ -477,13 +475,12 @@ export function StaffDashboard() {
                     </div>
 
                     {order.deliveryType === 'Delivery' && (
-                      <div className="mb-4 bg-white p-4 rounded-xl border border-gray-100">
-                        <h5 className="font-semibold text-gray-700 mb-3">Order Receiving Details:</h5>
-                        <div className="flex gap-4">
+                      <div className="mb-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                        <div className="flex gap-3 items-start">
                           {order.homeImage && (
-                            <img src={`${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${order.homeImage}`} alt="Home" className="w-24 h-24 rounded-lg object-cover border border-gray-200" />
+                            <img src={order.homeImage.startsWith('http') ? order.homeImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${order.homeImage}`} alt="Home" className="w-16 h-16 rounded-lg object-cover border border-gray-200 shrink-0" />
                           )}
-                          <div className="text-sm space-y-1">
+                          <div className="text-xs space-y-0.5">
                             <p><span className="font-medium text-gray-500">Receiver:</span> {order.receiverName || 'Not provided'}</p>
                             <p><span className="font-medium text-gray-500">Mobile:</span> {order.receiverMobile || 'Not provided'}</p>
                             <p><span className="font-medium text-gray-500">Location:</span> {order.customerLocation || 'Not provided'}</p>
@@ -625,11 +622,11 @@ export function StaffDashboard() {
           )}
 
           {activeTab === 1 && isViewingAll && (
-            <div className="w-full bg-white rounded-3xl md:rounded-[2rem] shadow-sm overflow-hidden flex flex-col relative h-[80vh]">
-              <div className="md:sticky md:top-0 bg-white/95 backdrop-blur-md z-20 border-b border-gray-100 px-6 py-4 flex flex-col gap-4">
-                <div className="flex items-center gap-4">
-                  <button onClick={() => setIsViewingAll(false)} className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold rounded-xl transition-colors flex items-center gap-2 shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+            <div className="w-full flex flex-col relative h-[80vh]">
+              <div className="sticky top-0 bg-[#F6EEED]/95 backdrop-blur-md z-20 pb-3 pt-2 flex flex-col gap-3">
+                <div className="flex items-center gap-3">
+                  <button onClick={() => setIsViewingAll(false)} className="px-3 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-xl transition-colors flex items-center gap-2 shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
                     Back
                   </button>
                   <h1 className="text-xl md:text-2xl font-bold">All Orders</h1>
@@ -675,11 +672,11 @@ export function StaffDashboard() {
                       <div 
                         key={order.id} 
                         onClick={() => toggleSelectOrder(order.id)} 
-                        className={`cursor-pointer border rounded-2xl p-6 flex flex-col transition-shadow relative ${
+                        className={`cursor-pointer border rounded-2xl p-4 flex flex-col transition-shadow relative ${
                           selectedOrderIds.includes(order.id) 
                             ? 'border-[#B2E624] bg-[#B2E624]/5 shadow-sm' 
                             : order.status === 'Delivered'
-                              ? 'border-green-200 bg-green-50 hover:shadow-md'
+                              ? 'border-green-200 bg-green-50/50 hover:shadow-md'
                               : 'border-gray-100 bg-white hover:shadow-md'
                         }`}
                       >
@@ -691,10 +688,10 @@ export function StaffDashboard() {
                             className="w-5 h-5 accent-black cursor-pointer"
                           />
                         </div>
-                        <div className="flex justify-between items-start mb-4 pr-8">
+                        <div className="flex justify-between items-start mb-3 pr-7">
                           <div>
-                            <h3 className="text-lg font-bold">Order by {order.customer?.username || `Customer #${order.customerId}`}</h3>
-                            <div className="text-sm text-gray-500 mt-1">{new Date(order.createdAt).toLocaleString()}</div>
+                            <h3 className="text-sm font-bold">{order.customer?.username || `Customer #${order.customerId}`}</h3>
+                            <div className="text-xs text-gray-400 mt-0.5">{new Date(order.createdAt).toLocaleString()}</div>
                           </div>
                           <div className="flex flex-col items-end gap-2">
                             <span className={`px-4 py-1.5 rounded-full text-xs font-bold ${
@@ -707,11 +704,11 @@ export function StaffDashboard() {
                           </div>
                         </div>
                         
-                        <div className="space-y-2 mb-4 bg-white p-4 rounded-xl border border-gray-100">
+                        <div className="space-y-1 mb-3 bg-gray-50 p-3 rounded-xl">
                           {order.items.map((item: any, idx: number) => (
-                            <div key={idx} className="flex items-center justify-between text-sm">
-                              <div className="flex items-center gap-2">
-                                <span className={`w-2.5 h-2.5 rounded-full ${item.isVeg === "true" || item.isVeg === true ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                            <div key={idx} className="flex items-center justify-between text-xs">
+                              <div className="flex items-center gap-1.5">
+                                <span className={`w-2 h-2 rounded-full shrink-0 ${item.isVeg === "true" || item.isVeg === true ? 'bg-green-500' : 'bg-red-500'}`}></span>
                                 <span className="font-medium">{item.name}</span>
                                 <span className="text-gray-500">x{item.quantity}</span>
                               </div>
@@ -750,9 +747,8 @@ export function StaffDashboard() {
           )}
 
           {activeTab === 2 && (
-            <div className="w-full min-h-[60vh] bg-white rounded-3xl md:rounded-[2rem] shadow-sm p-4 md:p-8 max-w-3xl mx-auto">
-              <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-6 md:mb-8">Staff Profile Settings</h3>
-              <form onSubmit={handleProfileUpdate} className="space-y-6 md:space-y-8">
+            <div className="w-full min-h-[60vh] flex flex-col gap-6 max-w-2xl mx-auto">
+              <form onSubmit={handleProfileUpdate} className="space-y-5">
                 {/* Profile Image Upload */}
                 <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-8">
                   <div className="relative shrink-0">
@@ -818,9 +814,8 @@ export function StaffDashboard() {
           )}
 
           {activeTab === 3 && settings && (
-            <div className="w-full min-h-[60vh] bg-white rounded-3xl md:rounded-[2rem] shadow-sm p-4 md:p-8 max-w-3xl mx-auto">
-              <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-6 md:mb-8">Fees & Charges Settings</h3>
-                {settingsMessage && (
+            <div className="w-full min-h-[60vh] flex flex-col gap-6 max-w-2xl mx-auto">
+              {settingsMessage && (
                   <div className="bg-blue-50 text-blue-800 p-4 rounded-xl text-sm border border-blue-200 mb-6">
                     {settingsMessage}
                   </div>
