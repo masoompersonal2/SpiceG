@@ -190,7 +190,7 @@ export function StaffDashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           newUsername: updateUsername,
-          newPassword: updatePassword || "staffSPICE" // Requires real original pwd if unchanged ideally, but we will mock for now
+          newPassword: updatePassword || "staffCRAVE" // Requires real original pwd if unchanged ideally, but we will mock for now
         })
       });
       if (res.ok) {

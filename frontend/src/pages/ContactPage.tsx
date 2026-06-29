@@ -79,7 +79,7 @@ export function ContactPage() {
           <div className="relative rounded-2xl bg-[#3A2417] p-4 md:p-8 border border-white/5 shadow-[inset_0_0_20px_rgba(255,255,255,0.03),inset_0_0_5px_rgba(255,255,255,0.05)] flex flex-col items-center text-center hover:bg-[#452D1C] transition-colors">
             <Mail className="w-6 h-6 md:w-10 md:h-10 text-[#C4A464] mb-2 md:mb-4" />
             <h3 className="font-serif text-sm md:text-xl mb-1 md:mb-2">Email</h3>
-            <p className="text-[#EBE6DD]/70 text-[10px] md:text-base break-all">{footer.email || "info@spicegarden.com"}</p>
+            <p className="text-[#EBE6DD]/70 text-[10px] md:text-base break-all">{footer.email || "info@crave.com"}</p>
           </div>
 
           <a href={footer.instagram || "#"} target="_blank" rel="noreferrer" className="relative rounded-2xl bg-[#3A2417] p-4 md:p-8 border border-white/5 shadow-[inset_0_0_20px_rgba(255,255,255,0.03),inset_0_0_5px_rgba(255,255,255,0.05)] flex flex-col items-center text-center hover:bg-[#452D1C] transition-colors group cursor-pointer">

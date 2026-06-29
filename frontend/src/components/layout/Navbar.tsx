@@ -65,7 +65,7 @@ export function Navbar() {
             onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             onDoubleClick={(e) => { e.preventDefault(); window.location.href = "/admin/login"; }}
           >
-            <img src="/logo.jpg" alt="Spice Garden Logo" className="h-8 md:h-10 w-auto object-contain rounded-xl" />
+            <img src="/logo.jpg" alt="Crave Logo" className="h-8 md:h-10 w-auto object-contain rounded-xl" />
           </a>
         </div>
 
@@ -110,7 +110,7 @@ export function Navbar() {
           >
             {/* Header */}
             <div className="flex justify-between items-center p-6 pb-4">
-              <img src="/logo.jpg" alt="Spice Garden Logo" className="h-10 w-auto object-contain rounded-xl" />
+              <img src="/logo.jpg" alt="Crave Logo" className="h-10 w-auto object-contain rounded-xl" />
               <button 
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/30 text-sm font-bold uppercase tracking-wider hover:bg-white/10 transition-colors"

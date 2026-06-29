@@ -209,15 +209,15 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Website Title</label>
-                <input type="text" value={siteData.seo.title || ''} onChange={(e) => handleTextChange('seo', 'title', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50" placeholder="Spice Garden | Authentic Indian..." />
+                <input type="text" value={siteData.seo.title || ''} onChange={(e) => handleTextChange('seo', 'title', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50" placeholder="Crave | Authentic Indian..." />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Meta Description</label>
-                <textarea rows={3} value={siteData.seo.description || ''} onChange={(e) => handleTextChange('seo', 'description', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50" placeholder="Welcome to Spice Garden. Experience the finest..." />
+                <textarea rows={3} value={siteData.seo.description || ''} onChange={(e) => handleTextChange('seo', 'description', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50" placeholder="Welcome to Crave. Experience the finest..." />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Meta Keywords (comma separated)</label>
-                <input type="text" value={siteData.seo.keywords || ''} onChange={(e) => handleTextChange('seo', 'keywords', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50" placeholder="spice garden, restaurant, indian food..." />
+                <input type="text" value={siteData.seo.keywords || ''} onChange={(e) => handleTextChange('seo', 'keywords', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50" placeholder="Crave, restaurant, indian food..." />
               </div>
             </div>
             

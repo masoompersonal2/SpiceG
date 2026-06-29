@@ -41,11 +41,11 @@ export function WhyDineSection() {
           </h2>
           
           <h3 className="font-serif text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6 md:mb-10 whitespace-pre-line">
-            {siteData?.promise?.promiseTitle || "Why Dine at Spice Garden?"}
+            {siteData?.promise?.promiseTitle || "Why Dine at Crave?"}
           </h3>
 
           <p className="text-gray-300 text-base md:text-xl lg:text-2xl leading-relaxed max-w-5xl font-light whitespace-pre-line">
-            {siteData?.promise?.promiseDescription || "Looking for the best family restaurant in Gokak? Spice Garden has been the go-to destination for lovers of authentic Indian and Chinese cuisine. Our chefs use only the freshest ingredients and traditional spice blends to create dishes that burst with flavour — from creamy butter chicken and smoky tandoori kebabs to sizzling Hakka noodles and crispy Manchurian. Whether it's a cozy family dinner, a birthday celebration, or a casual outing with friends, our warm ambiance and attentive service make every visit special. We take pride in using authentic masalas and time-honoured recipes passed down through generations, ensuring every dish delivers rich aroma and unmatched taste. With convenient online ordering, easy table booking, and fast home delivery across Gokak, enjoying a restaurant-quality meal has never been easier. Visit Spice Garden today and discover why thousands of happy diners keep coming back for more."}
+            {siteData?.promise?.promiseDescription || "Looking for the best family restaurant in Gokak? Crave has been the go-to destination for lovers of authentic Indian and Chinese cuisine. Our chefs use only the freshest ingredients and traditional spice blends to create dishes that burst with flavour — from creamy butter chicken and smoky tandoori kebabs to sizzling Hakka noodles and crispy Manchurian. Whether it's a cozy family dinner, a birthday celebration, or a casual outing with friends, our warm ambiance and attentive service make every visit special. We take pride in using authentic masalas and time-honoured recipes passed down through generations, ensuring every dish delivers rich aroma and unmatched taste. With convenient online ordering, easy table booking, and fast home delivery across Gokak, enjoying a restaurant-quality meal has never been easier. Visit Crave today and discover why thousands of happy diners keep coming back for more."}
           </p>
 
         </motion.div>

@@ -411,7 +411,7 @@ export function AuthPage() {
             <div className="size-8 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center">
               <Sparkles className="size-4" />
             </div>
-            <span>Spice Garden</span>
+            <span>Crave</span>
           </div>
         </div>
 
@@ -559,7 +559,7 @@ export function AuthPage() {
             <div className="size-8 rounded-lg bg-zinc-800 flex items-center justify-center">
               <Sparkles className="size-4 text-white" />
             </div>
-            <span>Spice Garden</span>
+            <span>Crave</span>
           </div>
 
           {view === 'setup' ? (

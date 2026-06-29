@@ -337,7 +337,7 @@ export function AdminHeaderPagesTab({ showToast, onViewGallery }: Props) {
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Location</label>
-                  <input type="text" value={newTicket.location} onChange={e => setNewTicket({...newTicket, location: e.target.value})} className="w-full px-4 py-2 rounded-xl border border-gray-200 bg-white" placeholder="SPICE GARDEN" />
+                  <input type="text" value={newTicket.location} onChange={e => setNewTicket({...newTicket, location: e.target.value})} className="w-full px-4 py-2 rounded-xl border border-gray-200 bg-white" placeholder="CRAVE" />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Date</label>

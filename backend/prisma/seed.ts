@@ -14,9 +14,9 @@ async function main() {
       data: {
         hero: {
           logoImage: "/logo.jpg",
-          heroTitle: "SPICE GARDEN",
+          heroTitle: "CRAVE",
           heroSubtitle: "Authentic Flavours, Unforgettable Moments",
-          heroDescription: "Experience the finest Indian & Chinese cuisine at Spice Garden — Gokak's premier family dining restaurant.",
+          heroDescription: "Experience the finest Indian & Chinese cuisine at Crave — Gokak's premier family dining restaurant.",
           heroLocation: "GOKAK →",
           heroLocationLink: "https://www.google.com/maps?sca_esv=61c81e9d6a134ee7&rlz=1C1JJTC_enIN1106IN1107&output=search&q=spice+garden+gokak&source=lnms&fbs=ADc_l-aN0CWEZBOHjofHoaMMDiKpaEWjvZ2Py1XXV8d8KvlI3j2nXl-YQ05KjnWz5SrU93H7yjmEhUi5AUSwdCoCuNwic2C_J_Rcmu3S7Rsfb8A-Hz00-ik_bO8c4MNkKc6tUmrCnhmBBrT29IjzuTXP2Ak-BeDcyqJz7v2k_Ej-hAjAQ0cyri10ggFh9PmGvCeGndjDicMMh169KjzYcYKe285f73kBkA&entry=mc&ved=1t:200715&ictx=111",
           heroAddress: "5R65+QQV, Yogikolla Rd, Janata Plot Sector 1, Gokak, Karnataka 591307",
@@ -31,13 +31,13 @@ async function main() {
           aboutButtonLink: "/visit",
           aboutRightTitle: "Restaurant Cuisine",
           aboutRightSubtitle: "Where Every Meal Is a Celebration",
-          aboutRightDesc1: "Spice Garrden is Gokak's premier family dining restaurant, serving authentic Indian and Chinese cuisine crafted with the freshest ingredients and traditional spices.",
+          aboutRightDesc1: "Crave is Gokak's premier family dining restaurant, serving authentic Indian and Chinese cuisine crafted with the freshest ingredients and traditional spices.",
           aboutRightDesc2: "Whether you're craving creamy butter chicken, sizzling tandoori kebabs, or flavorful vegetarian curries, our chefs bring passion to every dish. Perfect for family dinners, celebrations, and casual dining.",
           aboutImage: "/section-2/1.jpg"
         },
         online: {
           onlineTitle: "ONLINE RESERVATION",
-          onlineDescription: "Spice Garden is one of the most popular restaurants. Special menus made by our passionate chefs and quality that will impress you.",
+          onlineDescription: "Crave is one of the most popular restaurants. Special menus made by our passionate chefs and quality that will impress you.",
           mediaType: "video",
           mediaUrl: "/video2.mp4"
         },
@@ -49,19 +49,19 @@ async function main() {
         event: {
           eventSubtitle: "EVENTS & CELEBRATIONS",
           eventTitle: "Something Special Awaits",
-          eventDescription: "From live music nights to grand food festivals and private celebrations — discover what's happening at Spice Garden."
+          eventDescription: "From live music nights to grand food festivals and private celebrations — discover what's happening at Crave."
         },
         promise: {
           promiseTitle: "OUR PROMISE",
-          promiseSubtitle: "Why Dine at Spice Garden?",
-          promiseDescription: "Looking for the best family restaurant in Gokak? Spice Garden has been the go-to destination for lovers of authentic Indian and Chinese cuisine. Our chefs use only the freshest ingredients and traditional spice blends to create dishes that burst with flavour — from creamy butter chicken and smoky tandoori kebabs to sizzling Hakka noodles and crispy Manchurian. Whether it's a cozy family dinner, a birthday celebration, or a casual outing with friends, our warm ambiance and attentive service make every visit special. We take pride in using authentic masalas and time-honoured recipes passed down through generations, ensuring every dish delivers rich aroma and unmatched taste. With convenient online ordering, easy table booking, and fast home delivery across Gokak, enjoying a restaurant-quality meal has never been easier. Visit Spice Garden today and discover why thousands of happy diners keep coming back for more."
+          promiseSubtitle: "Why Dine at Crave?",
+          promiseDescription: "Looking for the best family restaurant in Gokak? Crave has been the go-to destination for lovers of authentic Indian and Chinese cuisine. Our chefs use only the freshest ingredients and traditional spice blends to create dishes that burst with flavour — from creamy butter chicken and smoky tandoori kebabs to sizzling Hakka noodles and crispy Manchurian. Whether it's a cozy family dinner, a birthday celebration, or a casual outing with friends, our warm ambiance and attentive service make every visit special. We take pride in using authentic masalas and time-honoured recipes passed down through generations, ensuring every dish delivers rich aroma and unmatched taste. With convenient online ordering, easy table booking, and fast home delivery across Gokak, enjoying a restaurant-quality meal has never been easier. Visit Crave today and discover why thousands of happy diners keep coming back for more."
         },
         footer: {
           footerDescription: "Gokak's premier family dining restaurant. Authentic Indian & Chinese cuisine.",
           footerPhone: "097418 00400",
           footerAddress: "Jadhav Farm, Gokak, Karnataka",
           footerAddressLink: "https://maps.google.com",
-          footerEmail: "info@spicegarden.info",
+          footerEmail: "info@crave.info",
           footerBackgroundType: "video",
           footerBackgroundMedia: "/footer.mp4",
           footerTextColor: "#FFFFFF",
@@ -125,7 +125,7 @@ async function main() {
     console.log('Seeding default Testimonials...');
     await prisma.testimonial.createMany({
       data: [
-        { name: "Ravi Kumar", text: "The butter chicken here is simply outstanding! The ambiance is perfect for a family dinner. Highly recommend Spice Garden to everyone in Gokak.", image: "/section-6/Ravi.jpg" },
+        { name: "Ravi Kumar", text: "The butter chicken here is simply outstanding! The ambiance is perfect for a family dinner. Highly recommend Crave to everyone in Gokak.", image: "/section-6/Ravi.jpg" },
         { name: "Priya Desai", text: "Authentic flavors and great service. The Chinese starters were crispy and delicious. A must-visit place for food lovers!", image: "/section-6/Priya.jpg" },
         { name: "Amit Patil", text: "Loved the Chicken Biryani. The aroma and taste were authentic. The staff is very polite and the place is very hygienic.", image: "/section-6/Amit.jpg" }
       ]

@@ -23,7 +23,7 @@ export function EventsCtaSection() {
               {siteData?.event?.eventTitle || "Something Special Awaits"}
             </h3>
             <p className="text-white/90 text-lg leading-relaxed max-w-2xl whitespace-pre-line">
-              {siteData?.event?.eventDescription || "From live music nights to grand food festivals and private celebrations — discover what's happening at Spice Garden."}
+              {siteData?.event?.eventDescription || "From live music nights to grand food festivals and private celebrations — discover what's happening at Crave."}
             </p>
           </div>
 

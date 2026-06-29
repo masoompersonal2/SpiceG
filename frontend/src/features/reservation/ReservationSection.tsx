@@ -125,7 +125,7 @@ export function ReservationSection() {
             transition={{ delay: 0.1 }}
             className="text-gray-400 text-base md:text-lg lg:text-xl leading-relaxed whitespace-pre-line"
           >
-            {siteData?.online?.onlineDescription || "Spice Garden is one of the most popular restaurants. Special menus made by our passionate chefs and quality that will impress you."}
+            {siteData?.online?.onlineDescription || "Crave is one of the most popular restaurants. Special menus made by our passionate chefs and quality that will impress you."}
           </motion.p>
         </div>
 

@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken'); 
-const token = jwt.sign({ id: 1 }, 'spicegarden_dev_secret_key'); 
+const token = jwt.sign({ id: 1 }, 'crave_dev_secret_key'); 
 fetch('http://localhost:3000/api/events', { 
   method: 'POST', 
   headers: { 

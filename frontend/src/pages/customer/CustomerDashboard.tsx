@@ -479,7 +479,7 @@ function EventsTab() {
 
         const options = {
           key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_dummy_key", 
-          amount: rzpOrder.amount, currency: rzpOrder.currency, name: "Spice Garden",
+          amount: rzpOrder.amount, currency: rzpOrder.currency, name: "Crave",
           description: "Event Ticket Booking", order_id: rzpOrder.id,
           handler: async function (response: any) {
             const verifyRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/payments/razorpay/verify`, {
@@ -937,7 +937,7 @@ function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSucce
         key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_dummy_key", 
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
-        name: "Spice Garden",
+        name: "Crave",
         description: "Food Order Payment",
         order_id: razorpayOrder.id,
         handler: async function (response: any) {
@@ -1258,7 +1258,7 @@ export function CustomerDashboard() {
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_dummy_key", 
-        amount: rzpOrder.amount, currency: rzpOrder.currency, name: "Spice Garden",
+        amount: rzpOrder.amount, currency: rzpOrder.currency, name: "Crave",
         description: "Table Booking Fee", order_id: rzpOrder.id,
         handler: async function (response: any) {
           const verifyRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/payments/razorpay/verify`, {
@@ -1343,7 +1343,7 @@ export function CustomerDashboard() {
           <div className="w-10 h-10 rounded-xl bg-[#B2E624] flex items-center justify-center shadow-lg shadow-[#B2E624]/20">
             <span className="text-black font-black text-xl leading-none">S</span>
           </div>
-          <span className="text-xl font-bold tracking-tight">SpiceGarden</span>
+          <span className="text-xl font-bold tracking-tight">Crave</span>
         </div>
 
         {/* Desktop Nav */}
@@ -1394,7 +1394,7 @@ export function CustomerDashboard() {
                   <div className="w-10 h-10 rounded-xl bg-[#B2E624] flex items-center justify-center shadow-lg shadow-[#B2E624]/20">
                     <span className="text-black font-black text-xl leading-none">S</span>
                   </div>
-                  <span className="text-xl font-bold tracking-tight">SpiceGarden</span>
+                  <span className="text-xl font-bold tracking-tight">Crave</span>
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto p-4 space-y-2">

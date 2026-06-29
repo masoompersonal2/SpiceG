@@ -31,7 +31,7 @@ import { prisma } from './prisma';
     }]),
     JwtModule.register({
       global: true,
-      secret: process.env.JWT_SECRET || 'spicegarden_dev_secret_key',
+      secret: process.env.JWT_SECRET || 'crave_dev_secret_key',
       signOptions: { expiresIn: '1d' },
     }),
   ],
@@ -47,7 +47,7 @@ export class AppModule {
   async onModuleInit() {
     // Seed staff user
     const staffUser = process.env.STAFF_USERNAME || 'spiceStaff';
-    const staffPass = process.env.STAFF_PASSWORD || 'staffSPICE';
+    const staffPass = process.env.STAFF_PASSWORD || 'staffCRAVE';
     const existingStaff = await prisma.staff.findUnique({ where: { username: staffUser } });
     if (!existingStaff) {
       const hashedPassword = await bcrypt.hash(staffPass, 10);
@@ -62,7 +62,7 @@ export class AppModule {
 
     // Seed admin user
     const adminUser = process.env.ADMIN_USERNAME || 'AdminS';
-    const adminPass = process.env.ADMIN_PASSWORD || 'adminSPICE';
+    const adminPass = process.env.ADMIN_PASSWORD || 'adminCRAVE';
     const existingAdmin = await prisma.admin.findUnique({ where: { username: adminUser } });
     if (!existingAdmin) {
       const hashedAdminPassword = await bcrypt.hash(adminPass, 10);
@@ -81,8 +81,8 @@ export class AppModule {
       console.log('Seeding default SiteContent...');
       await prisma.siteContent.create({
         data: {
-          seo: { title: "Spice Garden", metaDescription: "Spice Garden Gokak", favicon: "/favicon.ico" },
-          hero: { heroTitle: "SPICE GARDEN", heroSubtitle: "Authentic Flavours", heroLocation: "GOKAK", heroStatsHappyDiners: "15000+", heroStatsMenuItems: "60+" },
+          seo: { title: "Crave", metaDescription: "Crave Gokak", favicon: "/favicon.ico" },
+          hero: { heroTitle: "CRAVE", heroSubtitle: "Authentic Flavours", heroLocation: "GOKAK", heroStatsHappyDiners: "15000+", heroStatsMenuItems: "60+" },
           about: { aboutTitle: "FOOD LOVER'S PARADISE" },
           online: { onlineTitle: "ONLINE RESERVATION" },
           call: { callTitle: "Craving Something Delicious?" },

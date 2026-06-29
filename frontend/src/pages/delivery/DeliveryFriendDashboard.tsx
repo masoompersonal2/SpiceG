@@ -158,7 +158,7 @@ export function DeliveryFriendDashboard() {
             <Package className="w-6 h-6 text-black" />
           </div>
           <div>
-            <h1 className="text-xl font-black text-gray-900 leading-none">SpiceGarden</h1>
+            <h1 className="text-xl font-black text-gray-900 leading-none">Crave</h1>
             <p className="text-xs font-bold text-gray-500 mt-1 uppercase tracking-wider">Delivery Partner</p>
           </div>
         </div>

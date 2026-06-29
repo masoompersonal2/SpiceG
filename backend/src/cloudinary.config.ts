@@ -12,7 +12,7 @@ export const getCloudinaryStorage = () => {
     cloudinary: cloudinary,
     params: async (req, file) => {
       return {
-        folder: 'spicegarden',
+        folder: 'crave',
         resource_type: 'auto',
         public_id: `${file.fieldname}-${Date.now()}`
       };

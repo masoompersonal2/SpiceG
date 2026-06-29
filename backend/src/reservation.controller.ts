@@ -20,7 +20,7 @@ export class ReservationController {
     const token = req.cookies?.customerToken;
     if (token) {
       try {
-        const payload = this.jwtService.verify(token, { secret: process.env.JWT_SECRET || 'spicegarden_dev_secret_key' });
+        const payload = this.jwtService.verify(token, { secret: process.env.JWT_SECRET || 'crave_dev_secret_key' });
         customerId = payload.id;
       } catch (e) {
         // Ignore invalid token for public route

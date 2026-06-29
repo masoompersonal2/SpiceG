@@ -19,7 +19,7 @@ export class StaffGuard implements CanActivate {
 
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_SECRET || 'spicegarden_dev_secret_key',
+        secret: process.env.JWT_SECRET || 'crave_dev_secret_key',
       });
       
       // Verify role and verify the user still exists with this username (if changed, force logout)

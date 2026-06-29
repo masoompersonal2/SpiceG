@@ -21,7 +21,7 @@ export class CustomerAuthGuard implements CanActivate {
     
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_SECRET || 'spicegarden_dev_secret_key'
+        secret: process.env.JWT_SECRET || 'crave_dev_secret_key'
       });
       request['user'] = payload; // Payload contains { id, email }
     } catch {

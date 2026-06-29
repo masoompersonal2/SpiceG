@@ -50,12 +50,12 @@ export function Footer() {
                 style={{ fontSize: '300px' }}
                 fill="black"
               >
-                SPICE
+                CRAVE
               </text>
             </mask>
           </defs>
           <path 
-            d="M 20,80 Q 500,-20 980,80 L 920,400 L 80,400 Z" 
+            d="M 20,80 Q 500,-20 980,80 L 980,400 Q 500,300 20,400 Z" 
             fill={siteData?.footer?.footerTextColor || "white"}
             mask="url(#spiceMask)" 
           />
@@ -68,7 +68,7 @@ export function Footer() {
         <div className="flex flex-col lg:flex-row justify-between items-end gap-12 border-b border-white/10 pb-6">
           {/* Left Column */}
           <div className="flex flex-col gap-6 max-w-sm">
-            <img src="/logo.jpg" alt="Spice Garden" className="h-10 md:h-12 w-auto object-contain rounded-xl mix-blend-screen self-start" />
+            <img src="/logo.jpg" alt="Crave" className="h-10 md:h-12 w-auto object-contain rounded-xl mix-blend-screen self-start" />
             <p className="text-gray-300 font-medium text-sm leading-relaxed">
               {siteData?.footer?.footerDescription || "Gokak's premier family dining restaurant. Authentic Indian & Chinese cuisine."}
             </p>
@@ -132,7 +132,7 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center text-xs text-white/50 pt-4 gap-4">
-          <span>© 2026 Spice Garden. All rights reserved.</span>
+          <span>© 2026 Crave. All rights reserved.</span>
           <div className="flex gap-6 text-[#E04D2D] font-medium">
             {(siteData?.footer?.footerSocials || [])
               .filter((s: any) => s.isEnabled)
@@ -145,7 +145,7 @@ export function Footer() {
                 </a>
               ))}
           </div>
-          <span>{siteData?.footer?.footerEmail || "info@spicegarden.info"}</span>
+          <span>{siteData?.footer?.footerEmail || "info@crave.info"}</span>
         </div>
 
       </div>

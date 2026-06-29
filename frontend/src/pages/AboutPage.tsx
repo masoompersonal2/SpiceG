@@ -16,7 +16,7 @@ export function AboutPage() {
         <div className="mb-24">
           <span className="text-[#C4A464] text-xs font-bold tracking-[0.2em] uppercase mb-4 block">Our Story</span>
           <h1 className="text-5xl md:text-7xl font-serif font-bold text-[#E8E6E1] leading-tight">
-            About Spice<br />Garrden
+            About Crave
           </h1>
         </div>
 
@@ -24,10 +24,10 @@ export function AboutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-32">
           {/* Left Text */}
           <div className="space-y-8">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#E8E6E1]">Welcome to Spice Garrden</h2>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#E8E6E1]">Welcome to Crave</h2>
             <div className="space-y-6 text-[#EBE6DD]/80 leading-relaxed text-lg">
-              <p>Welcome to Spice Garrden, a vibrant and aromatic destination where nature, flavors, and beauty come together in perfect harmony. Nestled in a serene and lush environment, Spice Garrden is designed to offer visitors an immersive experience that celebrates the richness of nature and the charm of spices.</p>
-              <p>Whether you are a family seeking a peaceful outing, a nature enthusiast, or someone passionate about plants and greenery, Spice Garrden provides a refreshing escape from the daily hustle.</p>
+              <p>Welcome to Crave, a vibrant and aromatic destination where nature, flavors, and beauty come together in perfect harmony. Nestled in a serene and lush environment, Crave is designed to offer visitors an immersive experience that celebrates the richness of nature and the charm of spices.</p>
+              <p>Whether you are a family seeking a peaceful outing, a nature enthusiast, or someone passionate about plants and greenery, Crave provides a refreshing escape from the daily hustle.</p>
               <p>We take pride in curating a diverse and thoughtfully designed environment that showcases a wide variety of plants, herbs, and spices. Visitors can explore beautifully landscaped pathways, vibrant flowerbeds, and thematic sections dedicated to various aromatic and medicinal plants.</p>
             </div>
           </div>
@@ -47,7 +47,7 @@ export function AboutPage() {
               <h3 className="text-2xl font-serif text-[#C4A464] mb-4 flex items-center gap-3">
                 <Globe className="w-8 h-8" /> Community & Sustainability
               </h3>
-              <p className="text-[#EBE6DD]/80 leading-relaxed">Spice Garrden is committed to eco-friendly practices and environmental stewardship. We employ sustainable gardening methods, conserve water, and focus on planting native and spice-rich species to support local biodiversity.</p>
+              <p className="text-[#EBE6DD]/80 leading-relaxed">Crave is committed to eco-friendly practices and environmental stewardship. We employ sustainable gardening methods, conserve water, and focus on planting native and spice-rich species to support local biodiversity.</p>
             </div>
 
             {/* Card 3 */}
@@ -64,7 +64,7 @@ export function AboutPage() {
         <div className="mb-32">
           <div className="text-center mb-16">
             <span className="text-[#C4A464] text-xs font-bold tracking-[0.2em] uppercase mb-4 block">Why Choose Us</span>
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#E8E6E1]">The Spice Garrden Difference</h2>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#E8E6E1]">The Crave Difference</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -94,10 +94,10 @@ export function AboutPage() {
         {/* The Experience */}
         <div className="max-w-4xl mx-auto text-center">
           <span className="text-[#C4A464] text-xs font-bold tracking-[0.2em] uppercase mb-4 block">The Experience</span>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#E8E6E1] mb-10">Join the Spice Garrden Experience</h2>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#E8E6E1] mb-10">Join the Crave Experience</h2>
           <div className="space-y-6 text-[#EBE6DD]/80 leading-relaxed text-lg">
-            <p>Whether you are visiting for relaxation, education, or exploration, Spice Garrden invites you to immerse yourself in a world of natural beauty, aroma, and tranquility. Discover vibrant landscapes, enjoy serene surroundings, and gain knowledge about the fascinating world of spices.</p>
-            <p>At Spice Garrden, we don't just offer a garden — we provide an enriching experience that nourishes the mind, body, and soul while fostering a lasting connection with nature.</p>
+            <p>Whether you are visiting for relaxation, education, or exploration, Crave invites you to immerse yourself in a world of natural beauty, aroma, and tranquility. Discover vibrant landscapes, enjoy serene surroundings, and gain knowledge about the fascinating world of spices.</p>
+            <p>At Crave, we don't just offer a garden — we provide an enriching experience that nourishes the mind, body, and soul while fostering a lasting connection with nature.</p>
           </div>
         </div>
 

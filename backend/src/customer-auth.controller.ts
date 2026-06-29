@@ -37,7 +37,7 @@ export class CustomerAuthController {
 
     const payload = { id: customer.id, email: customer.email };
     const token = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_SECRET || 'spicegarden_dev_secret_key'
+      secret: process.env.JWT_SECRET || 'crave_dev_secret_key'
     });
 
     res.cookie('customerToken', token, {
@@ -64,7 +64,7 @@ export class CustomerAuthController {
 
     const payload = { id: customer.id, email: customer.email };
     const token = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_SECRET || 'spicegarden_dev_secret_key'
+      secret: process.env.JWT_SECRET || 'crave_dev_secret_key'
     });
 
     res.cookie('customerToken', token, {

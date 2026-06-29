@@ -50,7 +50,7 @@ export function AdminLogin() {
     <div className="min-h-screen bg-[#3b2314] flex flex-col items-center justify-center p-4">
       <div className="bg-white rounded-[2rem] p-8 sm:p-12 w-full max-w-md shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-2 bg-[#E04D2D]"></div>
-        <img src="/logo.jpg" alt="Spice Garden" className="h-16 mx-auto mb-8 mix-blend-multiply" />
+        <img src="/logo.jpg" alt="Crave" className="h-16 mx-auto mb-8 mix-blend-multiply" />
         
         <h2 className="text-3xl font-bold text-gray-800 mb-8 font-serif">Admin Access</h2>
         
