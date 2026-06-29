@@ -1,6 +1,10 @@
 import { ArrowLeft, Sprout, Globe, Gem, Leaf, BookOpen, Users, Camera } from "lucide-react";
+import { useContent } from "../context/ContentContext";
 
 export function AboutPage() {
+  const { siteData } = useContent();
+  const aboutH = siteData?.aboutH || {};
+  
   return (
     <main className="min-h-screen flex flex-col w-full bg-[#2D1B10] text-[#E8E6E1] pb-24 relative">
       <a 
@@ -26,9 +30,9 @@ export function AboutPage() {
           <div className="space-y-8">
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#E8E6E1]">Welcome to Crave</h2>
             <div className="space-y-6 text-[#EBE6DD]/80 leading-relaxed text-lg">
-              <p>Welcome to Crave, a vibrant and aromatic destination where nature, flavors, and beauty come together in perfect harmony. Nestled in a serene and lush environment, Crave is designed to offer visitors an immersive experience that celebrates the richness of nature and the charm of spices.</p>
-              <p>Whether you are a family seeking a peaceful outing, a nature enthusiast, or someone passionate about plants and greenery, Crave provides a refreshing escape from the daily hustle.</p>
-              <p>We take pride in curating a diverse and thoughtfully designed environment that showcases a wide variety of plants, herbs, and spices. Visitors can explore beautifully landscaped pathways, vibrant flowerbeds, and thematic sections dedicated to various aromatic and medicinal plants.</p>
+              <p>{aboutH.p1 || "Welcome to Crave, a vibrant and aromatic destination where nature, flavors, and beauty come together in perfect harmony. Nestled in a serene and lush environment, Crave is designed to offer visitors an immersive experience that celebrates the richness of nature and the charm of spices."}</p>
+              <p>{aboutH.p2 || "Whether you are a family seeking a peaceful outing, a nature enthusiast, or someone passionate about plants and greenery, Crave provides a refreshing escape from the daily hustle."}</p>
+              <p>{aboutH.p3 || "We take pride in curating a diverse and thoughtfully designed environment that showcases a wide variety of plants, herbs, and spices. Visitors can explore beautifully landscaped pathways, vibrant flowerbeds, and thematic sections dedicated to various aromatic and medicinal plants."}</p>
             </div>
           </div>
 
@@ -39,7 +43,7 @@ export function AboutPage() {
               <h3 className="text-2xl font-serif text-[#C4A464] mb-4 flex items-center gap-3">
                 <Sprout className="w-8 h-8" /> Our Mission
               </h3>
-              <p className="text-[#EBE6DD]/80 leading-relaxed">To create a green sanctuary that promotes environmental awareness, wellness, and education while providing an enjoyable and tranquil experience. We aim to foster a deeper connection between people and nature, inspiring an appreciation for biodiversity and sustainable practices.</p>
+              <p className="text-[#EBE6DD]/80 leading-relaxed">{aboutH.mission || "To create a green sanctuary that promotes environmental awareness, wellness, and education while providing an enjoyable and tranquil experience."}</p>
             </div>
 
             {/* Card 2 */}
@@ -47,7 +51,7 @@ export function AboutPage() {
               <h3 className="text-2xl font-serif text-[#C4A464] mb-4 flex items-center gap-3">
                 <Globe className="w-8 h-8" /> Community & Sustainability
               </h3>
-              <p className="text-[#EBE6DD]/80 leading-relaxed">Crave is committed to eco-friendly practices and environmental stewardship. We employ sustainable gardening methods, conserve water, and focus on planting native and spice-rich species to support local biodiversity.</p>
+              <p className="text-[#EBE6DD]/80 leading-relaxed">{aboutH.sustainability || "Crave is committed to eco-friendly practices and environmental stewardship."}</p>
             </div>
 
             {/* Card 3 */}
@@ -55,7 +59,7 @@ export function AboutPage() {
               <h3 className="text-2xl font-serif text-[#C4A464] mb-4 flex items-center gap-3">
                 <Gem className="w-8 h-8" /> Our Values
               </h3>
-              <p className="text-[#EBE6DD]/80 leading-relaxed">Integrity, sustainability, and community engagement are our guiding principles. We operate with transparency and dedication to maintaining a safe and welcoming environment for all visitors.</p>
+              <p className="text-[#EBE6DD]/80 leading-relaxed">{aboutH.values || "Integrity, sustainability, and community engagement are our guiding principles."}</p>
             </div>
           </div>
         </div>
@@ -96,8 +100,8 @@ export function AboutPage() {
           <span className="text-[#C4A464] text-xs font-bold tracking-[0.2em] uppercase mb-4 block">The Experience</span>
           <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#E8E6E1] mb-10">Join the Crave Experience</h2>
           <div className="space-y-6 text-[#EBE6DD]/80 leading-relaxed text-lg">
-            <p>Whether you are visiting for relaxation, education, or exploration, Crave invites you to immerse yourself in a world of natural beauty, aroma, and tranquility. Discover vibrant landscapes, enjoy serene surroundings, and gain knowledge about the fascinating world of spices.</p>
-            <p>At Crave, we don't just offer a garden — we provide an enriching experience that nourishes the mind, body, and soul while fostering a lasting connection with nature.</p>
+            <p>{aboutH.exp1 || "Whether you are visiting for relaxation, education, or exploration, Crave invites you to immerse yourself in a world of natural beauty, aroma, and tranquility."}</p>
+            <p>{aboutH.exp2 || "At Crave, we don't just offer a garden — we provide an enriching experience that nourishes the mind, body, and soul while fostering a lasting connection with nature."}</p>
           </div>
         </div>
 

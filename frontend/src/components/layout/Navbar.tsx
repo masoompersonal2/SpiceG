@@ -54,10 +54,9 @@ export function Navbar() {
       <nav 
         className={`fixed z-[9999] transition-all duration-500 ease-in-out flex items-center justify-between ${
           scrolled 
-            ? 'top-0 left-1/2 -translate-x-1/2 w-full md:w-[85%] md:max-w-[1200px] bg-black/95 backdrop-blur-xl py-2 md:py-2 px-6 md:px-12 shadow-[0_8px_32px_rgba(0,0,0,0.4)]' 
+            ? 'top-3 left-1/2 -translate-x-1/2 w-[92%] md:w-[80%] max-w-[1100px] bg-black/90 backdrop-blur-xl py-2 md:py-3 px-5 md:px-10 rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.5)] border border-white/10' 
             : 'top-0 left-0 w-full bg-transparent py-4 md:py-5 px-6 md:px-12'
         } ${isHiddenByFooter ? 'lg:-translate-y-[200%]' : 'translate-y-0'}`}
-        style={scrolled && !isHiddenByFooter ? { clipPath: 'polygon(0 0, 100% 0, calc(100% - 30px) 100%, 30px 100%)' } : {}}
       >
         {/* Logo */}
         <div className="flex-1 cursor-pointer">

@@ -51,7 +51,7 @@ export function ContactPage() {
 
   const isVideo = (url: string) => url.match(/\.(mp4|webm|ogg)/i) || url.includes('/video/upload/');
 
-  const footer = siteData?.footer || {};
+  const contactInfo = siteData?.contact || {};
   const insta = siteData?.contact?.instagram || [];
 
   return (
@@ -73,22 +73,22 @@ export function ContactPage() {
           <div className="relative rounded-2xl bg-[#3A2417] p-4 md:p-8 border border-white/5 shadow-[inset_0_0_20px_rgba(255,255,255,0.03),inset_0_0_5px_rgba(255,255,255,0.05)] flex flex-col items-center text-center hover:bg-[#452D1C] transition-colors">
             <Phone className="w-6 h-6 md:w-10 md:h-10 text-[#C4A464] mb-2 md:mb-4" />
             <h3 className="font-serif text-sm md:text-xl mb-1 md:mb-2">Phone</h3>
-            <p className="text-[#EBE6DD]/70 text-[10px] md:text-base">{footer.phone || "+91 98765 43210"}</p>
+            <p className="text-[#EBE6DD]/70 text-[10px] md:text-base">{contactInfo.phone || siteData?.footer?.footerPhone || "+91 98765 43210"}</p>
           </div>
           
           <div className="relative rounded-2xl bg-[#3A2417] p-4 md:p-8 border border-white/5 shadow-[inset_0_0_20px_rgba(255,255,255,0.03),inset_0_0_5px_rgba(255,255,255,0.05)] flex flex-col items-center text-center hover:bg-[#452D1C] transition-colors">
             <Mail className="w-6 h-6 md:w-10 md:h-10 text-[#C4A464] mb-2 md:mb-4" />
             <h3 className="font-serif text-sm md:text-xl mb-1 md:mb-2">Email</h3>
-            <p className="text-[#EBE6DD]/70 text-[10px] md:text-base break-all">{footer.email || "info@crave.com"}</p>
+            <p className="text-[#EBE6DD]/70 text-[10px] md:text-base break-all">{contactInfo.email || siteData?.footer?.footerEmail || "info@crave.com"}</p>
           </div>
 
-          <a href={footer.instagram || "#"} target="_blank" rel="noreferrer" className="relative rounded-2xl bg-[#3A2417] p-4 md:p-8 border border-white/5 shadow-[inset_0_0_20px_rgba(255,255,255,0.03),inset_0_0_5px_rgba(255,255,255,0.05)] flex flex-col items-center text-center hover:bg-[#452D1C] transition-colors group cursor-pointer">
+          <a href={contactInfo.instagramUrl || "#"} target="_blank" rel="noreferrer" className="relative rounded-2xl bg-[#3A2417] p-4 md:p-8 border border-white/5 shadow-[inset_0_0_20px_rgba(255,255,255,0.03),inset_0_0_5px_rgba(255,255,255,0.05)] flex flex-col items-center text-center hover:bg-[#452D1C] transition-colors group cursor-pointer">
             <InstagramIcon className="w-6 h-6 md:w-10 md:h-10 text-[#C4A464] mb-2 md:mb-4 group-hover:scale-110 transition-transform" />
             <h3 className="font-serif text-sm md:text-xl mb-1 md:mb-2">Instagram</h3>
             <p className="text-[#EBE6DD]/70 text-[10px] md:text-base">Follow Us</p>
           </a>
 
-          <a href={footer.facebook || "#"} target="_blank" rel="noreferrer" className="relative rounded-2xl bg-[#3A2417] p-4 md:p-8 border border-white/5 shadow-[inset_0_0_20px_rgba(255,255,255,0.03),inset_0_0_5px_rgba(255,255,255,0.05)] flex flex-col items-center text-center hover:bg-[#452D1C] transition-colors group cursor-pointer">
+          <a href={contactInfo.facebookUrl || "#"} target="_blank" rel="noreferrer" className="relative rounded-2xl bg-[#3A2417] p-4 md:p-8 border border-white/5 shadow-[inset_0_0_20px_rgba(255,255,255,0.03),inset_0_0_5px_rgba(255,255,255,0.05)] flex flex-col items-center text-center hover:bg-[#452D1C] transition-colors group cursor-pointer">
             <FacebookIcon className="w-6 h-6 md:w-10 md:h-10 text-[#C4A464] mb-2 md:mb-4 group-hover:scale-110 transition-transform" />
             <h3 className="font-serif text-sm md:text-xl mb-1 md:mb-2">Facebook</h3>
             <p className="text-[#EBE6DD]/70 text-[10px] md:text-base">Join Our Page</p>
@@ -121,7 +121,7 @@ export function ContactPage() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-[#EBE6DD]/80 mb-2">Mobile Number</label>
-                <input required type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-[#25150D] border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[#C4A464] transition-colors" placeholder={footer.phone || "+91 98765 43210"} />
+                <input required type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-[#25150D] border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[#C4A464] transition-colors" placeholder={contactInfo.phone || siteData?.footer?.footerPhone || "+91 98765 43210"} />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-[#EBE6DD]/80 mb-2">Describe your concern / query</label>
@@ -152,13 +152,13 @@ export function ContactPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 lg:gap-6 max-w-6xl mx-auto">
           {/* Left Column */}
           <div className="grid grid-cols-2 md:flex md:flex-col gap-4 lg:gap-6">
-            <a href={footer.instagram || "#"} target="_blank" rel="noreferrer" className="relative rounded-2xl overflow-hidden aspect-square border-4 border-white/5 hover:border-white/20 transition-all cursor-pointer block">
+            <a href={contactInfo.instagramUrl || "#"} target="_blank" rel="noreferrer" className="relative rounded-2xl overflow-hidden aspect-square border-4 border-white/5 hover:border-white/20 transition-all cursor-pointer block">
               {insta[0] && (isVideo(resolveImageUrl(insta[0])) ? 
                 <video src={resolveImageUrl(insta[0])} className="w-full h-full object-cover" autoPlay muted loop playsInline /> : 
                 <img src={resolveImageUrl(insta[0])} className="w-full h-full object-cover" alt="Insta 1" />
               )}
             </a>
-            <a href={footer.instagram || "#"} target="_blank" rel="noreferrer" className="relative rounded-2xl overflow-hidden aspect-square border-4 border-white/5 hover:border-white/20 transition-all cursor-pointer block">
+            <a href={contactInfo.instagramUrl || "#"} target="_blank" rel="noreferrer" className="relative rounded-2xl overflow-hidden aspect-square border-4 border-white/5 hover:border-white/20 transition-all cursor-pointer block">
               {insta[1] && (isVideo(resolveImageUrl(insta[1])) ? 
                 <video src={resolveImageUrl(insta[1])} className="w-full h-full object-cover" autoPlay muted loop playsInline /> : 
                 <img src={resolveImageUrl(insta[1])} className="w-full h-full object-cover" alt="Insta 2" />
@@ -167,7 +167,7 @@ export function ContactPage() {
           </div>
           
           {/* Center Column (Large) */}
-          <a href={footer.instagram || "#"} target="_blank" rel="noreferrer" className="md:col-span-2 relative rounded-3xl overflow-hidden border-4 border-white/5 hover:border-white/20 transition-all cursor-pointer group flex items-center justify-center aspect-square md:aspect-auto min-h-[250px]">
+          <a href={contactInfo.instagramUrl || "#"} target="_blank" rel="noreferrer" className="md:col-span-2 relative rounded-3xl overflow-hidden border-4 border-white/5 hover:border-white/20 transition-all cursor-pointer group flex items-center justify-center aspect-square md:aspect-auto min-h-[250px]">
             {insta[2] && (isVideo(resolveImageUrl(insta[2])) ? 
               <video src={resolveImageUrl(insta[2])} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" autoPlay muted loop playsInline /> : 
               <img src={resolveImageUrl(insta[2])} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Insta Center" />
@@ -181,13 +181,13 @@ export function ContactPage() {
           
           {/* Right Column */}
           <div className="grid grid-cols-2 md:flex md:flex-col gap-4 lg:gap-6">
-            <a href={footer.instagram || "#"} target="_blank" rel="noreferrer" className="relative rounded-2xl overflow-hidden aspect-square border-4 border-white/5 hover:border-white/20 transition-all cursor-pointer block">
+            <a href={contactInfo.instagramUrl || "#"} target="_blank" rel="noreferrer" className="relative rounded-2xl overflow-hidden aspect-square border-4 border-white/5 hover:border-white/20 transition-all cursor-pointer block">
               {insta[3] && (isVideo(resolveImageUrl(insta[3])) ? 
                 <video src={resolveImageUrl(insta[3])} className="w-full h-full object-cover" autoPlay muted loop playsInline /> : 
                 <img src={resolveImageUrl(insta[3])} className="w-full h-full object-cover" alt="Insta 4" />
               )}
             </a>
-            <a href={footer.instagram || "#"} target="_blank" rel="noreferrer" className="relative rounded-2xl overflow-hidden aspect-square border-4 border-white/5 hover:border-white/20 transition-all cursor-pointer block">
+            <a href={contactInfo.instagramUrl || "#"} target="_blank" rel="noreferrer" className="relative rounded-2xl overflow-hidden aspect-square border-4 border-white/5 hover:border-white/20 transition-all cursor-pointer block">
               {insta[4] && (isVideo(resolveImageUrl(insta[4])) ? 
                 <video src={resolveImageUrl(insta[4])} className="w-full h-full object-cover" autoPlay muted loop playsInline /> : 
                 <img src={resolveImageUrl(insta[4])} className="w-full h-full object-cover" alt="Insta 5" />
