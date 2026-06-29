@@ -304,17 +304,16 @@ function OrdersTab({ setCart, handleTabChange }: any) {
 
   return (
     <div className="h-full flex flex-col bg-transparent">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">Active Orders</h1>
-        {historyOrders.length > 0 && (
-          <button 
-            onClick={() => setIsViewingHistory(true)}
-            className="text-sm font-bold text-[#B2E624] bg-black px-6 py-2 rounded-full shadow-md hover:bg-gray-800 transition-colors flex items-center gap-2"
-          >
-            History
-          </button>
-        )}
-      </div>
+    <div className="flex justify-end items-center mb-4">
+      {historyOrders.length > 0 && (
+        <button 
+          onClick={() => setIsViewingHistory(true)}
+          className="text-sm font-bold text-[#B2E624] bg-black px-6 py-2 rounded-full shadow-md hover:bg-gray-800 transition-colors flex items-center gap-2"
+        >
+          History
+        </button>
+      )}
+    </div>
       <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide">
         {activeOrders.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center">
@@ -413,24 +412,21 @@ function MenuTab({ cart, setCart, setShowCartPanel }: any) {
 
   return (
     <div className="h-full flex flex-col bg-gray-50 rounded-3xl p-4 lg:p-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <h1 className="text-2xl font-bold">Our Menu</h1>
-        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-          <div className="relative w-full sm:w-[250px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input type="text" placeholder="Search menu..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
-          </div>
-          <select 
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="bg-gray-50 border-none rounded-xl text-sm px-4 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-[#B2E624] w-full sm:w-auto"
-          >
-            <option value="All">All Items</option>
-            {categories.slice(1).map((c: any) => (
-              <option key={c.id} value={c.name}>{c.name}</option>
-            ))}
-          </select>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input type="text" placeholder="Search menu..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-white border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
         </div>
+        <select 
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="bg-white border-none rounded-xl text-sm px-4 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-[#B2E624] w-full sm:w-auto"
+        >
+          <option value="All">All Items</option>
+          {categories.slice(1).map((c: any) => (
+            <option key={c.id} value={c.name}>{c.name}</option>
+          ))}
+        </select>
       </div>
 
       <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide">
@@ -541,20 +537,17 @@ function EventsTab() {
     <div className="h-full flex flex-col bg-transparent relative">
       <Modal isOpen={!!bookingEvent} title="Book Event" desc={`Are you sure you want to book a ticket for "${bookingEvent?.title}"?`} onConfirm={handleBook} onCancel={() => setBookingEvent(null)} confirmText="Yes, Book" />
       
-      <div className="sticky top-0 z-10 bg-[#f9fafb]/90 backdrop-blur-md pb-4 pt-2 flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-        <h1 className="text-2xl font-bold">Events</h1>
-        <div className="flex gap-3">
-          <div className="relative w-full md:w-48">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input type="text" placeholder="Search events..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-gray-50 border-none rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
-          </div>
-          <div className="flex bg-gray-100 rounded-full p-1 shrink-0">
-            {["All Events", "My Events"].map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab)} className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${activeTab === tab ? 'bg-white text-black shadow-sm' : 'text-gray-500'}`}>
-                {tab}
-              </button>
-            ))}
-          </div>
+      <div className="sticky top-0 z-10 bg-[#F8F9FB]/95 backdrop-blur-md pb-3 pt-1 flex flex-row items-center gap-3 mb-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input type="text" placeholder="Search events..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-white border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
+        </div>
+        <div className="flex bg-gray-100 rounded-full p-1 shrink-0">
+          {["All Events", "My Events"].map(tab => (
+            <button key={tab} onClick={() => setActiveTab(tab)} className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${activeTab === tab ? 'bg-white text-black shadow-sm' : 'text-gray-500'}`}>
+              {tab}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -618,8 +611,6 @@ function ReservationsTab({ onPay }: { onPay: (id: number) => void }) {
 
   return (
     <div className="h-full flex flex-col bg-transparent">
-      <h1 className="text-2xl font-bold mb-8">My Reservations</h1>
-      
       <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide">
         {reservations.length === 0 ? (
           <div className="text-center text-gray-500 py-12">No reservations found.</div>
@@ -1207,41 +1198,28 @@ export function CustomerDashboard() {
 
   const fetchUserAndSettings = async () => {
     try {
-      const [resUser, resSettings] = await Promise.all([
-        fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/me`, { credentials: "include" }),
-        fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/settings`)
-      ]);
-      if (!resUser.ok) throw new Error();
+      const resUser = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/customer/auth/me`, { credentials: "include" });
+      if (!resUser.ok) throw new Error("Not authenticated");
       setUser(await resUser.json());
-      if (resSettings.ok) {
-        const settingsData = await resSettings.json();
-        setSettings({
-          ...settingsData,
-          customFees: typeof settingsData.customFees === 'string' ? JSON.parse(settingsData.customFees) : (settingsData.customFees || [])
-        });
-        setIsAuthenticated(true);
-      } else {
-        window.location.replace("/auth");
-      }
+      setIsAuthenticated(true);
+      // Settings are optional — don't redirect if they fail
+      try {
+        const resSettings = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/settings`);
+        if (resSettings.ok) {
+          const settingsData = await resSettings.json();
+          setSettings({
+            ...settingsData,
+            customFees: typeof settingsData.customFees === 'string' ? JSON.parse(settingsData.customFees) : (settingsData.customFees || [])
+          });
+        }
+      } catch {}
     } catch {
       window.location.replace("/auth");
     }
   };
 
   useEffect(() => {
-    const checkSession = () => {
-      if (!sessionStorage.getItem("customerSession")) {
-        window.location.replace("/auth");
-      }
-    };
-    checkSession();
-    window.addEventListener("pageshow", checkSession);
-
     fetchUserAndSettings();
-
-    return () => {
-      window.removeEventListener("pageshow", checkSession);
-    };
   }, []);
 
   const handlePendingReservationConfirm = async () => {
