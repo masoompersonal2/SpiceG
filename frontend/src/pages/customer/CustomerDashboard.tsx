@@ -214,7 +214,7 @@ function OrdersTab({ setCart, handleTabChange }: any) {
 
   if (isViewingHistory) {
     return (
-      <div className="h-full flex flex-col bg-white rounded-3xl overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.03)] relative">
+      <div className="h-full flex flex-col bg-transparent relative">
         <Modal 
           isOpen={showBulkDeleteModal} 
           title="Delete Orders" 
@@ -224,30 +224,30 @@ function OrdersTab({ setCart, handleTabChange }: any) {
           confirmText="Yes, Delete" 
           isDestructive={true} 
         />
-        <div className="md:sticky md:top-0 bg-white/95 backdrop-blur-md z-20 border-b border-gray-100 px-6 py-4 flex flex-col gap-4">
-          <div className="flex items-center gap-4">
-            <button onClick={() => setIsViewingHistory(false)} className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold rounded-xl transition-colors flex items-center gap-2 shrink-0">
+        <div className="sticky top-0 bg-[#f9fafb]/95 backdrop-blur-md z-20 border-b border-gray-200 px-4 py-4 flex flex-col xl:flex-row gap-4 xl:items-center justify-between">
+          <div className="flex items-center gap-4 w-full xl:w-auto">
+            <button onClick={() => setIsViewingHistory(false)} className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold rounded-xl transition-colors flex items-center gap-2 shrink-0">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
               Back
             </button>
-            <h1 className="text-2xl font-bold">Order History</h1>
+            <div className="relative w-full xl:w-[250px]">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input 
+                type="text" 
+                placeholder="Search..." 
+                value={searchQuery} 
+                onChange={(e) => setSearchQuery(e.target.value)} 
+                className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624] shadow-sm" 
+              />
+            </div>
           </div>
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-            <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-              <div className="relative w-full sm:w-[250px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input 
-                  type="text" 
-                  placeholder="Search by dish name..." 
-                  value={searchQuery} 
-                  onChange={(e) => setSearchQuery(e.target.value)} 
-                  className="w-full pl-9 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624]" 
-                />
-              </div>
+          
+          <div className="flex flex-col sm:flex-row gap-4 xl:gap-4 items-center justify-between w-full xl:w-auto">
+            <div className="flex gap-2 w-full sm:w-auto justify-between sm:justify-start">
               <select 
                 value={historyStatusFilter}
                 onChange={(e) => setHistoryStatusFilter(e.target.value)}
-                className="bg-gray-50 border-none rounded-xl text-sm px-4 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-[#B2E624]"
+                className="bg-white border border-gray-200 shadow-sm rounded-xl text-sm px-3 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-[#B2E624] w-full sm:w-auto"
               >
                 <option value="All">All Statuses</option>
                 <option value="Delivered">Delivered</option>
@@ -257,14 +257,14 @@ function OrdersTab({ setCart, handleTabChange }: any) {
               <select 
                 value={historySortOrder}
                 onChange={(e) => setHistorySortOrder(e.target.value)}
-                className="bg-gray-50 border-none rounded-xl text-sm px-4 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-[#B2E624]"
+                className="bg-white border border-gray-200 shadow-sm rounded-xl text-sm px-3 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-[#B2E624] w-full sm:w-auto"
               >
                 <option value="Recent">Recent First</option>
                 <option value="Oldest">Oldest First</option>
               </select>
             </div>
             
-            <div className="flex items-center gap-4 w-full lg:w-auto mt-2 lg:mt-0">
+            <div className="flex items-center justify-end gap-4 w-full sm:w-auto">
               <label className="flex items-center gap-2 cursor-pointer text-sm font-bold text-gray-700 shrink-0">
                 <input 
                   type="checkbox" 
@@ -303,7 +303,7 @@ function OrdersTab({ setCart, handleTabChange }: any) {
   }
 
   return (
-    <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)]">
+    <div className="h-full flex flex-col bg-transparent">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">Active Orders</h1>
         {historyOrders.length > 0 && (
@@ -356,6 +356,17 @@ function MenuTab({ cart, setCart, setShowCartPanel }: any) {
     }
   };
 
+  const handleRemoveFromCart = (item: any) => {
+    const existing = cart.find((i: any) => i.id === item.id);
+    if (existing) {
+      if (existing.quantity > 1) {
+        setCart(cart.map((i: any) => i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i));
+      } else {
+        setCart(cart.filter((i: any) => i.id !== item.id));
+      }
+    }
+  };
+
   const filteredItems = items.filter((item: any) => {
     if (item.priceText && item.priceText.toLowerCase().includes("catch")) return false;
     const matchesCat = selectedCategory === "All" || item.category === selectedCategory;
@@ -363,7 +374,9 @@ function MenuTab({ cart, setCart, setShowCartPanel }: any) {
     return matchesCat && matchesSearch;
   });
 
-  const MenuItemCard = ({ item }: { item: any }) => (
+  const MenuItemCard = ({ item }: { item: any }) => {
+    const cartItem = cart.find((i: any) => i.id === item.id);
+    return (
     <div className="group flex flex-col cursor-pointer" onClick={() => handleAddToCart(item)}>
       <div className="relative w-full aspect-square rounded-xl md:rounded-2xl overflow-hidden mb-2 md:mb-3">
         <img src={item.image.startsWith('http') ? item.image : (item.image.startsWith('/') && !item.image.startsWith('/uploads') ? item.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${item.image}`)} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -371,38 +384,53 @@ function MenuTab({ cart, setCart, setShowCartPanel }: any) {
           <span className={`w-1.5 h-1.5 rounded-full ${item.isVeg === 'true' || item.isVeg === true ? 'bg-green-500' : 'bg-red-500'}`}></span>
           {item.isVeg === 'true' || item.isVeg === true ? 'VEG' : 'NON-VEG'}
         </div>
-        <button
-          onClick={(e) => { e.stopPropagation(); handleAddToCart(item); }}
-          className="absolute bottom-2 right-2 bg-black text-white w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-[#E04D2D]"
-        >
-          <Plus className="w-3 h-3 md:w-4 md:h-4" />
-        </button>
+        {cartItem ? (
+          <div className="absolute bottom-2 right-2 bg-black text-white rounded-full flex items-center gap-2 px-2 py-1 shadow-lg z-10" onClick={(e) => e.stopPropagation()}>
+            <button onClick={(e) => { e.stopPropagation(); handleRemoveFromCart(item); }} className="w-5 h-5 flex items-center justify-center hover:bg-gray-800 rounded-full">
+              <Minus className="w-3 h-3" />
+            </button>
+            <span className="text-xs font-bold w-4 text-center">{cartItem.quantity}</span>
+            <button onClick={(e) => { e.stopPropagation(); handleAddToCart(item); }} className="w-5 h-5 flex items-center justify-center hover:bg-gray-800 rounded-full">
+              <Plus className="w-3 h-3" />
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={(e) => { e.stopPropagation(); handleAddToCart(item); }}
+            className="absolute bottom-2 right-2 bg-black text-white w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-[#E04D2D]"
+          >
+            <Plus className="w-3 h-3 md:w-4 md:h-4" />
+          </button>
+        )}
       </div>
       <div className="px-0.5">
-        <h3 className="text-xs md:text-sm font-bold leading-tight mb-0.5 group-hover:text-[#E04D2D] transition-colors line-clamp-1">{item.name}</h3>
-        <p className="text-[9px] md:text-xs text-gray-400 line-clamp-1 mb-1">{item.description}</p>
-        <div className="text-sm md:text-base font-black text-black">{/^\d/.test(item.priceText) ? `₹${item.priceText}` : item.priceText}</div>
+        <h3 className="text-[10px] md:text-sm font-bold leading-tight mb-0.5 group-hover:text-[#E04D2D] transition-colors line-clamp-1">{item.name}</h3>
+        <p className="text-[8px] md:text-xs text-gray-400 line-clamp-1 mb-1">{item.description}</p>
+        <div className="text-xs md:text-base font-black text-black">{/^\d/.test(item.priceText) ? `₹${item.priceText}` : item.priceText}</div>
       </div>
     </div>
-  );
+  )};
 
   return (
     <div className="h-full flex flex-col bg-gray-50 rounded-3xl p-4 lg:p-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <h1 className="text-2xl font-bold">Our Menu</h1>
-        <div className="relative w-full md:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input type="text" placeholder="Search menu..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-gray-50 border-none rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
+        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+          <div className="relative w-full sm:w-[250px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input type="text" placeholder="Search menu..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
+          </div>
+          <select 
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="bg-gray-50 border-none rounded-xl text-sm px-4 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-[#B2E624] w-full sm:w-auto"
+          >
+            <option value="All">All Items</option>
+            {categories.slice(1).map((c: any) => (
+              <option key={c.id} value={c.name}>{c.name}</option>
+            ))}
+          </select>
         </div>
-      </div>
-
-      <div className="flex items-center gap-2 md:gap-4 overflow-x-auto pb-4 scrollbar-hide px-1 snap-x">
-        <button onClick={() => setSelectedCategory("All")} className={`shrink-0 px-4 md:px-6 py-2 md:py-3 rounded-full text-xs md:text-sm font-bold transition-all snap-start ${selectedCategory === "All" ? 'bg-black text-white shadow-md' : 'bg-white text-gray-500 hover:bg-gray-100'}`}>All Items</button>
-        {categories.slice(1).map((c: any) => (
-          <button key={c.id} onClick={() => setSelectedCategory(c.name)} className={`shrink-0 px-4 md:px-6 py-2 md:py-3 rounded-full text-xs md:text-sm font-bold transition-all snap-start ${selectedCategory === c.name ? 'bg-black text-white shadow-md' : 'bg-white text-gray-500 hover:bg-gray-100'}`}>
-            {c.name}
-          </button>
-        ))}
       </div>
 
       <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide">
@@ -510,10 +538,10 @@ function EventsTab() {
   const filteredEvents = displayedEvents.filter((e: any) => e.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] relative">
+    <div className="h-full flex flex-col bg-transparent relative">
       <Modal isOpen={!!bookingEvent} title="Book Event" desc={`Are you sure you want to book a ticket for "${bookingEvent?.title}"?`} onConfirm={handleBook} onCancel={() => setBookingEvent(null)} confirmText="Yes, Book" />
       
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div className="sticky top-0 z-10 bg-[#f9fafb]/90 backdrop-blur-md pb-4 pt-2 flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
         <h1 className="text-2xl font-bold">Events</h1>
         <div className="flex gap-3">
           <div className="relative w-full md:w-48">
@@ -535,8 +563,8 @@ function EventsTab() {
           {filteredEvents.map((ev: any, idx: number) => {
             const booking = activeTab === "My Events" ? myEvents.find((b: any) => b.eventId === ev.id) : null;
             return (
-              <div key={`${ev.id}-${idx}`} className="bg-white border border-gray-100 rounded-2xl md:rounded-3xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all group flex flex-col">
-                <div className="h-32 md:h-48 w-full relative overflow-hidden bg-gray-100">
+              <div key={`${ev.id}-${idx}`} className="group flex flex-col cursor-pointer hover:opacity-90 transition-opacity">
+                <div className="h-32 md:h-48 w-full relative rounded-xl overflow-hidden bg-gray-100">
                   <img src={ev.image.startsWith('http') ? ev.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${ev.image}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={ev.title} />
                   <div className="absolute top-2 md:top-3 left-2 md:left-3 bg-white/90 backdrop-blur-md rounded-lg md:rounded-xl p-1.5 md:p-2 flex flex-col items-center justify-center min-w-[40px] md:min-w-[50px] shadow-sm">
                     <span className="text-gray-500 text-[8px] md:text-[10px] font-bold uppercase">{new Date(ev.date).toLocaleString('default', {month:'short'})}</span>
@@ -548,8 +576,8 @@ function EventsTab() {
                     </div>
                   )}
                 </div>
-                <div className="p-4 md:p-6 flex flex-col flex-1">
-                  <div className="flex items-center gap-1 text-gray-500 text-[10px] md:text-xs font-bold uppercase mb-2 md:mb-3"><MapPin className="w-3 h-3" /> {ev.location}</div>
+                <div className="pt-2 flex flex-col flex-1">
+                  <div className="flex items-center gap-1 text-gray-500 text-[9px] md:text-xs font-bold uppercase mb-1"><MapPin className="w-3 h-3" /> {ev.location}</div>
                   <h3 className="text-base md:text-xl font-bold mb-1.5 md:mb-2 line-clamp-1">{ev.title}</h3>
                   <p className="text-gray-500 text-xs md:text-sm line-clamp-2 mb-4 md:mb-6">{ev.subtitle}</p>
                   
@@ -589,7 +617,7 @@ function ReservationsTab({ onPay }: { onPay: (id: number) => void }) {
   }, []);
 
   return (
-    <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)]">
+    <div className="h-full flex flex-col bg-transparent">
       <h1 className="text-2xl font-bold mb-8">My Reservations</h1>
       
       <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide">
@@ -780,7 +808,7 @@ function SettingsTab({ user, onUpdate }: any) {
           <form onSubmit={handleDeliverySubmit} className="space-y-6">
             <div className="flex items-center gap-6">
               <div className="w-32 h-24 rounded-xl bg-gray-100 overflow-hidden relative border-4 border-white shadow-sm flex items-center justify-center text-gray-400">
-                {delivery.homeImage ? <img src={`${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${delivery.homeImage}`} className="w-full h-full object-cover" /> : <span className="text-xs font-semibold">Home Image</span>}
+                {delivery.homeImage ? <img src={delivery.homeImage.startsWith('http') ? delivery.homeImage : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${delivery.homeImage}`} className="w-full h-full object-cover" /> : <span className="text-xs font-semibold">Home Image</span>}
               </div>
               <div>
                 <label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full text-sm font-semibold cursor-pointer transition-colors flex items-center gap-2">
