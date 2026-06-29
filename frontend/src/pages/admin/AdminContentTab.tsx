@@ -11,7 +11,8 @@ const TAGS = [
   { id: "eventL", label: "EventL" },
   { id: "promise", label: "Promise" },
   { id: "customers", label: "Customers" },
-  { id: "footer", label: "Footer" }
+  { id: "footer", label: "Footer" },
+  { id: "logos", label: "Logos" }
 ];
 
 export function AdminContentTab({ showToast }: { showToast: (msg: string) => void }) {
@@ -769,7 +770,41 @@ export function AdminContentTab({ showToast }: { showToast: (msg: string) => voi
         )}
 
         {/* CATCH ALL */}
-        {activeTag !== "seo" && activeTag !== "hero" && activeTag !== "AboutL" && activeTag !== "online" && activeTag !== "call" && activeTag !== "eventL" && activeTag !== "promise" && activeTag !== "footer" && activeTag !== "ChefL" && activeTag !== "recipes" && activeTag !== "customers" && (
+        {/* LOGOS SECTION */}
+        {activeTag === "logos" && (
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 animate-in fade-in slide-in-from-bottom-4">
+            <h3 className="text-2xl font-bold text-[#2D211F] mb-6">Site Logos</h3>
+            <div className="space-y-6">
+              
+              <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                <h4 className="font-bold text-gray-800 mb-4">Header Logo</h4>
+                <div className="flex flex-col gap-3">
+                  <span className="text-xs text-gray-500 truncate block w-full">{siteData?.hero?.logoImage || "/logo.jpg"}</span>
+                  <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'hero', 'logoImage')} className="w-full text-xs md:text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#FFE5E0] file:text-[#E04D2D] hover:file:bg-[#FFD1C8]" />
+                  {siteData?.hero?.logoImage && <img src={siteData.hero.logoImage} className="h-16 w-auto object-contain mt-2 border rounded p-2 bg-white" />}
+                  <button onClick={() => saveSection('hero')} className="bg-[#E04D2D] text-white px-8 py-2 rounded-xl font-bold shadow-lg hover:bg-black transition-colors w-max mt-2">
+                    Save Header Logo
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                <h4 className="font-bold text-gray-800 mb-4">Footer Logo</h4>
+                <div className="flex flex-col gap-3">
+                  <span className="text-xs text-gray-500 truncate block w-full">{siteData?.footer?.footerLogo || siteData?.hero?.logoImage || "/logo.jpg"}</span>
+                  <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'footer', 'footerLogo')} className="w-full text-xs md:text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#FFE5E0] file:text-[#E04D2D] hover:file:bg-[#FFD1C8]" />
+                  {siteData?.footer?.footerLogo && <img src={siteData.footer.footerLogo} className="h-16 w-auto object-contain mt-2 border rounded p-2 bg-[#0a0a0a]" />}
+                  <button onClick={() => saveSection('footer')} className="bg-[#E04D2D] text-white px-8 py-2 rounded-xl font-bold shadow-lg hover:bg-black transition-colors w-max mt-2">
+                    Save Footer Logo
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        )}
+
+        {activeTag !== "seo" && activeTag !== "hero" && activeTag !== "AboutL" && activeTag !== "online" && activeTag !== "call" && activeTag !== "eventL" && activeTag !== "promise" && activeTag !== "footer" && activeTag !== "ChefL" && activeTag !== "recipes" && activeTag !== "customers" && activeTag !== "logos" && (
           <div className="p-8 text-center text-gray-500">
             UI for {activeTag} is under construction...
           </div>

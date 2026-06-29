@@ -21,9 +21,10 @@ export function Footer() {
     <footer className="relative md:fixed bottom-0 left-0 w-full min-h-screen md:h-screen z-10 md:-z-10 bg-[#0a0a0a] flex flex-col justify-end overflow-hidden">
       
       {/* Video or Image Background (Full Screen) */}
-      {siteData?.footer?.footerBackgroundType === 'image' ? (
+      {/* Video or Image Background (Full Screen) */}
+      {(siteData?.footer?.footerBackgroundType === 'image' || siteData?.footer?.footerBackgroundMedia?.match(/\.(jpeg|jpg|gif|png|webp)$/i)) ? (
         <img 
-          src={siteData.footer.footerBackgroundMedia?.startsWith('http') ? siteData.footer.footerBackgroundMedia : (siteData.footer.footerBackgroundMedia?.startsWith('/') && !siteData.footer.footerBackgroundMedia?.startsWith('/uploads') ? siteData.footer.footerBackgroundMedia : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${siteData.footer.footerBackgroundMedia}`)} 
+          src={resolveMediaUrl(siteData?.footer?.footerBackgroundMedia) || "/logo.jpg"} 
           alt="Background" 
           className="absolute inset-0 w-full h-full object-cover opacity-90"
         />
@@ -68,7 +69,7 @@ export function Footer() {
         <div className="flex flex-col lg:flex-row justify-between items-end gap-12 border-b border-white/10 pb-6">
           {/* Left Column */}
           <div className="flex flex-col gap-6 max-w-sm">
-            <img src="/logo.jpg" alt="Crave" className="h-10 md:h-12 w-auto object-contain rounded-xl mix-blend-screen self-start" />
+            <img src={siteData?.footer?.footerLogo || siteData?.hero?.logoImage || "/logo.jpg"} alt="Crave" className="h-10 md:h-12 w-auto object-contain rounded-xl mix-blend-screen self-start" />
             <p className="text-gray-300 font-medium text-sm leading-relaxed">
               {siteData?.footer?.footerDescription || "Gokak's premier family dining restaurant. Authentic Indian & Chinese cuisine."}
             </p>

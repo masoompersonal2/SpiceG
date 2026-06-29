@@ -226,7 +226,7 @@ export function ReservationSection() {
             transition={{ duration: 0.6 }}
             className="relative rounded-[3rem] overflow-hidden shadow-2xl min-h-[400px] lg:min-h-0 h-full border border-gray-800/60 group bg-zinc-900"
           >
-            {siteData?.online?.mediaType === 'image' ? (
+            {(siteData?.online?.mediaType === 'image' || siteData?.online?.mediaUrl?.match(/\.(jpeg|jpg|gif|png|webp)$/i)) ? (
               <img 
                 src={resolveMediaUrl(siteData?.online?.mediaUrl)} 
                 alt="Reservation" 

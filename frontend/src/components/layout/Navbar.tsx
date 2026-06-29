@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useContent } from "../../context/ContentContext";
 
 export function Navbar() {
+  const { siteData } = useContent();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Prevent scrolling when mobile menu is open
@@ -65,7 +67,7 @@ export function Navbar() {
             onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             onDoubleClick={(e) => { e.preventDefault(); window.location.href = "/admin/login"; }}
           >
-            <img src="/logo.jpg" alt="Crave Logo" className="h-8 md:h-10 w-auto object-contain rounded-xl" />
+            <img src={siteData?.hero?.logoImage || "/logo.jpg"} alt="Crave Logo" className="h-8 md:h-10 w-auto object-contain rounded-xl" />
           </a>
         </div>
 
@@ -110,7 +112,13 @@ export function Navbar() {
           >
             {/* Header */}
             <div className="flex justify-between items-center p-6 pb-4">
-              <img src="/logo.jpg" alt="Crave Logo" className="h-10 w-auto object-contain rounded-xl" />
+              <a href="/" className="flex items-center gap-2 md:gap-3 group shrink-0">
+                <img src={siteData?.hero?.logoImage || "/logo.jpg"} alt="Crave Logo" className="h-8 md:h-10 w-auto object-contain rounded-xl" />
+                <div className="flex flex-col">
+                  <span className="font-serif text-lg md:text-xl font-bold tracking-widest text-[#E8E6E1] group-hover:text-[#B2E624] transition-colors">{siteData?.hero?.heroTitle || "CRAVE"}</span>
+                  <span className="text-[8px] md:text-[10px] text-[#C4A464] tracking-[0.2em] uppercase">{siteData?.hero?.heroLocation || "GOKAK"}</span>
+                </div>
+              </a>
               <button 
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/30 text-sm font-bold uppercase tracking-wider hover:bg-white/10 transition-colors"
