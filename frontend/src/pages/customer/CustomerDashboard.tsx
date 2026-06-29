@@ -303,7 +303,7 @@ function OrdersTab({ setCart, handleTabChange }: any) {
   }
 
   return (
-    <div className="h-full flex flex-col bg-transparent">
+    <div className="h-full flex flex-col bg-transparent pt-2">
     <div className="flex justify-end items-center mb-4">
       {historyOrders.length > 0 && (
         <button 
@@ -411,32 +411,34 @@ function MenuTab({ cart, setCart, setShowCartPanel }: any) {
   )};
 
   return (
-    <div className="h-full flex flex-col bg-gray-50 rounded-3xl p-4 lg:p-6">
-      <div className="flex flex-row items-center gap-2 mb-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input type="text" placeholder="Search menu..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-3 py-2 bg-white border-none rounded-xl text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
+    <div className="h-full flex flex-col bg-transparent">
+      <div className="sticky top-0 z-20 bg-[#F8F9FB]/95 backdrop-blur-md pb-2 pt-2 flex flex-col">
+        <div className="flex flex-row items-center gap-2 mb-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input type="text" placeholder="Search menu..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-3 py-2 bg-white border border-gray-100 rounded-xl text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
+          </div>
+          <select 
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="md:hidden bg-white border border-gray-100 rounded-xl text-[10px] sm:text-xs px-2 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-[#B2E624] w-24 shrink-0"
+          >
+            <option value="All">All Items</option>
+            {categories.slice(1).map((c: any) => (
+              <option key={c.id} value={c.name}>{c.name}</option>
+            ))}
+          </select>
         </div>
-        <select 
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="md:hidden bg-white border-none rounded-xl text-[10px] sm:text-xs px-2 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-[#B2E624] w-24 shrink-0"
-        >
-          <option value="All">All Items</option>
-          {categories.slice(1).map((c: any) => (
-            <option key={c.id} value={c.name}>{c.name}</option>
-          ))}
-        </select>
-      </div>
 
-      {/* Desktop tags - hidden on mobile, single line */}
-      <div className="hidden md:flex flex-nowrap items-center justify-between gap-1 mb-4 w-full overflow-hidden">
-        <button onClick={() => setSelectedCategory("All")} className={`px-2 py-1 rounded-full text-[9px] font-bold transition-all shrink-0 ${selectedCategory === "All" ? 'bg-black text-white shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-100'}`}>All Items</button>
-        {categories.slice(1).map((c: any) => (
-          <button key={c.id} onClick={() => setSelectedCategory(c.name)} className={`px-2 py-1 rounded-full text-[9px] font-bold transition-all shrink-0 whitespace-nowrap overflow-hidden text-ellipsis ${selectedCategory === c.name ? 'bg-black text-white shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-100'}`}>
-            {c.name}
-          </button>
-        ))}
+        {/* Desktop tags - hidden on mobile, single line */}
+        <div className="hidden md:flex flex-nowrap items-center justify-between gap-1 w-full overflow-hidden">
+          <button onClick={() => setSelectedCategory("All")} className={`px-2 py-1 rounded-full text-[9px] font-bold transition-all shrink-0 ${selectedCategory === "All" ? 'bg-black text-white shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-100'}`}>All Items</button>
+          {categories.slice(1).map((c: any) => (
+            <button key={c.id} onClick={() => setSelectedCategory(c.name)} className={`px-2 py-1 rounded-full text-[9px] font-bold transition-all shrink-0 whitespace-nowrap overflow-hidden text-ellipsis ${selectedCategory === c.name ? 'bg-black text-white shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-100'}`}>
+              {c.name}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide">
@@ -547,10 +549,10 @@ function EventsTab() {
     <div className="h-full flex flex-col bg-transparent relative">
       <Modal isOpen={!!bookingEvent} title="Book Event" desc={`Are you sure you want to book a ticket for "${bookingEvent?.title}"?`} onConfirm={handleBook} onCancel={() => setBookingEvent(null)} confirmText="Yes, Book" />
       
-      <div className="sticky top-0 z-10 bg-[#F8F9FB]/95 backdrop-blur-md pb-3 pt-1 flex flex-row items-center gap-3 mb-3">
+      <div className="sticky top-0 z-10 bg-[#F8F9FB]/95 backdrop-blur-md pb-3 pt-2 flex flex-row items-center gap-3 mb-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input type="text" placeholder="Search events..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-white border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
+          <input type="text" placeholder="Search events..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-white border border-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#B2E624]" />
         </div>
         <div className="flex bg-gray-100 rounded-full p-1 shrink-0">
           {["All Events", "My Events"].map(tab => (
@@ -620,7 +622,7 @@ function ReservationsTab({ onPay }: { onPay: (id: number) => void }) {
   }, []);
 
   return (
-    <div className="h-full flex flex-col bg-transparent">
+    <div className="h-full flex flex-col bg-transparent pt-2">
       <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide">
         {reservations.length === 0 ? (
           <div className="text-center text-gray-500 py-12">No reservations found.</div>
@@ -763,7 +765,7 @@ function SettingsTab({ user, onUpdate }: any) {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] relative overflow-hidden">
+    <div className="h-full flex flex-col bg-transparent relative overflow-hidden pt-2">
       {msg.text && (
         <div className={`absolute top-6 right-6 px-6 py-3 rounded-full text-sm font-bold shadow-lg z-50 animate-in fade-in slide-in-from-top-4 ${msg.type === 'success' ? 'bg-[#B2E624] text-black' : 'bg-red-500 text-white'}`}>
           {msg.text}
@@ -875,6 +877,7 @@ function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSucce
   const [checkoutPaymentMethod, setCheckoutPaymentMethod] = useState("Cash on Delivery");
   const [checkoutDeliveryType, setCheckoutDeliveryType] = useState("Delivery");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const subtotal = cart.reduce((total: number, item: any) => total + (parseInt(item.priceText.replace(/[^\d]/g, '')) * item.quantity), 0);
 
@@ -914,9 +917,12 @@ function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSucce
     });
   };
 
-  const handlePlaceOrder = async () => {
+  // COD flow — called from modal confirm
+  const handleCODOrder = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    setShowConfirmModal(false);
     try {
-      // 1. Create Order in Backend (Pending Payment)
       const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -924,7 +930,7 @@ function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSucce
         body: JSON.stringify({
           items: cart,
           totalAmount: finalTotal,
-          paymentMethod: "Razorpay", // Enforced Online Payment
+          paymentMethod: "Cash on Delivery",
           deliveryType: checkoutDeliveryType,
           streetAddress: user.streetAddress,
           receiverName: user.receiverName,
@@ -933,19 +939,47 @@ function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSucce
           feeBreakdown
         })
       });
+      if (!res.ok) throw new Error("Order creation failed");
+      setCart([]);
+      setReservationSuccessMsg("Order Placed! Our staff will confirm shortly.");
+      setTimeout(() => setReservationSuccessMsg(""), 4000);
+      handleTabChange("Orders");
+    } catch (e) {
+      console.error("Order failed", e);
+      alert("Failed to place order. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
+  // Razorpay flow
+  const handleRazorpayOrder = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          items: cart,
+          totalAmount: finalTotal,
+          paymentMethod: "Razorpay",
+          deliveryType: checkoutDeliveryType,
+          streetAddress: user.streetAddress,
+          receiverName: user.receiverName,
+          receiverMobile: user.receiverMobile,
+          homeImage: user.homeImage,
+          feeBreakdown
+        })
+      });
       if (!res.ok) throw new Error("Order creation failed");
       const orderData = await res.json();
       const orderId = orderData.order.id;
 
-      // 2. Load Razorpay Script
       const resScript = await loadRazorpayScript();
-      if (!resScript) {
-        alert("Razorpay SDK failed to load. Are you online?");
-        return;
-      }
+      if (!resScript) { alert("Razorpay SDK failed to load."); setIsSubmitting(false); return; }
 
-      // 3. Create Razorpay Order
       const razorpayOrderRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/payments/razorpay/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -953,37 +987,28 @@ function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSucce
         body: JSON.stringify({ type: 'food_order', id: orderId })
       });
       const razorpayOrder = await razorpayOrderRes.json();
+      if (!razorpayOrder.id) { alert("Server error."); setIsSubmitting(false); return; }
 
-      if (!razorpayOrder.id) {
-        alert("Server error. Are you online?");
-        return;
-      }
-
-      // 4. Open Razorpay Checkout
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_dummy_key", 
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_dummy_key",
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
         name: "Crave",
         description: "Food Order Payment",
         order_id: razorpayOrder.id,
         handler: async function (response: any) {
-          // 5. Verify Payment
           const verifyRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/payments/razorpay/verify`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
             body: JSON.stringify({
-              type: 'food_order',
-              id: orderId,
+              type: 'food_order', id: orderId,
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature
             })
           });
-
           if (verifyRes.ok) {
-            setShowConfirmModal(false);
             setCart([]);
             setReservationSuccessMsg("Payment Successful! Order Placed.");
             setTimeout(() => setReservationSuccessMsg(""), 4000);
@@ -991,47 +1016,53 @@ function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSucce
           } else {
             alert("Payment Verification Failed!");
           }
+          setIsSubmitting(false);
         },
-        prefill: {
-          name: user.fullName || "Customer",
-          email: user.email || "",
-          contact: user.mobile || ""
-        },
-        theme: {
-          color: "#B2E624"
-        }
+        prefill: { name: user.fullName || "Customer", email: user.email || "", contact: user.mobile || "" },
+        theme: { color: "#B2E624" },
+        modal: { ondismiss: () => setIsSubmitting(false) }
       };
-
       const paymentObject = new (window as any).Razorpay(options);
-      paymentObject.on('payment.failed', function (response: any){
-        alert("Payment Failed. Reason: " + response.error.description);
-      });
+      paymentObject.on('payment.failed', () => setIsSubmitting(false));
       paymentObject.open();
-
     } catch (e) {
       console.error("Order failed", e);
       alert("Failed to process order.");
+      setIsSubmitting(false);
+    }
+  };
+
+  // Entry point — route to correct flow
+  const handlePlaceOrder = () => {
+    if (isSubmitting) return;
+    if (checkoutPaymentMethod === "Cash on Delivery") {
+      setShowConfirmModal(true);
+    } else {
+      handleRazorpayOrder();
     }
   };
 
   if (cart.length === 0) {
     return (
-      <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] items-center justify-center">
-        <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
-        <button onClick={() => handleTabChange("Menu")} className="px-6 py-3 bg-[#B2E624] text-black font-bold rounded-full">Go to Menu</button>
+      <div className="h-full flex flex-col bg-transparent items-center justify-center pt-10">
+        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm border border-gray-100">
+          <ShoppingBag className="w-10 h-10 text-gray-300" />
+        </div>
+        <h2 className="text-2xl font-bold mb-2">Your cart is empty</h2>
+        <p className="text-gray-500">Add some items from the menu to proceed.</p>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] relative">
+    <div className="h-full flex flex-col bg-transparent relative">
       <Modal 
         isOpen={showConfirmModal} 
         title="Confirm Cash on Delivery" 
         desc="Are you sure you want to place this order using Cash on Delivery?" 
-        onConfirm={handlePlaceOrder} 
+        onConfirm={handleCODOrder} 
         onCancel={() => setShowConfirmModal(false)} 
-        confirmText="Yes, Confirm" 
+        confirmText={isSubmitting ? "Placing..." : "Yes, Confirm"} 
       />
       
       <div className="flex items-center gap-4 mb-8">
@@ -1043,11 +1074,11 @@ function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSucce
 
       <div className="flex-1 overflow-y-auto pr-2 pb-4 flex flex-col lg:flex-row gap-8">
         <div className="flex-[2] space-y-6">
-          <div className="bg-gray-50 rounded-2xl p-6">
+          <div>
             <h2 className="text-lg font-bold mb-4">Order Summary</h2>
             <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2">
               {cart.map((item: any, idx: number) => (
-                <div key={idx} className="flex justify-between items-center text-sm bg-white p-3 rounded-xl border border-gray-100">
+                <div key={idx} className="flex justify-between items-center text-sm p-3 border-b border-gray-100">
                   <div className="flex items-center gap-3">
                     <img src={item.image.startsWith('http') ? item.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${item.image}`} className="w-10 h-10 rounded-lg object-cover" />
                     <div>
@@ -1061,16 +1092,16 @@ function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSucce
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-2xl p-6">
+          <div>
             <h2 className="text-lg font-bold mb-4">Payment Options</h2>
             <div className="space-y-3">
-              <label className="flex items-center justify-between p-4 border-2 border-[#B2E624] bg-white rounded-xl cursor-pointer">
+              <label className="flex items-center justify-between p-4 border-2 border-[#B2E624] rounded-xl cursor-pointer">
                 <div className="flex items-center gap-3">
                   <input type="radio" checked={checkoutPaymentMethod === "Cash on Delivery"} onChange={() => setCheckoutPaymentMethod("Cash on Delivery")} className="w-4 h-4 text-[#B2E624]" />
                   <span className="font-bold">Cash on Delivery</span>
                 </div>
               </label>
-              <label className="flex items-center justify-between p-4 border-2 border-gray-100 opacity-50 bg-white rounded-xl cursor-not-allowed">
+              <label className="flex items-center justify-between p-4 border-2 border-gray-100 opacity-50 rounded-xl cursor-not-allowed">
                 <div className="flex items-center gap-3">
                   <input type="radio" disabled className="w-4 h-4" />
                   <span className="font-bold">Online Payment</span>
@@ -1082,16 +1113,16 @@ function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSucce
         </div>
 
         <div className="flex-[1] flex flex-col gap-6">
-          <div className="bg-gray-50 rounded-2xl p-6">
+          <div>
             <h2 className="text-lg font-bold mb-4">Delivery Method</h2>
             <div className="space-y-3">
-              <label className={`flex items-center justify-between p-4 border-2 ${checkoutDeliveryType === "Delivery" ? 'border-[#B2E624]' : 'border-gray-100'} bg-white rounded-xl cursor-pointer`}>
+              <label className={`flex items-center justify-between p-4 border-2 ${checkoutDeliveryType === "Delivery" ? 'border-[#B2E624]' : 'border-gray-100'} rounded-xl cursor-pointer`}>
                 <div className="flex items-center gap-3">
                   <input type="radio" checked={checkoutDeliveryType === "Delivery"} onChange={() => setCheckoutDeliveryType("Delivery")} className="w-4 h-4 text-[#B2E624]" />
                   <span className="font-bold">Delivery Partner</span>
                 </div>
               </label>
-              <label className={`flex items-center justify-between p-4 border-2 ${checkoutDeliveryType === "Pickup" ? 'border-[#B2E624]' : 'border-gray-100'} bg-white rounded-xl cursor-pointer`}>
+              <label className={`flex items-center justify-between p-4 border-2 ${checkoutDeliveryType === "Pickup" ? 'border-[#B2E624]' : 'border-gray-100'} rounded-xl cursor-pointer`}>
                 <div className="flex items-center gap-3">
                   <input type="radio" checked={checkoutDeliveryType === "Pickup"} onChange={() => setCheckoutDeliveryType("Pickup")} className="w-4 h-4 text-[#B2E624]" />
                   <span className="font-bold">I will pick up</span>
@@ -1132,11 +1163,15 @@ function CheckoutTab({ user, cart, setCart, handleTabChange, setReservationSucce
               </div>
             ) : (
               <button 
-                onClick={() => handlePlaceOrder()} 
-                className="w-full mt-6 bg-[#B2E624] text-black font-bold py-4 rounded-xl shadow-lg hover:bg-[#a0d21d] transition-colors flex items-center justify-center gap-2"
+                onClick={handlePlaceOrder}
+                disabled={isSubmitting}
+                className="w-full mt-6 bg-[#B2E624] text-black font-bold py-4 rounded-xl shadow-lg hover:bg-[#a0d21d] transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <Check className="w-5 h-5" />
-                Place Order
+                {isSubmitting ? (
+                  <span className="flex items-center gap-2"><svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25"/><path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="4" className="opacity-75"/></svg>Placing...</span>
+                ) : (
+                  <><Check className="w-5 h-5" />Place Order</>
+                )}
               </button>
             )}
           </div>
@@ -1436,7 +1471,7 @@ export function CustomerDashboard() {
       </AnimatePresence>
 
       {/* Main Scrollable Content Layout */}
-      <main className="flex-1 overflow-y-auto w-full p-4 md:p-8 relative">
+      <main className="flex-1 overflow-y-auto w-full px-4 md:px-8 pb-4 md:pb-8 pt-0 relative">
         <div className={`max-w-[1600px] mx-auto h-full grid grid-cols-1 gap-6 lg:gap-8`}>
           
           {/* Left Area - Active Tab Content */}
