@@ -9,10 +9,14 @@ import { EventsCtaSection } from "../features/events/EventsCtaSection";
 import { WhyDineSection } from "../features/about/WhyDineSection";
 import { TestimonialsSection } from "../features/testimonials/TestimonialsSection";
 import { Footer } from "../components/layout/Footer";
+import { SplashScreen } from "../components/ui/SplashScreen";
 import { useEffect } from "react";
 import Lenis from "@studio-freight/lenis";
+import { useContent } from "../context/ContentContext";
 
 export function Home() {
+  const { firstLoadDone } = useContent();
+
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -31,6 +35,9 @@ export function Home() {
 
   return (
     <>
+      {/* Splash screen: visible until backend data has been fetched at least once this session */}
+      <SplashScreen visible={!firstLoadDone} />
+
       <main className="relative z-10 min-h-screen flex flex-col w-full overflow-hidden bg-background md:mb-[100vh] shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-b-[2rem] md:rounded-b-[3rem]">
         <Navbar />
         <HeroSection />

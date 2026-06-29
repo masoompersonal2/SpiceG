@@ -6,6 +6,7 @@ interface ContentContextType {
   categoryData: any[];
   testimonialData: any[];
   loading: boolean;
+  firstLoadDone: boolean;
 }
 
 const ContentContext = createContext<ContentContextType>({
@@ -13,7 +14,8 @@ const ContentContext = createContext<ContentContextType>({
   chefData: [],
   categoryData: [],
   testimonialData: [],
-  loading: true
+  loading: true,
+  firstLoadDone: false
 });
 
 export function ContentProvider({ children }: { children: ReactNode }) {
@@ -22,6 +24,11 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   const [categoryData, setCategoryData] = useState<any[]>([]);
   const [testimonialData, setTestimonialData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  // firstLoadDone: becomes true after very first data fetch. Stored in sessionStorage
+  // so splash only shows on fresh tab, not on page-to-page navigation.
+  const [firstLoadDone, setFirstLoadDone] = useState(
+    () => sessionStorage.getItem('crave_loaded') === '1'
+  );
 
   useEffect(() => {
     async function fetchData() {
@@ -69,13 +76,16 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         console.error("Failed to load CMS content:", err);
       } finally {
         setLoading(false);
+        // Mark first load done so splash dismisses
+        sessionStorage.setItem('crave_loaded', '1');
+        setFirstLoadDone(true);
       }
     }
     fetchData();
   }, []);
 
   return (
-    <ContentContext.Provider value={{ siteData, chefData, categoryData, testimonialData, loading }}>
+    <ContentContext.Provider value={{ siteData, chefData, categoryData, testimonialData, loading, firstLoadDone }}>
       {children}
     </ContentContext.Provider>
   );

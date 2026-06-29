@@ -364,32 +364,30 @@ function MenuTab({ cart, setCart, setShowCartPanel }: any) {
   });
 
   const MenuItemCard = ({ item }: { item: any }) => (
-    <div className="bg-white border border-gray-100 rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-[0_2px_20px_rgba(0,0,0,0.03)] hover:shadow-xl transition-all duration-300 group flex flex-col h-full">
-      <div className="relative h-28 md:h-48 mb-3 md:mb-6 rounded-xl md:rounded-2xl overflow-hidden shrink-0">
-        <img src={item.image.startsWith('http') ? item.image : (item.image.startsWith('/') && !item.image.startsWith('/uploads') ? item.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${item.image}`)} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-        <div className="absolute top-2 md:top-4 left-2 md:left-4 bg-white/90 backdrop-blur-sm px-2 md:px-3 py-1 md:py-1.5 rounded-full text-[10px] md:text-xs font-bold text-gray-700 flex items-center gap-1.5 shadow-sm">
-          <span className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${item.isVeg === "true" || item.isVeg === true ? 'bg-green-500' : 'bg-red-500'}`}></span>
-          {item.isVeg === "true" || item.isVeg === true ? 'VEG' : 'NON-VEG'}
+    <div className="group flex flex-col cursor-pointer" onClick={() => handleAddToCart(item)}>
+      <div className="relative w-full aspect-square rounded-xl md:rounded-2xl overflow-hidden mb-2 md:mb-3">
+        <img src={item.image.startsWith('http') ? item.image : (item.image.startsWith('/') && !item.image.startsWith('/uploads') ? item.image : `${(import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace('/api', '')}${item.image}`)} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+        <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full text-[9px] md:text-[10px] font-bold text-gray-700 flex items-center gap-1 shadow-sm">
+          <span className={`w-1.5 h-1.5 rounded-full ${item.isVeg === 'true' || item.isVeg === true ? 'bg-green-500' : 'bg-red-500'}`}></span>
+          {item.isVeg === 'true' || item.isVeg === true ? 'VEG' : 'NON-VEG'}
         </div>
+        <button
+          onClick={(e) => { e.stopPropagation(); handleAddToCart(item); }}
+          className="absolute bottom-2 right-2 bg-black text-white w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-[#E04D2D]"
+        >
+          <Plus className="w-3 h-3 md:w-4 md:h-4" />
+        </button>
       </div>
-      <div className="flex-1 flex flex-col">
-        <h3 className="text-base md:text-xl font-bold leading-tight mb-1.5 md:mb-3 group-hover:text-[#E04D2D] transition-colors">{item.name}</h3>
-        <p className="text-[10px] md:text-sm text-gray-500 line-clamp-2 mb-3 md:mb-6 flex-1 leading-relaxed">{item.description}</p>
-        <div className="flex items-center justify-between mt-auto pt-3 md:pt-4 border-t border-gray-50">
-          <div className="text-lg md:text-2xl font-black text-black tracking-tight">{/^\d/.test(item.priceText) ? `₹${item.priceText}` : item.priceText}</div>
-          <button 
-            onClick={() => handleAddToCart(item)}
-            className="bg-black text-white px-4 md:px-6 py-2 md:py-3 text-xs md:text-base rounded-xl md:rounded-2xl font-bold hover:bg-[#E04D2D] hover:shadow-lg hover:shadow-[#E04D2D]/20 hover:-translate-y-0.5 transition-all active:translate-y-0 flex items-center gap-2"
-          >
-            <Plus className="w-3 h-3 md:w-4 md:h-4" /> <span className="hidden sm:inline">Add</span>
-          </button>
-        </div>
+      <div className="px-0.5">
+        <h3 className="text-xs md:text-sm font-bold leading-tight mb-0.5 group-hover:text-[#E04D2D] transition-colors line-clamp-1">{item.name}</h3>
+        <p className="text-[9px] md:text-xs text-gray-400 line-clamp-1 mb-1">{item.description}</p>
+        <div className="text-sm md:text-base font-black text-black">{/^\d/.test(item.priceText) ? `₹${item.priceText}` : item.priceText}</div>
       </div>
     </div>
   );
 
   return (
-    <div className="h-full flex flex-col bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)]">
+    <div className="h-full flex flex-col bg-gray-50 rounded-3xl p-4 lg:p-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <h1 className="text-2xl font-bold">Our Menu</h1>
         <div className="relative w-full md:w-64">
@@ -408,7 +406,7 @@ function MenuTab({ cart, setCart, setShowCartPanel }: any) {
       </div>
 
       <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide">
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6 mt-2 md:mt-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-4 mt-2 md:mt-4">
           {filteredItems.map((item: any) => <MenuItemCard key={item.id} item={item} />)}
           {filteredItems.length === 0 && <div className="col-span-full py-12 text-center text-gray-500">No dishes found.</div>}
         </div>
