@@ -17,6 +17,9 @@ import { AdminDeliveryFriendsList } from "./pages/admin/AdminDeliveryFriendsList
 import { StaffDashboard } from "./pages/staff/StaffDashboard";
 import { DeliveryFriendDashboard } from "./pages/delivery/DeliveryFriendDashboard";
 import { ContentProvider } from './context/ContentContext';
+import { TermsPage } from "./pages/TermsPage";
+import { PrivacyPage } from "./pages/PrivacyPage";
+import { DisclaimerPage } from "./pages/DisclaimerPage";
 
 function App() {
   return (
@@ -79,6 +82,18 @@ function AppContent() {
 
   if (path === "/contact") {
     return <ContactPage />;
+  }
+
+  if (path === "/terms") {
+    return <TermsPage />;
+  }
+
+  if (path === "/privacy") {
+    return <PrivacyPage />;
+  }
+
+  if (path === "/disclaimer") {
+    return <DisclaimerPage />;
   }
 
   if (path === "/auth") {
